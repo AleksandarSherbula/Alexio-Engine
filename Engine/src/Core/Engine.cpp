@@ -7,7 +7,13 @@ namespace Alexio
 {
 	void Engine::Run()
 	{
-		OnStart();
+		Log::Initialize();
+		OnStart();		
+
+		while (true)
+		{
+			OnUpdate();
+		}
 	}
 }
 
