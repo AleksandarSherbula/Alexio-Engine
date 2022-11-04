@@ -1,11 +1,12 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "AlexioEngine.h"
+#include "Alexio.h"
 
 class Game : public Alexio::Engine
 {
 public:
+	Game();
 	void OnStart() override;
 	void OnUpdate() override;
 };

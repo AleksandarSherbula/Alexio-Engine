@@ -1,6 +1,10 @@
 #include "Game.h"
 #include <iostream>
 
+Game::Game() : Engine()
+{
+}
+
 void Game::OnStart()
 {	
 	AIO_LOG_INFO("Hello! Welcome to Alexio Game Engine");

@@ -11,6 +11,9 @@ project "Engine"
    
    targetdir "build/%{prj.name}/bin/%{cfg.system}/%{cfg.buildcfg}-%{cfg.architecture}"
    objdir    "build/%{prj.name}/intermediate/%{cfg.system}/%{cfg.buildcfg}-%{cfg.architecture}"
+
+   pchheader "aio_pch.h"
+   pchsource "%{prj.name}/src/aio_pch.cpp"
    
    files
    {

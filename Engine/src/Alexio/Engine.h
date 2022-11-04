@@ -6,10 +6,15 @@ namespace Alexio
 	class Engine
 	{
 	public:
+		Engine();
 		virtual void OnStart() = 0;
 		virtual void OnUpdate() = 0;
 
 		void Run();
+
+		inline static Engine* GetInstance() { return sInstance; }
+	private:
+		static Engine* sInstance;
 	};
 }
 
