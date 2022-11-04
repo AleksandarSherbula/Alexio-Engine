@@ -1,7 +1,7 @@
 #include "Game.h"
 #include <iostream>
 
-Game::Game() : Engine()
+Game::Game()
 {
 }
 

@@ -21,5 +21,6 @@ namespace Alexio
 #define AIO_LOG_ERROR(...)       Alexio::Log::sLogger->error(__VA_ARGS__)
 #define AIO_LOG_CRITICAL(...)    Alexio::Log::sLogger->critical(__VA_ARGS__)
 
+#define AIO_ASSERT(x, ...) { if(!(x)) { AIO_LOG_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 
 #endif // !LOG_H

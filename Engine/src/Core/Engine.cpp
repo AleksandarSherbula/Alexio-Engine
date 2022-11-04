@@ -28,6 +28,7 @@ int main(int argc, char** agrv)
 	Alexio::Log::Initialize();
 
 	std::unique_ptr<Game> game = std::make_unique<Game>();
+	std::unique_ptr<Game> game2 = std::make_unique<Game>();
 	game->Run();	
 	return 0;
 }
