@@ -25,7 +25,6 @@ project "Engine"
    {
       "%{prj.name}/dependecies/spdlog/include",
       "%{prj.name}/src",
-      "Game/src"
    }
 
    links

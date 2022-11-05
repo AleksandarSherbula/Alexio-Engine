@@ -1,6 +1,8 @@
 #include "aio_pch.h"
 #include "Engine.h"
-#include "Game.h"
+#include "Log.h"
+
+#include "Events/AppEvent.h"
 
 namespace Alexio
 {
@@ -16,6 +18,9 @@ namespace Alexio
 	{		
 		OnStart();
 
+		WindowResizeEvent e(1280, 720);
+		AIO_LOG_TRACE(e);
+
 		while (true)
 		{
 			OnUpdate();
@@ -23,12 +28,15 @@ namespace Alexio
 	}
 }
 
+
 int main(int argc, char** agrv)
 {
 	Alexio::Log::Initialize();
 
-	std::unique_ptr<Game> game = std::make_unique<Game>();
-	std::unique_ptr<Game> game2 = std::make_unique<Game>();
-	game->Run();	
+	Alexio::Engine* engine = Create();
+	engine->Run();
+	delete engine;
 	return 0;
 }
+
+

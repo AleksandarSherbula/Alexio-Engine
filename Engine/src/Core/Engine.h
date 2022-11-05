@@ -18,4 +18,8 @@ namespace Alexio
 	};
 }
 
+Alexio::Engine* Create();
+
+
+
 #endif // ENGINE_H

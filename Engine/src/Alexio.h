@@ -1,10 +1,7 @@
 #ifndef ALEXIO_ENGINE_H
 #define ALEXIO_ENGINE_H
 
-#ifndef AIO_PLATFORM_WINDOWS
-	#error Alexio Engine only supports Windows
-#endif
-
+#include "Core/Utilities.h"
 #include "Core/Log.h"
 #include "Core/Engine.h"
 
