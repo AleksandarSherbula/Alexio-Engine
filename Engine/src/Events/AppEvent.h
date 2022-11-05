@@ -3,7 +3,6 @@
 
 #include "Event.h"
 
-
 namespace Alexio
 {
 	class WindowResizeEvent : public Event

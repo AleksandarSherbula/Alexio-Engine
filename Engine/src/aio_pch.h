@@ -14,4 +14,12 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Core/Log.h"
+
+#ifdef AIO_PLATFORM_WINDOWS
+	#include <Windows.h>
+	#include <comdef.h>
+#endif // AIO_PLATFORM_WINDOWS
+
+
 #endif // !AIO_PCH_H

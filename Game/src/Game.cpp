@@ -5,6 +5,7 @@ class Game : public Alexio::Engine
 public:
 	Game::Game()
 	{
+		
 	}
 
 	void Game::OnStart() override

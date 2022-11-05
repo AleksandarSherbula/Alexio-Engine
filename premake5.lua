@@ -3,6 +3,13 @@ workspace "AlexioEngine"
    configurations { "Debug", "Release" }
    architecture "x64"
 
+IncludeDir = {}
+IncludeDir["GLFW"] = "Engine/dependecies/GLFW/include"
+
+group "Dependencies"
+   include "Engine/dependecies/GLFW"
+group ""
+
 project "Engine"
    location "Engine"
    kind "ConsoleApp"
@@ -25,15 +32,17 @@ project "Engine"
    {
       "%{prj.name}/dependecies/spdlog/include",
       "%{prj.name}/src",
+      "%{IncludeDir.GLFW}"
    }
 
    links
    {
-      "Game"
+      "Game",
+      "GLFW",
+      "opengl32.lib"
    }
 
    filter "system:windows"
-      cppdialect "C++17"
       staticruntime "On"
       systemversion "latest"
       
@@ -72,7 +81,6 @@ project "Game"
    }
 
    filter "system:windows"
-      cppdialect "C++17"
       staticruntime "On"
       systemversion "latest"
       
