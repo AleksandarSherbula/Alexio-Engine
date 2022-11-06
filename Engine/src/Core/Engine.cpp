@@ -5,10 +5,10 @@
 #include "Events/AppEvent.h"
 #include "Window/GLFW_Window.h"
 
-#include "GLFW/glfw3.h"
-
 namespace Alexio
 {
+#define BIND_EVENT_FN(x) std::bind(&Engine::x, this, std::placeholders::_1)
+
 	Engine* Engine::sInstance = nullptr;
 
 	Engine::Engine()
@@ -16,27 +16,37 @@ namespace Alexio
 		AIO_ASSERT(!sInstance, "An instance of Engine has already been made");
 		sInstance = this;
 
-		m_gAPI = GraphicsAPI::OpenGL;
+		m_gAPI = GraphicsAPI::DirectX11;
+
 		mWindow = Window::Create("Alexio Engine", 1280, 720, m_gAPI);
+		mWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 		mRunning = true;
+	}
+
+	void Engine::OnEvent(Event& e)
+	{
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+
+		AIO_LOG_TRACE("{0}", e);
 	}
 
 	void Engine::Run()
 	{
 		OnStart();
 
-		WindowResizeEvent e(1280, 720);
-		AIO_LOG_TRACE(e);
-
 		while (mRunning)
 		{
-			glClear(GL_COLOR_BUFFER_BIT);
-			glClearColor(0.0f, 0.8f, 1.0f, 1.0f);
-
 			OnUpdate();
 
 			mWindow->Update();
 		}
+	}	
+
+	bool Engine::OnWindowClose(WindowCloseEvent& e)
+	{
+		mRunning = false;
+		return true;
 	}
 }
 

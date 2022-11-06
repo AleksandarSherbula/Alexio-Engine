@@ -14,10 +14,22 @@ namespace Alexio
 		~GLFW_Window();
 		void Initialize();
 		void Update() override;
+		void ProcessEvents() override;
 
 		inline void* GetHandle() override { return mHandle; }
+		void SetEventCallback(const EventCallbackFn& callback) override { mData.eventCallback = callback; }
 	private:
 		GLFWwindow* mHandle;
+
+		struct WindowData
+		{
+			std::string title;
+			uint32_t width, height;
+
+			EventCallbackFn eventCallback;
+		};
+
+		WindowData mData;
 	};
 }
 

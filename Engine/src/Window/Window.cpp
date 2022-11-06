@@ -1,26 +1,31 @@
 #include "aio_pch.h"
-#include "GLFW_Window.h"
 
+#include "GLFW_Window.h"
 #ifdef AIO_PLATFORM_WINDOWS
     #include "Win32_Window.h"
 #endif // AIO_PLATFORM_WINDOWS
 
-
 namespace Alexio
 {
+    Window::~Window()
+    {
+    }
+
     std::unique_ptr<Window> Window::Create(const std::string& title, uint32_t width, uint32_t height, GraphicsAPI api)
     {
+#ifdef AIO_PLATFORM_WINDOWS
+        switch (api)
+        {
+        case GraphicsAPI::OpenGL:    return std::make_unique<GLFW_Window>(title, width, height);
+        case GraphicsAPI::DirectX11: return std::make_unique<Win32_Window>(title, width, height);
+        }
+#else
         if (api == GraphicsAPI::OpenGL)
             return std::make_unique<GLFW_Window>(title, width, height);
-        else if (api == GraphicsAPI::DirectX11)
-        {
-            #ifndef AIO_PLATFORM_WINDOWS
-                #error Win32 API is only supported on Windos
-            #endif // AIO_PLATFORM_WINDOWS
-            return std::make_unique<Win32_Window>(title, width, height);
-        }
-
-        AIO_ASSERT(false, "GLFW window is the only one that can be created.");
+        else
+            AIO_LOG_ERROR("DirectX11 is only supported on Windows");
+#endif
+        AIO_ASSERT(false, "A Graphics API has not been picked");
         return nullptr;
     }
 }

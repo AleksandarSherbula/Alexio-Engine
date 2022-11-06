@@ -13,14 +13,20 @@ namespace Alexio
 		void Initialize() override;
 		void Update() override;
 
+		void ProcessEvents() override;
+
 		inline void* GetHandle() override { return mHandle; }
+		void SetEventCallback(const EventCallbackFn& callback) override;
 	private:
 		HWND mHandle;
 		HINSTANCE m_hInstance;
 		const WCHAR* mWindowClass;
+		EventCallbackFn mEventCallBack;
 	};
 
 	LRESULT CALLBACK WindowsProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT CALLBACK KeyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT CALLBACK MouseProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	std::string ResultInfo(HRESULT hr);
 }
 
