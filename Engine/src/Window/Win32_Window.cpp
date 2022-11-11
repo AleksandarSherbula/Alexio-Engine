@@ -5,9 +5,11 @@
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 
+#include "Input/Input.h"
+
 namespace Alexio
 {
-	std::function<void(Event&)> ecFn;
+	static EventCallbackFn ecFn;
 
 	Win32_Window::Win32_Window(const std::string& title, uint32_t width, uint32_t height)
 	{
@@ -16,8 +18,6 @@ namespace Alexio
 		mTitle = title;
 		mWindowClass = L"Win32 Class";
 		m_hInstance = GetModuleHandle(nullptr);
-
-		Initialize();
 	}
 
 	Win32_Window::~Win32_Window()
@@ -61,15 +61,15 @@ namespace Alexio
 		
 		AIO_ASSERT(mHandle, "Failed to create a Window: {0}", ResultInfo(GetLastError()));
 
-		
+		ShowWindow(mHandle, SW_SHOW);
+		SetForegroundWindow(mHandle);
+		SetFocus(mHandle);
 	}
 
 	void Win32_Window::SetEventCallback(const EventCallbackFn& callback)
 	{		
 		ecFn = callback;
-		ShowWindow(mHandle, SW_SHOW);
-		SetForegroundWindow(mHandle);
-		SetFocus(mHandle);
+		Initialize();
 	}
 
 	void Win32_Window::Update()
@@ -110,7 +110,6 @@ namespace Alexio
 		default:
 			return KeyProc(hwnd, uMsg, wParam, lParam);
 		};
-		
 	}
 
 	LRESULT KeyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -121,18 +120,19 @@ namespace Alexio
 		{
 			KeyPressedEvent event(wParam, LOWORD(lParam));
 			ecFn(event);
+			Input::UpdateKeyState(wParam, true);
 			return 0;
 		}
 		case WM_KEYUP:
 		{
 			KeyReleasedEvent event(wParam);
 			ecFn(event);
+			Input::UpdateKeyState(wParam, true);
 			return 0;
 		}
 		default:
 			return MouseProc(hwnd, uMsg, wParam, lParam);
-		};
-		
+		};		
 	}
 
 	LRESULT MouseProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -197,7 +197,13 @@ namespace Alexio
 		}
 
 		// MOUSE SCROLL EVENTS
-		// TODO
+		case WM_MOUSEWHEEL:
+		{
+			// Have no mouse to test the x-axis scrolling so for now it's set to 0.
+			MouseScrolledEvent event(0, GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA);
+			ecFn(event);
+			return 0;
+		}
 
 		// MOUSE MOVE EVENTS
 		case WM_MOUSEMOVE:

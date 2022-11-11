@@ -9,6 +9,13 @@ enum class GraphicsAPI
 	OpenGL
 };
 
+enum class WindowAPI
+{
+	None,
+	GLFW,
+	Win32
+};
+
 #include <string>
 
 inline std::wstring StringToWide(const std::string& str)

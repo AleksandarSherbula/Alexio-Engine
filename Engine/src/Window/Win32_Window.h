@@ -21,9 +21,8 @@ namespace Alexio
 		HWND mHandle;
 		HINSTANCE m_hInstance;
 		const WCHAR* mWindowClass;
-		EventCallbackFn mEventCallBack;
 	};
-
+	
 	LRESULT CALLBACK WindowsProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK KeyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK MouseProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

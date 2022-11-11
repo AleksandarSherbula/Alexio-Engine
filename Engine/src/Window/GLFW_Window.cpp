@@ -6,6 +6,8 @@
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 
+#include "Input/Input.h"
+
 namespace Alexio
 {
     static bool sGLFW_Initialize = false;
@@ -74,12 +76,14 @@ namespace Alexio
                 {
                     KeyPressedEvent event(key, 0);
                     data.eventCallback(event);
+                    Input::UpdateKeyState(key, true);
                     break;
                 }
                 case GLFW_RELEASE:
                 {
                     KeyReleasedEvent event(key);
                     data.eventCallback(event);
+                    Input::UpdateKeyState(key, false);
                     break;
                 }
                 case GLFW_REPEAT:
@@ -134,8 +138,8 @@ namespace Alexio
 
     void GLFW_Window::Update()
     {
-        glfwSwapBuffers(mHandle);
         ProcessEvents();
+        glfwSwapBuffers(mHandle);
     }
 
     void GLFW_Window::ProcessEvents()

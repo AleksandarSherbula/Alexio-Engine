@@ -18,6 +18,8 @@ namespace Alexio
 		void Run();
 
 		void OnEvent(Event& e);
+
+		inline Window* GetWindow() { return mWindow.get(); }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 	protected:

@@ -5,4 +5,10 @@
 #include "Core/Log.h"
 #include "Core/Engine.h"
 
+#include "Events/Event.h"
+#include "Events/KeyEvent.h"
+#include "Events/MouseEvent.h"
+
+#include "Input/Input.h"
+
 #endif // !ALEXIO_ENGINE_H

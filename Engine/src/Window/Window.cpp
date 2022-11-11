@@ -7,6 +7,8 @@
 
 namespace Alexio
 {
+    WindowAPI Window::sAPI = WindowAPI::None;
+
     Window::~Window()
     {
     }
@@ -16,8 +18,8 @@ namespace Alexio
 #ifdef AIO_PLATFORM_WINDOWS
         switch (api)
         {
-        case GraphicsAPI::OpenGL:    return std::make_unique<GLFW_Window>(title, width, height);
-        case GraphicsAPI::DirectX11: return std::make_unique<Win32_Window>(title, width, height);
+        case GraphicsAPI::OpenGL:    sAPI = WindowAPI::GLFW; return std::make_unique<GLFW_Window>(title, width, height);
+        case GraphicsAPI::DirectX11: sAPI = WindowAPI::Win32; return std::make_unique<Win32_Window>(title, width, height);
         }
 #else
         if (api == GraphicsAPI::OpenGL)
