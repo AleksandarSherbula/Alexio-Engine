@@ -5,6 +5,7 @@
 
 enum class GraphicsAPI
 {
+	None,
 	DirectX11,
 	OpenGL
 };

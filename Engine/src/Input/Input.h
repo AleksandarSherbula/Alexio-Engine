@@ -2,6 +2,7 @@
 #define INPUT_H
 
 #include "..\Window\Window.h"
+#include "KeyCodes.h"
 
 namespace Alexio
 {
@@ -15,29 +16,31 @@ namespace Alexio
 			bool released = false;
 		};
 	private:
-		static States keyStates[1024];
-		static bool newKeyState[1024];
-		static bool oldKeyState[1024];
+		static std::array<States, 256> keyStates;
+		static std::array<bool, 256> newKeyState;
+		static std::array<bool, 256> oldKeyState;
 
-		static States mouseButtonStates[8];
-		static bool newMouseButtonState[8];
-		static bool oldMouseButtonState[8];
+		static std::array<States, 8> mouseButtonStates;
+		static std::array<bool, 8> newMouseButtonState;
+		static std::array<bool, 8> oldMouseButtonState;
 	public:
-		static void GetKeyCodes();
+		static std::unordered_map<size_t, int8_t> mapKeys;
+	public:
+		static void SetKeyCodes();
 		static void Scan();
-		static void UpdateKeyState(int keycode, bool state);
+		static void UpdateKeyState(int32_t keycode, bool state);
+		static void UpdateMouseState(int32_t mousebutton, bool state);
 
 		inline static States GetKeyState(int keycode) { return keyStates[keycode]; }
 
-		static bool KeyPressed(int keycode) { return keyStates[keycode].pressed; }
-		static bool KeyHeld(int keycode) { return keyStates[keycode].held; }
-		static bool KeyReleased(int keycode) { return keyStates[keycode].released; }
+		static bool KeyPressed(int32_t keycode) { return keyStates[keycode].pressed; }
+		static bool KeyHeld(int32_t keycode) { return keyStates[keycode].held; }
+		static bool KeyReleased(int32_t keycode) { return keyStates[keycode].released; }
 
-		static bool GetMouseButtonPressed(int mb) { mouseButtonStates[mb].pressed; }
-		static bool GetMouseButtonHeld(int mb) { mouseButtonStates[mb].held; }
-		static bool GetMouseButtonReleased(int mb) { mouseButtonStates[mb].released; }
+		static inline bool MouseButtonPressed(int32_t mb) { return mouseButtonStates[mb].pressed; }
+		static inline bool MouseButtonHeld(int32_t mb) { return mouseButtonStates[mb].held; }
+		static inline bool MouseButtonReleased(int32_t mb) { return mouseButtonStates[mb].released; }
 	};
-
 }
 
 

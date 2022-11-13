@@ -16,7 +16,7 @@ namespace Alexio
 		virtual void Initialize() = 0;
 		virtual void Update() = 0;
 
-		virtual void ProcessEvents() = 0;
+		virtual void PollEvents() = 0;
 
 		inline uint32_t GetWidth() { return mWidth; }
 		inline uint32_t GetHeight() { return mHeight; }		

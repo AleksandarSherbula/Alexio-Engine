@@ -1,12 +1,12 @@
 #include "aio_pch.h"
 #include "GLFW_Window.h"
-#include "GLFW/glfw3.h"
 
 #include "Events/AppEvent.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 
 #include "Input/Input.h"
+#include "Input/KeyCodes.h"
 
 namespace Alexio
 {
@@ -47,6 +47,21 @@ namespace Alexio
         glfwMakeContextCurrent(mHandle);
         glfwSetWindowUserPointer(mHandle, &mData);
 
+        EventProcess();
+    }
+
+    void GLFW_Window::Update()
+    {
+        glfwSwapBuffers(mHandle);
+    }
+
+    void GLFW_Window::PollEvents()
+    {
+        glfwPollEvents();
+    }
+
+    void GLFW_Window::EventProcess()
+    {
         glfwSetWindowSizeCallback(mHandle, [](GLFWwindow* window, int width, int height)
             {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -76,14 +91,14 @@ namespace Alexio
                 {
                     KeyPressedEvent event(key, 0);
                     data.eventCallback(event);
-                    Input::UpdateKeyState(key, true);
+                    Input::UpdateKeyState(Input::mapKeys[key], true);
                     break;
                 }
                 case GLFW_RELEASE:
                 {
                     KeyReleasedEvent event(key);
                     data.eventCallback(event);
-                    Input::UpdateKeyState(key, false);
+                    Input::UpdateKeyState(Input::mapKeys[key], false);
                     break;
                 }
                 case GLFW_REPEAT:
@@ -99,52 +114,43 @@ namespace Alexio
         glfwSetMouseButtonCallback(mHandle, [](GLFWwindow* window, int button, int action, int mods)
             {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-        
+
                 switch (action)
                 {
                 case GLFW_PRESS:
                 {
                     MouseButtonPressedEvent event(button);
                     data.eventCallback(event);
+                    Input::UpdateMouseState(button, true);
                     break;
                 }
                 case GLFW_RELEASE:
                 {
                     MouseButtonReleasedEvent event(button);
                     data.eventCallback(event);
+                    Input::UpdateMouseState(button, false);
                     break;
                 }
                 }
             }
         );
-        
+
         glfwSetScrollCallback(mHandle, [](GLFWwindow* window, double xOffset, double yOffset)
             {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-        
+
                 MouseScrolledEvent event((float)xOffset, (float)yOffset);
                 data.eventCallback(event);
             }
         );
-        
+
         glfwSetCursorPosCallback(mHandle, [](GLFWwindow* window, double xPos, double yPos)
             {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-        
+
                 MouseMovedEvent event((float)xPos, (float)yPos);
                 data.eventCallback(event);
             });
-    }
-
-    void GLFW_Window::Update()
-    {
-        ProcessEvents();
-        glfwSwapBuffers(mHandle);
-    }
-
-    void GLFW_Window::ProcessEvents()
-    {
-        glfwPollEvents();
     }
 }
 

@@ -12,8 +12,8 @@ namespace Alexio
 		inline static Engine* GetInstance() { return sInstance; }
 	public:
 		Engine();
-		virtual void OnStart() = 0;
-		virtual void OnUpdate() = 0;
+		virtual bool OnStart() = 0;
+		virtual bool OnUpdate() = 0;
 
 		void Run();
 

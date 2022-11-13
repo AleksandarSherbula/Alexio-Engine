@@ -74,10 +74,10 @@ namespace Alexio
 
 	void Win32_Window::Update()
 	{
-		ProcessEvents();
+		PollEvents();
 	}
 
-	void Win32_Window::ProcessEvents()
+	void Win32_Window::PollEvents()
 	{
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));	
@@ -116,18 +116,93 @@ namespace Alexio
 	{
 		switch (uMsg)
 		{
+		case WM_SYSKEYDOWN:
+		{
+			int32_t keycode;
+			int32_t isRight = (lParam >> 24) & 0x01;
+
+			switch (wParam)
+			{
+			case 18: keycode = (isRight) ? Key::R_ALT : Key::L_ALT; break;
+			case 121: keycode = Key::F10; break;
+			default:
+				keycode = Input::mapKeys[wParam];
+			}
+			KeyPressedEvent event(wParam, LOWORD(lParam));
+			ecFn(event);
+			Input::UpdateKeyState(keycode, true);
+			return 0;
+		}
+		case WM_SYSKEYUP:
+		{
+			int32_t keycode;
+			int32_t isRight = (lParam >> 24) & 0x01;
+
+			switch (wParam)
+			{
+			case 18: keycode = (isRight) ? Key::R_ALT : Key::L_ALT; break;
+			case 121: keycode = Key::F10; break;
+			default:
+				keycode = Input::mapKeys[wParam];
+			}
+			KeyPressedEvent event(wParam, LOWORD(lParam));
+			ecFn(event);
+			Input::UpdateKeyState(keycode, false);
+			return 0;
+		}
 		case WM_KEYDOWN:
 		{
 			KeyPressedEvent event(wParam, LOWORD(lParam));
 			ecFn(event);
-			Input::UpdateKeyState(wParam, true);
+
+			int32_t keycode;
+			bool isRight;
+
+			switch (wParam)
+			{
+			case 16:
+			{
+				isRight = (lParam >> 20) & 0x01;
+				keycode = (isRight) ? Key::R_SHIFT : Key::L_SHIFT; break;
+			}
+			case 17:
+			{
+				isRight = (lParam >> 24) & 0x01;
+				keycode = (isRight) ? Key::R_CTRL : Key::L_CTRL; break;
+			}
+			default:
+				keycode = Input::mapKeys[wParam];
+			}
+				
+
+			Input::UpdateKeyState(keycode, true);
 			return 0;
 		}
 		case WM_KEYUP:
 		{
 			KeyReleasedEvent event(wParam);
 			ecFn(event);
-			Input::UpdateKeyState(wParam, true);
+
+			int32_t keycode;
+			int32_t isRight;
+
+			switch (wParam)
+			{
+			case 16:
+			{
+				isRight = (lParam >> 20) & 0x01;
+				keycode = (isRight) ? Key::R_SHIFT : Key::L_SHIFT; break;
+			}
+			case 17:
+			{
+				isRight = (lParam >> 24) & 0x01;
+				keycode = (isRight) ? Key::R_CTRL : Key::L_CTRL; break;
+			}
+			default:
+				keycode = Input::mapKeys[wParam];
+			}
+
+			Input::UpdateKeyState(keycode, false);
 			return 0;
 		}
 		default:
@@ -145,24 +220,33 @@ namespace Alexio
 		{
 			MouseButtonPressedEvent event(MK_LBUTTON);
 			ecFn(event);
+			Input::UpdateMouseState(Alexio::L_BUTTON, true);
 			return 0;
 		}
 		case WM_RBUTTONDOWN:
 		{
 			MouseButtonPressedEvent event(MK_RBUTTON);
 			ecFn(event);
+			Input::UpdateMouseState(Alexio::R_BUTTON, true);
 			return 0;
 		}
 		case WM_MBUTTONDOWN:
 		{
 			MouseButtonPressedEvent event(MK_MBUTTON);
 			ecFn(event);
+			Input::UpdateMouseState(Alexio::M_BUTTON, true);
 			return 0;
 		}
 		case WM_XBUTTONDOWN:
 		{
-			MouseButtonPressedEvent event((wParam & MK_XBUTTON1) | (wParam & MK_XBUTTON2));
+			int mouseButton = (wParam & MK_XBUTTON1) | (wParam & MK_XBUTTON2);
+			MouseButtonPressedEvent event(mouseButton);
 			ecFn(event);
+			if (mouseButton == 32)
+				mouseButton = X_BUTTON1;
+			else if (mouseButton == 64)
+				mouseButton = X_BUTTON2;
+			Input::UpdateMouseState(mouseButton, true);
 			return 0;
 		}
 
@@ -171,18 +255,21 @@ namespace Alexio
 		{
 			MouseButtonReleasedEvent event(MK_LBUTTON);
 			ecFn(event);
+			Input::UpdateMouseState(Alexio::L_BUTTON, false);
 			return 0;
 		}
 		case WM_RBUTTONUP:
 		{
 			MouseButtonReleasedEvent event(MK_RBUTTON);
 			ecFn(event);
+			Input::UpdateMouseState(Alexio::R_BUTTON, false);
 			return 0;
 		}
 		case WM_MBUTTONUP:
 		{
 			MouseButtonReleasedEvent event(MK_MBUTTON);
 			ecFn(event);
+			Input::UpdateMouseState(Alexio::M_BUTTON, false);
 			return 0;
 		}
 		case WM_XBUTTONUP:
@@ -190,9 +277,13 @@ namespace Alexio
 			UINT xbuttoncode = wParam;
 			if (wParam == 131072)		xbuttoncode = (wParam | 0x0040) & 0x0040;
 			else if (wParam == 65536)	xbuttoncode = (wParam | 0x0020) & 0x0020;
-
 			MouseButtonReleasedEvent event(xbuttoncode);
 			ecFn(event);
+			if (xbuttoncode == 32)
+				xbuttoncode = X_BUTTON1;
+			else if (xbuttoncode == 64)
+				xbuttoncode = X_BUTTON2;			
+			Input::UpdateMouseState(xbuttoncode, false);
 			return 0;
 		}
 

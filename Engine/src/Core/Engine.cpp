@@ -17,10 +17,11 @@ namespace Alexio
 		AIO_ASSERT(!sInstance, "An instance of Engine has already been made");
 		sInstance = this;
 
-		m_gAPI = GraphicsAPI::OpenGL;
+		m_gAPI = GraphicsAPI::DirectX11;
 
 		mWindow = Window::Create("Alexio Engine", 1280, 720, m_gAPI);
 		mWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		Input::SetKeyCodes();
 		mRunning = true;
 	}
 
@@ -29,23 +30,23 @@ namespace Alexio
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 
-		if (e.GetEventType() == EventType::KeyPressed)
-		{
-			
-		}
-
 		//AIO_LOG_TRACE("{0}", e);
 	}
 
 	void Engine::Run()
-	{
-		OnStart();
+	{		
+		AIO_ASSERT(OnStart(),"Initialization failed");
 
 		while (mRunning)
 		{
-			Input::Scan();
+			mWindow->PollEvents();
 
-			OnUpdate();
+			Input::Scan();
+			
+			if (!OnUpdate() || 
+			// Because Win32 needs to make my life hard
+				(Window::GetAPI() == WindowAPI::Win32 && Input::KeyHeld(Alexio::L_ALT) && Input::KeyPressed(Alexio::F4)))
+				mRunning = false;
 
 			mWindow->Update();
 		}

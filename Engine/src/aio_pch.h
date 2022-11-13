@@ -16,6 +16,8 @@
 
 #include "Core/Log.h"
 
+#include "GLFW/glfw3.h"
+
 #ifdef AIO_PLATFORM_WINDOWS
 	#include <Windows.h>
 	#include <comdef.h>

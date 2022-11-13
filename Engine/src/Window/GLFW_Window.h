@@ -3,8 +3,6 @@
 
 #include "Window.h"
 
-class GLFWwindow;
-
 namespace Alexio
 {
 	class GLFW_Window : public Window
@@ -14,10 +12,12 @@ namespace Alexio
 		~GLFW_Window();
 		void Initialize();
 		void Update() override;
-		void ProcessEvents() override;
+		void PollEvents() override;
 
 		inline void* GetHandle() override { return mHandle; }
 		void SetEventCallback(const EventCallbackFn& callback) override { mData.eventCallback = callback; }
+	private:
+		void EventProcess();
 	private:
 		GLFWwindow* mHandle;
 

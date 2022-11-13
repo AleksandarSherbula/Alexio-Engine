@@ -1,17 +1,20 @@
 #include "aio_pch.h"
 #include "Input.h"
 
+
 #include "Core/Engine.h"
 
 namespace Alexio
 {
-	bool Input::oldKeyState[1024] = { false };
-	bool Input::newKeyState[1024] = { false };
-	Input::States Input::keyStates[1024] = { false };
+	std::array<bool, 256> Input::oldKeyState = { false };
+	std::array<bool, 256> Input::newKeyState = { false };
+	std::array<Input::States, 256> Input::keyStates = { false };
 
-	bool Input::oldMouseButtonState[8] = { false };
-	bool Input::newMouseButtonState[8] = { false };
-	Input::States Input::mouseButtonStates[8] = { false };
+	std::array<bool, 8> Input::oldMouseButtonState = { false };
+	std::array<bool, 8> Input::newMouseButtonState = { false };
+	std::array<Input::States, 8> Input::mouseButtonStates = { false };
+
+	std::unordered_map<size_t, int8_t> Input::mapKeys;
 
 	void Input::Scan()
 	{
@@ -37,20 +40,39 @@ namespace Alexio
 			oldState = newState;
 		};
 
-		for (int i = 0; i < 1024; i++)
+		for (int i = 0; i < keyStates.size(); i++)
 			scan(keyStates[i], oldKeyState[i], newKeyState[i]);
 
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < mouseButtonStates.size(); i++)
 			scan(mouseButtonStates[i], oldMouseButtonState[i], newMouseButtonState[i]);
 	}
 
-	void Input::UpdateKeyState(int keycode, bool state)
+	void Input::UpdateKeyState(int32_t keycode, bool state)
 	{
 		newKeyState[keycode] = state;
 	}
 
-	void Input::GetKeyCodes()
+	void Input::UpdateMouseState(int32_t mousebutton, bool state)
 	{
+		newMouseButtonState[mousebutton] = state;
+	}
 
+	void Input::SetKeyCodes()
+	{
+		mapKeys[0x41] = Key::A; mapKeys[0x42] = Key::B; mapKeys[0x43] = Key::C; mapKeys[0x44] = Key::D; mapKeys[0x45] = Key::E;
+		mapKeys[0x46] = Key::F; mapKeys[0x47] = Key::G; mapKeys[0x48] = Key::H; mapKeys[0x49] = Key::I; mapKeys[0x4A] = Key::J;
+		mapKeys[0x4B] = Key::K; mapKeys[0x4C] = Key::L; mapKeys[0x4D] = Key::M; mapKeys[0x4E] = Key::N; mapKeys[0x4F] = Key::O;
+		mapKeys[0x50] = Key::P; mapKeys[0x51] = Key::Q; mapKeys[0x52] = Key::R; mapKeys[0x53] = Key::S; mapKeys[0x54] = Key::T;
+		mapKeys[0x55] = Key::U; mapKeys[0x56] = Key::V; mapKeys[0x57] = Key::W; mapKeys[0x58] = Key::X; mapKeys[0x59] = Key::Y;
+		mapKeys[0x5A] = Key::Z;
+
+		if (Window::GetAPI() == WindowAPI::GLFW)
+			SetGLFWKeyCodes(mapKeys);
+#ifdef AIO_PLATFORM_WINDOWS
+		else if (Window::GetAPI() == WindowAPI::Win32)
+			SetWin32KeyCodes(mapKeys);
+#endif // AIO_PLATFORM_WINDOWS
+
+		
 	}
 }
