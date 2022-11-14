@@ -31,6 +31,23 @@ namespace Alexio
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 
 		//AIO_LOG_TRACE("{0}", e);
+
+		for (auto it = mLayerStack.end(); it != mLayerStack.begin();)
+		{
+			(*--it)->OnEvent(e);
+			if (e.Handled)
+				break;
+		}
+	}
+
+	void Engine::PushLayer(Layer* layer)
+	{
+		mLayerStack.PushLayer(layer);
+	}
+
+	void Engine::PushOverlay(Layer* layer)
+	{
+		mLayerStack.PushOverlay(layer);
 	}
 
 	void Engine::Run()
@@ -42,6 +59,9 @@ namespace Alexio
 			mWindow->PollEvents();
 
 			Input::Scan();
+
+			for (Layer* layer : mLayerStack)
+				layer->OnUpdate();
 			
 			if (!OnUpdate() || 
 			// Because Win32 needs to make my life hard
