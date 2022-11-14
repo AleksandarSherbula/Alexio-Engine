@@ -5,9 +5,11 @@ workspace "AlexioEngine"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "Engine/dependecies/GLFW/include"
+IncludeDir["GLAD"] = "Engine/dependecies/GLAD/include"
 
 group "Dependencies"
    include "Engine/dependecies/GLFW"
+   include "Engine/dependecies/GLAD"
 group ""
 
 project "Engine"
@@ -15,6 +17,7 @@ project "Engine"
    kind "ConsoleApp"
    language "C++"
    cppdialect "C++17"
+   staticruntime "On"
    
    targetdir "build/%{prj.name}/bin/%{cfg.system}/%{cfg.buildcfg}-%{cfg.architecture}"
    objdir    "build/%{prj.name}/intermediate/%{cfg.system}/%{cfg.buildcfg}-%{cfg.architecture}"
@@ -32,18 +35,19 @@ project "Engine"
    {
       "%{prj.name}/dependecies/spdlog/include",
       "%{prj.name}/src",
-      "%{IncludeDir.GLFW}"
+      "%{IncludeDir.GLFW}",
+      "%{IncludeDir.GLAD}"
    }
 
    links
    {
       "Game",
       "GLFW",
+      "GLAD",
       "opengl32.lib"
    }
 
-   filter "system:windows"
-      staticruntime "On"
+   filter "system:windows"      
       systemversion "latest"
       
       defines
@@ -64,6 +68,7 @@ project "Game"
    kind "StaticLib"
    language "C++"
    cppdialect "C++17"
+   staticruntime "On"
    
    targetdir "build/%{prj.name}/bin/%{cfg.system}/%{cfg.buildcfg}-%{cfg.architecture}"
    objdir    "build/%{prj.name}/intermediate/%{cfg.system}/%{cfg.buildcfg}-%{cfg.architecture}"
@@ -80,15 +85,6 @@ project "Game"
       "Engine/src"
    }
 
-   filter "system:windows"
-      staticruntime "On"
-      systemversion "latest"
-      
-      defines
-      {
-         "AIO_PLATFORM_WINDOWS"
-      }
-       
    filter "configurations:Debug"
       defines { "AIO_DEBUG" }
       symbols "On"
@@ -96,3 +92,12 @@ project "Game"
    filter "configurations:Release"
       defines { "AIO_RELEASE" }
       optimize "On"
+
+   filter "system:windows"
+      staticruntime "On"
+      systemversion "latest"
+      
+      defines
+      {
+         "AIO_PLATFORM_WINDOWS"
+      }  

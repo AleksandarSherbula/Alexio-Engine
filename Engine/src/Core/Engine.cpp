@@ -17,7 +17,7 @@ namespace Alexio
 		AIO_ASSERT(!sInstance, "An instance of Engine has already been made");
 		sInstance = this;
 
-		m_gAPI = GraphicsAPI::DirectX11;
+		m_gAPI = GraphicsAPI::OpenGL;
 
 		mWindow = Window::Create("Alexio Engine", 1280, 720, m_gAPI);
 		mWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
