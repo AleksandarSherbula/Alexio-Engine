@@ -6,10 +6,12 @@ workspace "AlexioEngine"
 IncludeDir = {}
 IncludeDir["GLFW"] = "Engine/dependecies/GLFW/include"
 IncludeDir["GLAD"] = "Engine/dependecies/GLAD/include"
+IncludeDir["ImGUI"] = "Engine/dependecies/imgui"
 
 group "Dependencies"
    include "Engine/dependecies/GLFW"
    include "Engine/dependecies/GLAD"
+   include "Engine/dependecies/imgui"
 group ""
 
 project "Engine"
@@ -36,7 +38,8 @@ project "Engine"
       "%{prj.name}/dependecies/spdlog/include",
       "%{prj.name}/src",
       "%{IncludeDir.GLFW}",
-      "%{IncludeDir.GLAD}"
+      "%{IncludeDir.GLAD}",
+      "%{IncludeDir.ImGUI}"
    }
 
    links
@@ -44,6 +47,7 @@ project "Engine"
       "Game",
       "GLFW",
       "GLAD",
+      "ImGUI",
       "opengl32.lib"
    }
 

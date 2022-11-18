@@ -10,12 +10,12 @@ public:
 
 	void OnUpdate() override
 	{
-		//AIO_LOG_INFO("Example Layer: Updated");
+		AIO_LOG_INFO("Example Layer: Updated");
 	}
 
 	void OnEvent(Alexio::Event& event) override
 	{
-		AIO_LOG_TRACE("{0}", event);
+		
 	}
 };
 

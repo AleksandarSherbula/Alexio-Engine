@@ -4,6 +4,7 @@
 #include "Window/Window.h"
 #include "Layer.h"
 #include "Events/AppEvent.h"
+#include "ImGUI/ImGUI.h"
 
 namespace Alexio
 {
@@ -26,6 +27,9 @@ namespace Alexio
 		inline Window* GetWindow() { return mWindow.get(); }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+
+	public:
+		//ImGUI imgui;
 	protected:
 		GraphicsAPI m_gAPI;
 	private:

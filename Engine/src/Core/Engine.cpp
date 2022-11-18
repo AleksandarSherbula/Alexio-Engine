@@ -22,6 +22,8 @@ namespace Alexio
 		mWindow = Window::Create("Alexio Engine", 1280, 720, m_gAPI);
 		mWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 		Input::SetKeyCodes();
+
+		//imgui.OnAttach();
 		mRunning = true;
 	}
 
@@ -60,6 +62,8 @@ namespace Alexio
 
 			Input::Scan();
 
+			//imgui.Begin();
+
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate();
 			
@@ -68,8 +72,11 @@ namespace Alexio
 				(Window::GetAPI() == WindowAPI::Win32 && Input::KeyHeld(Alexio::L_ALT) && Input::KeyPressed(Alexio::F4)))
 				mRunning = false;
 
+			//imgui.OnUpdate();
 			mWindow->Update();
 		}
+
+		//imgui.OnDetach();
 	}	
 
 	bool Engine::OnWindowClose(WindowCloseEvent& e)

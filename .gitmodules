@@ -4,3 +4,6 @@
 [submodule "Engine/dependecies/GLFW"]
 	path = Engine/dependecies/GLFW
 	url = https://github.com/AleksandarSherbula/GLFW
+[submodule "Engine/dependecies/imgui"]
+	path = Engine/dependecies/imgui
+	url = https://github.com/AleksandarSherbula/imgui
