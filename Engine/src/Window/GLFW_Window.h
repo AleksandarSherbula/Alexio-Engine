@@ -1,7 +1,7 @@
 #ifndef GLFW_WINDOW_H
 #define GLFW_WINDOW_H
 
-#include "Window.h"
+#include "Alexio/Window.h"
 
 namespace Alexio
 {

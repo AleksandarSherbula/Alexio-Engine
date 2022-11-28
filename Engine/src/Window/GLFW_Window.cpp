@@ -5,8 +5,7 @@
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 
-#include "Input/Input.h"
-#include "Input/KeyCodes.h"
+#include "Alexio/Input.h"
 
 namespace Alexio
 {

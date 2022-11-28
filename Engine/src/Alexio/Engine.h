@@ -1,7 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "Window/Window.h"
+#include "Window.h"
 #include "Layer.h"
 #include "Events/AppEvent.h"
 #include "ImGUI/ImGUI.h"

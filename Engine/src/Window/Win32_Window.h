@@ -1,7 +1,7 @@
 #ifndef WIN32_WINDOW_H
 #define WIN32_WINDOW_H
 
-#include "Window/Window.h"
+#include "Alexio/Window.h"
 
 namespace Alexio
 {

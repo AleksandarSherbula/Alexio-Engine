@@ -1,8 +1,10 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include "../Core/Utilities.h"
-#include "../Events/Event.h"
+#include "Utilities.h"
+#include "Events/Event.h"
+
+#include <functional>
 
 namespace Alexio
 {

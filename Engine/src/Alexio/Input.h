@@ -1,8 +1,8 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "..\Window\Window.h"
-#include "KeyCodes.h"
+#include "Window.h"
+#include "Input/KeyCodes.h"
 
 namespace Alexio
 {

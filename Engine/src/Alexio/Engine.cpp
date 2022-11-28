@@ -1,8 +1,8 @@
 #include "aio_pch.h"
 #include "Engine.h"
 #include "Log.h"
-#include "Input/Input.h"
-#include "Math/Math.h"
+#include "Alexio/Input.h"
+#include "Alexio/Math.h"
 
 #include "Events/AppEvent.h"
 #include "Window/GLFW_Window.h"
