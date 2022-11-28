@@ -1,6 +1,9 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
+#include <string>
+
+
 #define BIT(x) (1 << x)
 
 enum class GraphicsAPI
@@ -16,8 +19,6 @@ enum class WindowAPI
 	GLFW,
 	Win32
 };
-
-#include <string>
 
 inline std::wstring StringToWide(const std::string& str)
 {

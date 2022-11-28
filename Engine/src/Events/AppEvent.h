@@ -21,8 +21,12 @@ namespace Alexio
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(WindowResize)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+		int GetCategoryFlags() const override { return EventCategoryApplication; }
+
+		static EventType GetStaticType() { return EventType::WindowResize; }
+		EventType GetEventType() const override { return GetStaticType(); }
+
+		const char* GetName() const override { return "WindowResize"; }
 	private:
 		unsigned int m_Width, m_Height;
 	};
@@ -32,8 +36,12 @@ namespace Alexio
 	public:
 		WindowCloseEvent() = default;
 
-		EVENT_CLASS_TYPE(WindowClose)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+		static EventType GetStaticType() { return EventType::WindowClose; }
+		EventType GetEventType() const override { return GetStaticType(); }
+
+		const char* GetName() const override { return "WindowClose"; }
+
+		int GetCategoryFlags() const override { return EventCategoryApplication; }
 	};
 
 	class AppTickEvent : public Event
@@ -41,8 +49,12 @@ namespace Alexio
 	public:
 		AppTickEvent() = default;
 
-		EVENT_CLASS_TYPE(AppTick)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+		static EventType GetStaticType() { return EventType::AppTick; }
+		EventType GetEventType() const override { return GetStaticType(); }
+
+		const char* GetName() const override { return "AppTick"; }
+
+		int GetCategoryFlags() const override { return EventCategoryApplication; }
 	};
 
 	class AppUpdateEvent : public Event
@@ -50,8 +62,12 @@ namespace Alexio
 	public:
 		AppUpdateEvent() = default;
 
-		EVENT_CLASS_TYPE(AppUpdate)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+		static EventType GetStaticType() { return EventType::AppUpdate; }
+		EventType GetEventType() const override { return GetStaticType(); }
+
+		const char* GetName() const override { return "AppUpdate"; }
+
+		int GetCategoryFlags() const override { return EventCategoryApplication; }
 	};
 
 	class AppRenderEvent : public Event
@@ -59,8 +75,12 @@ namespace Alexio
 	public:
 		AppRenderEvent() = default;
 
-		EVENT_CLASS_TYPE(AppRender)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+		static EventType GetStaticType() { return EventType::AppRender; }
+		EventType GetEventType() const override { return GetStaticType(); }
+
+		const char* GetName() const override { return "AppRender"; }
+
+		int GetCategoryFlags() const override { return EventCategoryApplication; }
 	};
 }
 

@@ -12,4 +12,6 @@
 
 #include "Input/Input.h"
 
+#include "Math/Math.h"
+
 #endif // !ALEXIO_ENGINE_H

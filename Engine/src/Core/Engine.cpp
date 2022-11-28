@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Log.h"
 #include "Input/Input.h"
+#include "Math/Math.h"
 
 #include "Events/AppEvent.h"
 #include "Window/GLFW_Window.h"
@@ -15,14 +16,8 @@ namespace Alexio
 	Engine::Engine()
 	{
 		AIO_ASSERT(!sInstance, "An instance of Engine has already been made");
-		sInstance = this;
-
-		m_gAPI = GraphicsAPI::OpenGL;
-
-		mWindow = Window::Create("Alexio Engine", 1280, 720, m_gAPI);
-		mWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
-		Input::SetKeyCodes();
-
+		sInstance = this;		
+		
 		//imgui.OnAttach();
 		mRunning = true;
 	}
@@ -54,7 +49,13 @@ namespace Alexio
 
 	void Engine::Run()
 	{		
+		m_gAPI = GraphicsAPI::DirectX11;
+
 		AIO_ASSERT(OnStart(),"Initialization failed");
+
+		mWindow = Window::Create("Alexio Engine", 1280, 720, m_gAPI);
+		mWindow->SetEventCallback(BIND_EVENT_FN(Engine::OnEvent));
+		Input::SetKeyCodes();
 
 		while (mRunning)
 		{
@@ -68,7 +69,7 @@ namespace Alexio
 				layer->OnUpdate();
 			
 			if (!OnUpdate() || 
-			// Because Win32 needs to make my life hard
+			// Because Win32 API needs to make my life hard
 				(Window::GetAPI() == WindowAPI::Win32 && Input::KeyHeld(Alexio::L_ALT) && Input::KeyPressed(Alexio::F4)))
 				mRunning = false;
 

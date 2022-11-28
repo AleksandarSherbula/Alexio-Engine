@@ -1,4 +1,5 @@
 #include "Alexio.h"
+#include <iostream>
 
 class ExampleLayer : public Alexio::Layer
 {
@@ -10,7 +11,7 @@ public:
 
 	void OnUpdate() override
 	{
-		AIO_LOG_INFO("Example Layer: Updated");
+		//AIO_LOG_INFO("Example Layer: Updated");
 	}
 
 	void OnEvent(Alexio::Event& event) override
@@ -29,11 +30,12 @@ public:
 
 	bool Game::OnStart() override
 	{
-		AIO_LOG_INFO("Hello! Welcome to Alexio Game Engine");
-		AIO_LOG_TRACE("Game has been traced and logged with macro");
-		AIO_LOG_WARN("Game has a warning and logged with macro");
-		AIO_LOG_ERROR("Game has a error and logged with macro");
-		AIO_LOG_CRITICAL("Game has a critical and logged with macro");
+		m_gAPI = GraphicsAPI::OpenGL;
+
+		Alexio::Vector4f a(1.4f, 2.5f, 3.2f, 4.7f);
+		Alexio::Vector4f b(2.7f, 3.2f, 3.2f, 4.7f);
+
+		AIO_LOG_INFO(a + b);
 
 		PushLayer(new ExampleLayer());
 

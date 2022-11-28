@@ -2,12 +2,10 @@
 #define EVENT_H
 
 /*
-* Can't say for certain if this will even be a thing, but i am giving EventSystem a go, for a possibility that 
-* it might be of help. I trust that this system will have its usage for something in the future, but right now,
-* i don't know what this "something" is. So on that note, i have taken this code from Cherno's Game Engine series.
+* This entire Event System code seen here was taken from Cherno's Game Engine series.
 * The playlist can be found here: https://www.youtube.com/watch?v=JxIZbV_XjAs&list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT
 * or the particular video i got this code from is here: https://www.youtube.com/watch?v=xnopUoZbMEk
-* Once i figure out this whole system, this code will possibly be a subject to change.
+* 
 */
 
 #include "Core/Utilities.h"
@@ -35,12 +33,6 @@ namespace Alexio
 		EventCategoryMouse = BIT(3),
 		EventCategoryMouseButton = BIT(4)
 	};
-
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
-								virtual EventType GetEventType() const override { return GetStaticType(); }\
-								virtual const char* GetName() const override { return #type; }
-
-#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
 	class Event
 	{
@@ -74,7 +66,7 @@ namespace Alexio
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.Handled |= func(static_cast<T&>(m_Event));
+				m_Event.Handled = func((T&)m_Event);
 				return true;
 			}
 			return false;

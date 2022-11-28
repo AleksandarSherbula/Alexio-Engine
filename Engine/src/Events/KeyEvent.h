@@ -10,7 +10,7 @@ namespace Alexio
 	public:
 		inline int GetKeyCode() const { return m_KeyCode; }
 
-		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
+		virtual int GetCategoryFlags() const override { return EventCategoryKeyboard | EventCategoryInput; }
 	protected:
 		KeyEvent(const int keycode)
 			: m_KeyCode(keycode) {}
@@ -33,7 +33,10 @@ namespace Alexio
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(KeyPressed)
+		static EventType GetStaticType() { return EventType::KeyPressed; }
+		virtual EventType GetEventType() const override { return GetStaticType(); }
+		virtual const char* GetName() const override { return "KeyPressed"; }
+		
 	private:
 		bool m_IsRepeat;
 	};
@@ -51,7 +54,9 @@ namespace Alexio
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(KeyReleased)
+		static EventType GetStaticType() { return EventType::KeyReleased; }
+		virtual EventType GetEventType() const override { return GetStaticType(); }
+		virtual const char* GetName() const override { return "KeyReleased"; }
 	};
 
 	class KeyTypedEvent : public KeyEvent
@@ -67,7 +72,9 @@ namespace Alexio
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(KeyTyped)
+		static EventType GetStaticType() { return EventType::KeyTyped; }
+		virtual EventType GetEventType() const override { return GetStaticType(); }
+		virtual const char* GetName() const override { return "KeyTyped"; }
 	};
 }
 

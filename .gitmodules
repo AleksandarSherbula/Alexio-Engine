@@ -7,3 +7,6 @@
 [submodule "Engine/dependecies/imgui"]
 	path = Engine/dependecies/imgui
 	url = https://github.com/AleksandarSherbula/imgui
+[submodule "Engine/dependecies/glm"]
+	path = Engine/dependecies/glm
+	url = https://github.com/g-truc/glm

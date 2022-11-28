@@ -21,8 +21,12 @@ namespace Alexio
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(MouseMoved)
-		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+		static EventType GetStaticType() { return EventType::MouseMoved; }
+		EventType GetEventType() const override { return GetStaticType(); }
+
+		const char* GetName() const override { return "MouseMoved"; }
+
+		virtual int GetCategoryFlags() const override { return EventCategoryMouse | EventCategoryInput; }
 	private:
 		float m_MouseX, m_MouseY;
 	};
@@ -43,8 +47,12 @@ namespace Alexio
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(MouseScrolled)
-		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+		static EventType GetStaticType() { return EventType::MouseScrolled; }
+		EventType GetEventType() const override { return GetStaticType(); }
+
+		const char* GetName() const override { return "MouseScrolled"; }
+
+		int GetCategoryFlags() const override { return EventCategoryMouse | EventCategoryInput; }
 	private:
 		float m_XOffset, m_YOffset;
 	};
@@ -54,7 +62,7 @@ namespace Alexio
 	public:
 		inline int GetMouseButton() const { return m_Button; }
 
-		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+		int GetCategoryFlags() const override { return EventCategoryMouse | EventCategoryInput; }
 	protected:
 		MouseButtonEvent(int button)
 			: m_Button(button) {}
@@ -75,7 +83,10 @@ namespace Alexio
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(MouseButtonPressed)
+		static EventType GetStaticType() { return EventType::MouseButtonPressed; }
+		EventType GetEventType() const override { return GetStaticType(); }
+
+		const char* GetName() const override { return "MouseButtonPressed"; }
 	};
 
 	class MouseButtonReleasedEvent : public MouseButtonEvent
@@ -91,7 +102,10 @@ namespace Alexio
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(MouseButtonReleased)
+		static EventType GetStaticType() { return EventType::MouseButtonReleased; }
+		EventType GetEventType() const override { return GetStaticType(); }
+
+		const char* GetName() const override { return "MouseButtonReleased"; }
 	};
 }
 
