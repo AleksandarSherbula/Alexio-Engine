@@ -1,5 +1,4 @@
-#ifndef VECTOR4_H
-#define VECTOR4_H
+#pragma once
 
 namespace Alexio
 {
@@ -48,5 +47,3 @@ namespace Alexio
 	typedef Vector4<float> Vector4f;
 	typedef Vector4<double> Vector4d;
 }
-
-#endif // !VECTOR4_H

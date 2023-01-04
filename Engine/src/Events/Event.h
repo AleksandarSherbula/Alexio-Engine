@@ -1,5 +1,4 @@
-#ifndef EVENT_H
-#define EVENT_H
+#pragma once
 
 /*
 * This entire Event System code seen here was taken from Cherno's Game Engine series.
@@ -80,5 +79,3 @@ namespace Alexio
 	}
 
 }
-
-#endif // !EVENT_H

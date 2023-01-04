@@ -1,5 +1,4 @@
-#ifndef IMGUI_H
-#define IMGUI_H
+#pragma once
 
 #include "Alexio/Layer.h"
 
@@ -16,5 +15,3 @@ namespace Alexio
 		bool showWindow;
 	};
 }
-
-#endif // !IMGUI_H

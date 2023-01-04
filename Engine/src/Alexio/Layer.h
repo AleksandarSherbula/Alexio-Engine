@@ -1,5 +1,4 @@
-#ifndef LAYER_H
-#define LAYER_H
+#pragma once
 
 #include "Events/Event.h"
 
@@ -50,5 +49,3 @@ namespace Alexio {
 		unsigned int mLayerInsertIndex = 0;
 	};
 }
-
-#endif // !LAYER_H

@@ -1,5 +1,4 @@
-#ifndef ALEXIO_ENGINE_H
-#define ALEXIO_ENGINE_H
+#pragma once
 
 #include "Alexio/Utilities.h"
 #include "Alexio/Engine.h"
@@ -11,7 +10,3 @@
 #include "Events/Event.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
-
-
-
-#endif // !ALEXIO_ENGINE_H

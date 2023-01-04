@@ -1,5 +1,4 @@
-#ifndef KEYCODES_H
-#define KEYCODES_H
+#pragma once
 
 namespace Alexio
 {
@@ -37,7 +36,3 @@ namespace Alexio
 	void SetWin32KeyCodes(std::unordered_map<size_t, int8_t>& mapKeys);
 #endif // ALI_PLATFORM_WINDOWS	
 }
-
-
-#endif // !KEYCODES_H
-

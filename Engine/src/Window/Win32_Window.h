@@ -1,5 +1,4 @@
-#ifndef WIN32_WINDOW_H
-#define WIN32_WINDOW_H
+#pragma once
 
 #include "Alexio/Window.h"
 
@@ -28,5 +27,3 @@ namespace Alexio
 	LRESULT CALLBACK MouseProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	std::string ResultInfo(HRESULT hr);
 }
-
-#endif // !WIN32_WINDOW_H

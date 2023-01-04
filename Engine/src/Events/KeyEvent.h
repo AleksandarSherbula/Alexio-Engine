@@ -1,5 +1,4 @@
-#ifndef KEY_EVENT_H
-#define KEY_EVENT_H
+#pragma once
 
 #include "Event.h"
 
@@ -77,5 +76,3 @@ namespace Alexio
 		virtual const char* GetName() const override { return "KeyTyped"; }
 	};
 }
-
-#endif // !KEY_EVENT_H

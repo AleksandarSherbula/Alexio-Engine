@@ -1,5 +1,4 @@
-#ifndef APP_EVENT_H
-#define APP_EVENT_H
+#pragma once
 
 #include "Event.h"
 
@@ -83,5 +82,3 @@ namespace Alexio
 		int GetCategoryFlags() const override { return EventCategoryApplication; }
 	};
 }
-
-#endif // !APP_EVENT_H

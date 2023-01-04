@@ -1,5 +1,4 @@
-#ifndef LOG_H
-#define LOG_H
+#pragma once
 
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
@@ -38,4 +37,3 @@ namespace Alexio
 #define AIO_ASSERT(x, ...)
 
 #endif
-#endif // !LOG_H

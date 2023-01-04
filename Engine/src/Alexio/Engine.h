@@ -1,5 +1,4 @@
-#ifndef ENGINE_H
-#define ENGINE_H
+#pragma once
 
 #include "Window.h"
 #include "Layer.h"
@@ -42,7 +41,3 @@ namespace Alexio
 }
 
 Alexio::Engine* Create();
-
-
-
-#endif // ENGINE_H

@@ -1,5 +1,4 @@
-#ifndef AIO_PCH_H
-#define AIO_PCH_H
+#pragma once
 
 #include <iostream>
 #include <memory>
@@ -23,6 +22,3 @@
 	#include <Windows.h>
 	#include <comdef.h>
 #endif // AIO_PLATFORM_WINDOWS
-
-
-#endif // !AIO_PCH_H

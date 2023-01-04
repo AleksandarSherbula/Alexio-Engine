@@ -1,5 +1,4 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
 
 #include "Utilities.h"
 #include "Events/Event.h"
@@ -39,5 +38,3 @@ namespace Alexio
 	};
 
 }
-
-#endif // !WINDOW_H

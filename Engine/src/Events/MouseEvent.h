@@ -1,5 +1,4 @@
-#ifndef MOUSE_EVENT_H
-#define MOUSE_EVENT_H
+#pragma once
 
 #include "Event.h"
 
@@ -108,5 +107,3 @@ namespace Alexio
 		const char* GetName() const override { return "MouseButtonReleased"; }
 	};
 }
-
-#endif // !MOUSE_EVENT_H

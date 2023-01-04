@@ -1,5 +1,4 @@
-#ifndef GLFW_WINDOW_H
-#define GLFW_WINDOW_H
+#pragma once
 
 #include "Alexio/Window.h"
 
@@ -32,8 +31,3 @@ namespace Alexio
 		WindowData mData;
 	};
 }
-
-#endif // !GLFW_WINDOW_H
-
-
-

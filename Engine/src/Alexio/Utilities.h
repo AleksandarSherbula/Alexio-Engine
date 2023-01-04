@@ -1,8 +1,6 @@
-#ifndef UTILITIES_H
-#define UTILITIES_H
+#pragma once
 
 #include <string>
-
 
 #define BIT(x) (1 << x)
 
@@ -35,5 +33,3 @@ inline std::string WideToString(const std::wstring& wstr)
 #ifndef AIO_PLATFORM_WINDOWS
 #error Alexio Engine only supports Windows
 #endif
-
-#endif // !UTILITIES_H

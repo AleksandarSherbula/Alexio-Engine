@@ -1,5 +1,4 @@
-#ifndef INPUT_H
-#define INPUT_H
+#pragma once
 
 #include "Window.h"
 #include "Input/KeyCodes.h"
@@ -42,6 +41,3 @@ namespace Alexio
 		static inline bool MouseButtonReleased(int32_t mb) { return mouseButtonStates[mb].released; }
 	};
 }
-
-
-#endif // !INPUT_H
