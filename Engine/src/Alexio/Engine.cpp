@@ -1,8 +1,9 @@
 #include "aio_pch.h"
 #include "Engine.h"
 #include "Log.h"
-#include "Alexio/Input.h"
-#include "Alexio/Math.h"
+#include "Input.h"
+#include "Math.h"
+#include "Renderer.h"
 
 #include "Events/AppEvent.h"
 #include "Window/GLFW_Window.h"
@@ -48,14 +49,14 @@ namespace Alexio
 	}
 
 	void Engine::Run()
-	{		
-		m_gAPI = GraphicsAPI::DirectX11;
-
+	{
 		AIO_ASSERT(OnStart(),"Initialization failed");
 
-		mWindow = Window::Create("Alexio Engine", 1280, 720, m_gAPI);
+		mWindow = Window::Create("Alexio Engine", 1280, 720, Renderer::GetAPI());
 		mWindow->SetEventCallback(BIND_EVENT_FN(Engine::OnEvent));
 		Input::SetKeyCodes();
+
+		Renderer::Begin(mWindow.get());
 
 		while (mRunning)
 		{
@@ -74,8 +75,10 @@ namespace Alexio
 				mRunning = false;
 
 			//imgui.OnUpdate();
-			mWindow->Update();
+			Renderer::DrawFrame();
 		}
+
+		Renderer::End();
 
 		//imgui.OnDetach();
 	}	

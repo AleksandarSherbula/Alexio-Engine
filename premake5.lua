@@ -60,6 +60,12 @@ project "Engine"
       {
          "AIO_PLATFORM_WINDOWS"
       }
+
+      links
+      {
+         "DXGI.lib",
+         "D3D11.lib"
+      }
        
    filter "configurations:Debug"
       defines { "AIO_DEBUG" }

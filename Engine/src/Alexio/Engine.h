@@ -2,7 +2,7 @@
 
 #include "Window.h"
 #include "Layer.h"
-#include "ImGUI.h"
+#include "ImGuiLayer.h"
 #include "Events/AppEvent.h"
 
 namespace Alexio

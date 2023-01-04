@@ -1,5 +1,4 @@
 #include "Alexio.h"
-#include <iostream>
 
 class ExampleLayer : public Alexio::Layer
 {
@@ -30,7 +29,7 @@ public:
 
 	bool Game::OnStart() override
 	{
-		m_gAPI = GraphicsAPI::OpenGL;
+		Alexio::Renderer::SetAPI(GraphicsAPI::DirectX11);
 
 		Alexio::Vector4f a(1.4f, 2.5f, 3.2f, 4.7f);
 		Alexio::Vector4f b(2.7f, 3.2f, 3.2f, 4.7f);

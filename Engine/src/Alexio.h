@@ -6,6 +6,7 @@
 #include "Alexio/Layer.h"
 #include "Alexio/Input.h"
 #include "Alexio/Math.h"
+#include "Alexio/Renderer.h"
 
 #include "Events/Event.h"
 #include "Events/KeyEvent.h"
