@@ -2,6 +2,11 @@
 #include "DirectX11_Renderer.h"
 #include "Window/Win32_Window.h"
 
+#include "Alexio/Engine.h"
+
+#include <backends/imgui_impl_win32.h>
+#include <backends/imgui_impl_dx11.h>
+
 namespace Alexio
 {
 	Renderer_DirectX11* Renderer_DirectX11::sInstance = nullptr;
@@ -84,7 +89,30 @@ namespace Alexio
 
 	void Renderer_DirectX11::SwapBuffer()
 	{
-		mSwapChain->Present((UINT)mVSync, NULL);
+		mSwapChain->Present((UINT)mVSync, 0);
+	}
+
+	void Renderer_DirectX11::ImGuiBackendInit()
+	{
+		ImGui_ImplWin32_Init((HWND)Engine::GetInstance()->GetWindow()->GetHandle());
+		ImGui_ImplDX11_Init(mDevice.Get(), mDeviceContext.Get());
+	}
+
+	void Renderer_DirectX11::ImGuiBackendBegin()
+	{
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+	}
+
+	void Renderer_DirectX11::ImGuiBackendDrawData()
+	{
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
+
+	void Renderer_DirectX11::ImGuiBackendShutDown()
+	{
+		ImGui_ImplDX11_Shutdown();
+		ImGui_ImplWin32_Shutdown();
 	}
 
 	void Renderer_DirectX11::GetAdapters()

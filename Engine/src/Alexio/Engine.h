@@ -26,9 +26,6 @@ namespace Alexio
 		inline Window* GetWindow() { return mWindow.get(); }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
-
-	public:
-		//ImGUI imgui;
 	protected:
 		GraphicsAPI m_gAPI;
 	private:

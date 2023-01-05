@@ -1,5 +1,9 @@
 #include "aio_pch.h"
 #include "OpenGL_Renderer.h"
+#include "Alexio/Engine.h"
+
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
 
 namespace Alexio
 {
@@ -37,6 +41,29 @@ namespace Alexio
 	{
 		glfwSwapInterval((int)mVSync);
 		glfwSwapBuffers((GLFWwindow*)mWindow->GetHandle());
+	}
+
+	void Renderer_OpenGL::ImGuiBackendInit()
+	{
+		ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)Engine::GetInstance()->GetWindow()->GetHandle(), true);
+		ImGui_ImplOpenGL3_Init("#version 410 core");
+	}
+
+	void Renderer_OpenGL::ImGuiBackendBegin()
+	{
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+	}
+
+	void Renderer_OpenGL::ImGuiBackendDrawData()
+	{
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	}
+
+	void Renderer_OpenGL::ImGuiBackendShutDown()
+	{
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
 	}
 }
 

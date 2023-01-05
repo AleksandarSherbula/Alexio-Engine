@@ -10,25 +10,20 @@
 
 namespace Alexio
 {
-#define BIND_EVENT_FN(x) std::bind(&Engine::x, this, std::placeholders::_1)
-
 	Engine* Engine::sInstance = nullptr;
 
 	Engine::Engine()
 	{
 		AIO_ASSERT(!sInstance, "An instance of Engine has already been made");
-		sInstance = this;		
+		sInstance = this;
 		
-		//imgui.OnAttach();
 		mRunning = true;
 	}
 
 	void Engine::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-
-		//AIO_LOG_TRACE("{0}", e);
+		dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Engine::OnWindowClose, this, std::placeholders::_1));
 
 		for (auto it = mLayerStack.end(); it != mLayerStack.begin();)
 		{
@@ -50,21 +45,23 @@ namespace Alexio
 
 	void Engine::Run()
 	{
-		AIO_ASSERT(OnStart(),"Initialization failed");
+		Renderer::SetAPIflag(GraphicsAPI::DirectX11);
 
-		mWindow = Window::Create("Alexio Engine", 1280, 720, Renderer::GetAPI());
-		mWindow->SetEventCallback(BIND_EVENT_FN(Engine::OnEvent));
+		std::string apiName = (Renderer::GetAPIflag() == GraphicsAPI::DirectX11) ? "DirectX 11" : "OpenGL";
+
+		mWindow = Window::Create("Alexio Engine (" + apiName + ")", 1280, 720, Renderer::GetAPIflag());
+		mWindow->SetEventCallback(std::bind(&Engine::OnEvent, this, std::placeholders::_1));
 		Input::SetKeyCodes();
 
 		Renderer::Begin(mWindow.get());
+
+		AIO_ASSERT(OnStart(),"Initialization failed");
 
 		while (mRunning)
 		{
 			mWindow->PollEvents();
 
 			Input::Scan();
-
-			//imgui.Begin();
 
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate();
@@ -74,13 +71,10 @@ namespace Alexio
 				(Window::GetAPI() == WindowAPI::Win32 && Input::KeyHeld(Alexio::L_ALT) && Input::KeyPressed(Alexio::F4)))
 				mRunning = false;
 
-			//imgui.OnUpdate();
 			Renderer::DrawFrame();
 		}
 
 		Renderer::End();
-
-		//imgui.OnDetach();
 	}	
 
 	bool Engine::OnWindowClose(WindowCloseEvent& e)

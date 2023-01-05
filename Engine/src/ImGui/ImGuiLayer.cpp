@@ -1,10 +1,9 @@
 #include "aio_pch.h"
 #include "Alexio/ImGuiLayer.h"
 #include "Alexio/Engine.h"
+#include "Alexio/Renderer.h"
 
 #include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
 
 namespace Alexio
 {
@@ -12,21 +11,18 @@ namespace Alexio
     {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
-
         ImGui::StyleColorsDark();
-
-        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)Engine::GetInstance()->GetWindow()->GetHandle(), true);
-        ImGui_ImplOpenGL3_Init("#version 410 core");
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        
+        Renderer::GetAPI()->ImGuiBackendInit();
 
         showWindow = true;
     }
 
-    void ImGUI::OnDetach()
+    void ImGUI::Begin()
     {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
+        Renderer::GetAPI()->ImGuiBackendBegin();
+        ImGui::NewFrame();
     }
 
     void ImGUI::OnUpdate()
@@ -35,13 +31,12 @@ namespace Alexio
             ImGui::ShowDemoWindow(&showWindow);
 
         ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        Renderer::GetAPI()->ImGuiBackendDrawData();
     }
 
-    void ImGUI::Begin()
+    void ImGUI::OnDetach()
     {
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        Renderer::GetAPI()->ImGuiBackendShutDown();
+        ImGui::DestroyContext();
     }
 }

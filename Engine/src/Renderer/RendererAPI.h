@@ -15,6 +15,13 @@ namespace Alexio
 		virtual void ClearColor(float r, float g, float b, float a) = 0;
 		virtual void SwapBuffer() = 0;
 
+		virtual void ImGuiBackendInit() = 0;
+		virtual void ImGuiBackendBegin() = 0;
+		virtual void ImGuiBackendDrawData() = 0;
+		virtual void ImGuiBackendShutDown() = 0;
+
+		virtual std::string GetName() = 0;
+
 		inline void SetWindow(Window* window) { mWindow = window; }
 		inline void SetVSync(bool vSync) { mVSync = vSync; }
 		inline bool IsVSync() { return mVSync; }

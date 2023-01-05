@@ -12,7 +12,7 @@ namespace Alexio
 {
     RendererAPI* RendererAPI::Create()
     {
-		switch (Renderer::GetAPI())
+		switch (Renderer::GetAPIflag())
 		{
 		case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
 		case GraphicsAPI::OpenGL: return new Renderer_OpenGL();

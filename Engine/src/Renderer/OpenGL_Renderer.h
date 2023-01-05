@@ -14,6 +14,13 @@ namespace Alexio
 		void Draw() override;
 		void ClearColor(float r, float g, float b, float a) override;
 		void SwapBuffer() override;
+
+		void ImGuiBackendInit() override;
+		void ImGuiBackendBegin() override;
+		void ImGuiBackendDrawData() override;
+		void ImGuiBackendShutDown() override;
+
+		inline std::string GetName() override { return "OpenGL"; };
 	private:
 		static Renderer_OpenGL* sInstance;
 	};

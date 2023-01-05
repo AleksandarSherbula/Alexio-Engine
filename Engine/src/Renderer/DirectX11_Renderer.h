@@ -24,10 +24,17 @@ namespace Alexio
 		void ClearColor(float r, float g, float b, float a) override;
 		void SwapBuffer() override;
 
+		void ImGuiBackendInit() override;
+		void ImGuiBackendBegin() override;
+		void ImGuiBackendDrawData() override;
+		void ImGuiBackendShutDown() override;
+
 		// Getters
 		inline static Renderer_DirectX11* GetInstance() { return sInstance; }
 		inline ID3D11Device* GetDevice() { return mDevice.Get(); }
 		inline ID3D11DeviceContext* GetDeviceContext() { return mDeviceContext.Get(); }
+
+		inline std::string GetName() override { return "DirectX 11"; };
 	private:
 		// States
 		void GetAdapters();
