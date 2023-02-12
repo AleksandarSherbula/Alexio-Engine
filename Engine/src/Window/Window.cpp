@@ -2,7 +2,7 @@
 
 #include "GLFW_Window.h"
 #ifdef AIO_PLATFORM_WINDOWS
-    #include "Win32_Window.h"
+#include "Win32_Window.h"
 #endif // AIO_PLATFORM_WINDOWS
 
 namespace Alexio

@@ -14,10 +14,11 @@ namespace Alexio
 		void Draw() override;
 		void ClearColor(float r, float g, float b, float a) override;
 		void SwapBuffer() override;
+		void ResizeBuffer(uint32_t width, uint32_t height) override {}
 
 		void ImGuiBackendInit() override;
 		void ImGuiBackendBegin() override;
-		void ImGuiBackendDrawData() override;
+		void ImGuiBackendUpdate() override;
 		void ImGuiBackendShutDown() override;
 
 		inline std::string GetName() override { return "OpenGL"; };

@@ -10,7 +10,6 @@ namespace Alexio
 		{
 			struct { T x, y; };
 			struct { T u, v; };
-			struct { T width, height; };
 		};
 	public:
 		inline Vector2() : x(0), y(0) {}

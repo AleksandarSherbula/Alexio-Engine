@@ -3,6 +3,10 @@
 #include "Alexio/Window.h"
 #include "Alexio/ImGuiLayer.h"
 #include "Renderer/RendererAPI.h"
+#include "Renderer/OpenGL_Renderer.h"
+#ifdef AIO_PLATFORM_WINDOWS
+#include "Renderer/DirectX11_Renderer.h"
+#endif
 
 namespace Alexio
 {

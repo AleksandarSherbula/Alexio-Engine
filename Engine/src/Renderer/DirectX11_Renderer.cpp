@@ -17,7 +17,7 @@ namespace Alexio
 		AIO_ASSERT(!sInstance, "OpenGL API object was already been made");
 		sInstance = this;
 
-		GetAdapters();		
+		GetAdapters();
 	}
 
 	void Renderer_DirectX11::Initialize()
@@ -26,49 +26,45 @@ namespace Alexio
 			AIO_LOG_ERROR("NO IDXGI Adapter found");
 
 		DXGI_SWAP_CHAIN_DESC scd;
-		ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
-
-		scd.BufferDesc.Width = mWindow->GetWidth();
-		scd.BufferDesc.Height = mWindow->GetHeight();
+		ZeroMemory(&scd, sizeof(scd));
+		scd.BufferCount = 2;
+		scd.BufferDesc.Width = 0;
+		scd.BufferDesc.Height = 0;
+		scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		scd.BufferDesc.RefreshRate.Numerator = 60;
 		scd.BufferDesc.RefreshRate.Denominator = 1;
-		scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		scd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		scd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-
+		scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		scd.OutputWindow = (HWND)mWindow->GetHandle();
 		scd.SampleDesc.Count = 1;
 		scd.SampleDesc.Quality = 0;
-
-		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		scd.BufferCount = 1;
-		scd.OutputWindow = (HWND)mWindow->GetHandle();
 		scd.Windowed = TRUE;
 		scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-		scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+
+		D3D_FEATURE_LEVEL featureLevel;
+		const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0, };
+
+		UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#ifdef AIO_DEBUG
+		flags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif // AIO_DEBUG
 
 		HRESULT hr;
 		hr = D3D11CreateDeviceAndSwapChain(mAdapters[0].ptr, // IDXGI Adapter
 			D3D_DRIVER_TYPE_UNKNOWN,
 			NULL, // FOR SOFTWARE DRIVER TYPE
-			NULL, // FLAGS FOR RUNTIME LAYERS
-			NULL, // FEATURE LEVELS ARRAY
-			0,    // # OF FEATURE LEVELS IN ARRAY
+			flags, // FLAGS FOR RUNTIME LAYERS
+			featureLevelArray, // FEATURE LEVELS ARRAY
+			2,    // # OF FEATURE LEVELS IN ARRAY
 			D3D11_SDK_VERSION,
 			&scd, // SwapChain description
 			mSwapChain.GetAddressOf(),
 			mDevice.GetAddressOf(),
-			NULL, // Supported feature level
+			&featureLevel, // Supported feature level
 			mDeviceContext.GetAddressOf());
 		AIO_ASSERT(!FAILED(hr), "Failed to create device and swapchain: " + ResultInfo(hr) + "\n");
 
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
-		hr = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(backBuffer.GetAddressOf()));
-		AIO_ASSERT(!FAILED(hr), "GetBuffer failed: " + ResultInfo(hr) + "\n");
-
-		hr = mDevice->CreateRenderTargetView(backBuffer.Get(), NULL, mRenderTargetView.GetAddressOf());
-		AIO_ASSERT(!FAILED(hr), "Failed to create render target view: " + ResultInfo(hr) + "\n");
-
-		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), NULL);
+		CreateRenderTarget();
 
 		AIO_LOG_INFO("DirectX 11 Initialized");
 	}
@@ -92,9 +88,18 @@ namespace Alexio
 		mSwapChain->Present((UINT)mVSync, 0);
 	}
 
+	void Renderer_DirectX11::ResizeBuffer(uint32_t width, uint32_t height)
+	{
+		CleanRenderTarget();
+		HRESULT hr = mSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+		AIO_ASSERT(!FAILED(hr), "Failed to resize the buffer: " + ResultInfo(hr) + "\n");
+		CreateRenderTarget();
+	}
+
 	void Renderer_DirectX11::ImGuiBackendInit()
 	{
-		ImGui_ImplWin32_Init((HWND)Engine::GetInstance()->GetWindow()->GetHandle());
+		HWND hwnd = (HWND)Engine::GetInstance()->GetWindow()->GetHandle();
+		ImGui_ImplWin32_Init(hwnd);
 		ImGui_ImplDX11_Init(mDevice.Get(), mDeviceContext.Get());
 	}
 
@@ -104,15 +109,35 @@ namespace Alexio
 		ImGui_ImplWin32_NewFrame();
 	}
 
-	void Renderer_DirectX11::ImGuiBackendDrawData()
+	void Renderer_DirectX11::ImGuiBackendUpdate()
 	{
+		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), NULL);
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
 	}
 
 	void Renderer_DirectX11::ImGuiBackendShutDown()
 	{
 		ImGui_ImplDX11_Shutdown();
 		ImGui_ImplWin32_Shutdown();
+	}
+
+	void Renderer_DirectX11::CreateRenderTarget()
+	{
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
+		mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(backBuffer.GetAddressOf()));
+		mDevice->CreateRenderTargetView(backBuffer.Get(), NULL, mRenderTargetView.GetAddressOf());
+	}
+
+	void Renderer_DirectX11::CleanRenderTarget()
+	{
+		if (mRenderTargetView)
+			mRenderTargetView->Release();
 	}
 
 	void Renderer_DirectX11::GetAdapters()

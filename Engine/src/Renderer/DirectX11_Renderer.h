@@ -23,18 +23,22 @@ namespace Alexio
 		void Draw() override;
 		void ClearColor(float r, float g, float b, float a) override;
 		void SwapBuffer() override;
+		void ResizeBuffer(uint32_t width, uint32_t height) override;
+
+		// Getters
+		inline Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice() { return mDevice; }
+		inline Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetDeviceContext() { return mDeviceContext; }
+		inline Microsoft::WRL::ComPtr<IDXGISwapChain>& GetSwapChain() { return mSwapChain; }
+		inline std::string GetName() override { return "DirectX 11"; };
+
+		void CreateRenderTarget();
+		void CleanRenderTarget();
 
 		void ImGuiBackendInit() override;
 		void ImGuiBackendBegin() override;
-		void ImGuiBackendDrawData() override;
+		void ImGuiBackendUpdate() override;
 		void ImGuiBackendShutDown() override;
 
-		// Getters
-		inline static Renderer_DirectX11* GetInstance() { return sInstance; }
-		inline ID3D11Device* GetDevice() { return mDevice.Get(); }
-		inline ID3D11DeviceContext* GetDeviceContext() { return mDeviceContext.Get(); }
-
-		inline std::string GetName() override { return "DirectX 11"; };
 	private:
 		// States
 		void GetAdapters();

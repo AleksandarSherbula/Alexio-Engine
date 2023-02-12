@@ -14,10 +14,11 @@ namespace Alexio
 		virtual void Draw() = 0;
 		virtual void ClearColor(float r, float g, float b, float a) = 0;
 		virtual void SwapBuffer() = 0;
+		virtual void ResizeBuffer(uint32_t width, uint32_t height) = 0;
 
 		virtual void ImGuiBackendInit() = 0;
 		virtual void ImGuiBackendBegin() = 0;
-		virtual void ImGuiBackendDrawData() = 0;
+		virtual void ImGuiBackendUpdate() = 0;
 		virtual void ImGuiBackendShutDown() = 0;
 
 		virtual std::string GetName() = 0;

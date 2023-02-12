@@ -8,15 +8,15 @@ namespace Alexio
 	{
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height)
-			: m_Width(width), m_Height(height) {}
+			: mWidth(width), mHeight(height) {}
 
-		unsigned int GetWidth() const { return m_Width; }
-		unsigned int GetHeight() const { return m_Height; }
+		unsigned int GetWidth() const { return mWidth; }
+		unsigned int GetHeight() const { return mHeight; }
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
+			ss << "WindowResizeEvent: " << mWidth << ", " << mHeight;
 			return ss.str();
 		}
 
@@ -27,7 +27,7 @@ namespace Alexio
 
 		const char* GetName() const override { return "WindowResize"; }
 	private:
-		unsigned int m_Width, m_Height;
+		unsigned int mWidth, mHeight;
 	};
 
 	class WindowCloseEvent : public Event

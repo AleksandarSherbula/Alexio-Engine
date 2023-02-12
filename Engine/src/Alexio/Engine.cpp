@@ -24,6 +24,7 @@ namespace Alexio
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Engine::OnWindowClose, this, std::placeholders::_1));
+		dispatcher.Dispatch<WindowResizeEvent>(std::bind(&Engine::OnWindowResize, this, std::placeholders::_1));
 
 		for (auto it = mLayerStack.end(); it != mLayerStack.begin();)
 		{
@@ -80,6 +81,13 @@ namespace Alexio
 	bool Engine::OnWindowClose(WindowCloseEvent& e)
 	{
 		mRunning = false;
+		return true;
+	}
+
+	bool Engine::OnWindowResize(WindowResizeEvent& e)
+	{
+		if (Renderer::GetAPI() != nullptr)
+			Renderer::GetAPI()->ResizeBuffer(e.GetWidth(), e.GetHeight());
 		return true;
 	}
 }

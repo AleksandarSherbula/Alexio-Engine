@@ -11,6 +11,7 @@ namespace Alexio
 		void OnDetach() override;
 		void OnUpdate() override;
 		void Begin();
+		void End();
 	public:
 		bool showWindow;
 	};

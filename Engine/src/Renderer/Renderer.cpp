@@ -1,6 +1,8 @@
 #include "aio_pch.h"
 #include "Alexio/Renderer.h"
 
+#include <imgui.h>
+
 namespace Alexio
 {
 	GraphicsAPI Renderer::sAPI_flag = GraphicsAPI::None;
@@ -12,21 +14,27 @@ namespace Alexio
 		sRendererAPI = RendererAPI::Create();
 
 		sRendererAPI->SetWindow(window);
+
 		sRendererAPI->Initialize();
+
 		sRendererAPI->SetVSync(true);
 
 		imgui = new ImGUI();
 		imgui->OnAttach();
-
 	}
 
 	void Renderer::DrawFrame()
 	{
 		sRendererAPI->ClearColor(0.0f, 0.8f, 1.0f, 1.0f);
 
-		imgui->Begin();
+		//imgui->Begin();
+		Renderer::GetAPI()->ImGuiBackendBegin();
+		ImGui::NewFrame();
 
 		imgui->OnUpdate();
+
+		ImGui::Render();
+		Renderer::GetAPI()->ImGuiBackendUpdate();
 
 		sRendererAPI->SwapBuffer();
 	}
@@ -34,8 +42,8 @@ namespace Alexio
 	void Renderer::End()
 	{
 		imgui->OnDetach();
-
 		delete imgui;
+
 		delete sRendererAPI;
 	}
 }

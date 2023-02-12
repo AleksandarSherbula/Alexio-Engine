@@ -1,11 +1,15 @@
 #include "aio_pch.h"
 #include "Win32_Window.h"
+#include "Alexio/Engine.h"
+#include "Alexio/Input.h"
 
 #include "Events/AppEvent.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 
-#include "Alexio/Input.h"
+#include <imgui.h>
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace Alexio
 {
@@ -51,7 +55,7 @@ namespace Alexio
 		wr.left = 50;
 		wr.top = 50;
 		wr.right = wr.left + mWidth;
-		wr.bottom = wr.top + mHeight;
+		wr.bottom = wr.top + mHeight;		
 		if (!AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE))
 			std::cout << "Failed to adjust window" << std::endl;
 
@@ -61,7 +65,7 @@ namespace Alexio
 		
 		AIO_ASSERT(mHandle, "Failed to create a Window: {0}", ResultInfo(GetLastError()));
 
-		ShowWindow(mHandle, SW_SHOW);
+		ShowWindow(mHandle, SW_SHOWDEFAULT);
 		SetForegroundWindow(mHandle);
 		SetFocus(mHandle);
 	}
@@ -82,7 +86,7 @@ namespace Alexio
 		MSG msg;
 		ZeroMemory(&msg, sizeof(MSG));	
 
-		if (PeekMessage(&msg, mHandle, 0, 0, PM_REMOVE))
+		while (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -91,14 +95,21 @@ namespace Alexio
 
 	LRESULT WindowsProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
+			return true;
+
 		switch (uMsg)
 		{
 		case WM_SIZE:
-		{
-			UINT width = LOWORD(lParam);
-			UINT height = HIWORD(lParam);
-			WindowResizeEvent event(width, height);
-			ecFn(event);
+		{			
+			if (wParam != SIZE_MINIMIZED)
+			{
+				UINT width = LOWORD(lParam);
+				UINT height = HIWORD(lParam);
+
+				WindowResizeEvent event(width, height);
+				ecFn(event);
+			}
 			return 0;
 		}
 		case WM_CLOSE:
@@ -173,7 +184,6 @@ namespace Alexio
 			default:
 				keycode = Input::mapKeys[wParam];
 			}
-				
 
 			Input::UpdateKeyState(keycode, true);
 			return 0;
