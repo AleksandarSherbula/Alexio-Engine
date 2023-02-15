@@ -33,15 +33,14 @@ namespace Alexio
 
 		void CreateRenderTarget();
 		void CleanRenderTarget();
+	private:
+		// States
+		void GetAdapters();
 
 		void ImGuiBackendInit() override;
 		void ImGuiBackendBegin() override;
 		void ImGuiBackendUpdate() override;
 		void ImGuiBackendShutDown() override;
-
-	private:
-		// States
-		void GetAdapters();
 	private:
 		static Renderer_DirectX11* sInstance;
 	private:

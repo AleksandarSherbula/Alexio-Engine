@@ -5,7 +5,7 @@
 
 namespace Alexio
 {
-	GraphicsAPI Renderer::sAPI_flag = GraphicsAPI::None;
+	GraphicsAPIflag Renderer::sAPI_flag = GraphicsAPIflag::None;
 	RendererAPI* Renderer::sRendererAPI = nullptr;
 	ImGUI* Renderer::imgui = nullptr;
 
@@ -27,14 +27,11 @@ namespace Alexio
 	{
 		sRendererAPI->ClearColor(0.0f, 0.8f, 1.0f, 1.0f);
 
-		//imgui->Begin();
-		Renderer::GetAPI()->ImGuiBackendBegin();
-		ImGui::NewFrame();
+		imgui->Begin();
 
 		imgui->OnUpdate();
 
-		ImGui::Render();
-		Renderer::GetAPI()->ImGuiBackendUpdate();
+		imgui->End();
 
 		sRendererAPI->SwapBuffer();
 	}

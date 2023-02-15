@@ -4,7 +4,7 @@
 
 #define BIT(x) (1 << x)
 
-enum class GraphicsAPI
+enum class GraphicsAPIflag
 {
 	None,
 	DirectX11,

@@ -30,7 +30,7 @@ namespace Alexio
 		virtual inline void* GetHandle() = 0;
 		virtual inline void SetEventCallback(const EventCallbackFn& callback) = 0;
 	public:
-		static std::unique_ptr<Window> Create(const std::string& title, uint32_t width, uint32_t height, GraphicsAPI api);
+		static std::unique_ptr<Window> Create(const std::string& title, uint32_t width, uint32_t height, GraphicsAPIflag api);
 	private:
 		static WindowAPI sAPI;
 	protected:

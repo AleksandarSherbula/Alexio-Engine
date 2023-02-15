@@ -46,9 +46,9 @@ namespace Alexio
 
 	void Engine::Run()
 	{
-		Renderer::SetAPIflag(GraphicsAPI::DirectX11);
+		Renderer::SetAPIflag(GraphicsAPIflag::OpenGL);
 
-		std::string apiName = (Renderer::GetAPIflag() == GraphicsAPI::DirectX11) ? "DirectX 11" : "OpenGL";
+		std::string apiName = (Renderer::GetAPIflag() == GraphicsAPIflag::DirectX11) ? "DirectX 11" : "OpenGL";
 
 		mWindow = Window::Create("Alexio Engine (" + apiName + ")", 1280, 720, Renderer::GetAPIflag());
 		mWindow->SetEventCallback(std::bind(&Engine::OnEvent, this, std::placeholders::_1));

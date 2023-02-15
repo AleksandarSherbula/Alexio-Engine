@@ -46,9 +46,6 @@ namespace Alexio
         glfwMakeContextCurrent(mHandle);
         glfwSetWindowUserPointer(mHandle, &mData);
 
-        int gladLoad = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-        AIO_ASSERT(gladLoad, "Failed to initialize GLAD");
-
         EventProcess();
     }
 

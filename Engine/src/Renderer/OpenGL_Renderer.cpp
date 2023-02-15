@@ -18,7 +18,8 @@ namespace Alexio
 
 	void Renderer_OpenGL::Initialize()
 	{
-		glfwMakeContextCurrent((GLFWwindow*)mWindow->GetHandle());
+		int gladLoad = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		AIO_ASSERT(gladLoad, "Failed to initialize GLAD");
 
 		AIO_LOG_INFO("OpenGL Initialized");
 	}

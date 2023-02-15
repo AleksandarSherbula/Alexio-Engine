@@ -14,9 +14,9 @@ namespace Alexio
     {
 		switch (Renderer::GetAPIflag())
 		{
-		case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
-		case GraphicsAPI::OpenGL: return new Renderer_OpenGL();
-		case GraphicsAPI::DirectX11: return new Renderer_DirectX11();
+		case GraphicsAPIflag::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
+		case GraphicsAPIflag::OpenGL: return new Renderer_OpenGL();
+		case GraphicsAPIflag::DirectX11: return new Renderer_DirectX11();
 		}
 
 		AIO_ASSERT(false, "Error in selecting a Graphics API for Rendering.\n");

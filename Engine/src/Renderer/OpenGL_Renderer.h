@@ -16,12 +16,13 @@ namespace Alexio
 		void SwapBuffer() override;
 		void ResizeBuffer(uint32_t width, uint32_t height) override {}
 
+		inline std::string GetName() override { return "OpenGL"; };
+	private:
 		void ImGuiBackendInit() override;
 		void ImGuiBackendBegin() override;
 		void ImGuiBackendUpdate() override;
 		void ImGuiBackendShutDown() override;
 
-		inline std::string GetName() override { return "OpenGL"; };
 	private:
 		static Renderer_OpenGL* sInstance;
 	};
