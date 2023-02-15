@@ -22,6 +22,23 @@ namespace Alexio
 		AIO_ASSERT(gladLoad, "Failed to initialize GLAD");
 
 		AIO_LOG_INFO("OpenGL Initialized");
+
+		GLfloat vertices[] =
+		{
+		   -0.5f, -0.5f,
+			0.0f,  0.5f,
+			0.5f, -0.5f,
+		};
+
+		glGenVertexArrays(1, &va);
+		glBindVertexArray(va);
+		
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	}
 
 	void Renderer_OpenGL::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -30,6 +47,9 @@ namespace Alexio
 
 	void Renderer_OpenGL::Draw()
 	{
+		glBindVertexArray(va);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glBindVertexArray(0);
 	}
 
 	void Renderer_OpenGL::ClearColor(float r, float g, float b, float a)

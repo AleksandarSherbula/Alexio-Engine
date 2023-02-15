@@ -25,5 +25,7 @@ namespace Alexio
 
 	private:
 		static Renderer_OpenGL* sInstance;
+	private:
+		GLuint vbo, va;
 	};
 }

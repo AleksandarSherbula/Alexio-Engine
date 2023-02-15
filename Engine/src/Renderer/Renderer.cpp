@@ -25,11 +25,13 @@ namespace Alexio
 
 	void Renderer::DrawFrame()
 	{
-		sRendererAPI->ClearColor(0.0f, 0.8f, 1.0f, 1.0f);
+		sRendererAPI->ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 		imgui->Begin();
 
 		imgui->OnUpdate();
+
+		sRendererAPI->Draw();
 
 		imgui->End();
 

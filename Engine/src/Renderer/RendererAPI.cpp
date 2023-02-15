@@ -3,9 +3,9 @@
 #include "Alexio/Renderer.h"
 #include "Alexio/Utilities.h"
 
-#include "OpenGL_Renderer.h"
+#include "OpenGL/OpenGL_Renderer.h"
 #ifdef AIO_PLATFORM_WINDOWS
-	#include "DirectX11_Renderer.h"
+	#include "DirectX11/DirectX11_Renderer.h"
 #endif // AIO_PLATFORM_WINDOWS
 
 namespace Alexio
