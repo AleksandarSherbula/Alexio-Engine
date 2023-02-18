@@ -1,6 +1,8 @@
 #include "aio_pch.h"
-#include "OpenGL_Renderer.h"
 #include "Alexio/Engine.h"
+
+#include "OpenGL_Renderer.h"
+#include "OpenGL_Buffer.h"
 
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
@@ -8,6 +10,27 @@
 namespace Alexio
 {
 	Renderer_OpenGL* Renderer_OpenGL::sInstance = nullptr;
+
+	void OpenGLMessageCallback(
+		unsigned source,
+		unsigned type,
+		unsigned id,
+		unsigned severity,
+		int length,
+		const char* message,
+		const void* userParam)
+	{
+		switch (severity)
+		{
+		case GL_DEBUG_SEVERITY_HIGH:         AIO_LOG_CRITICAL(message); return;
+		case GL_DEBUG_SEVERITY_MEDIUM:       AIO_LOG_ERROR(message); return;
+		case GL_DEBUG_SEVERITY_LOW:          AIO_LOG_WARN(message); return;
+		case GL_DEBUG_SEVERITY_NOTIFICATION: AIO_LOG_TRACE(message); return;
+		}
+
+		AIO_ASSERT(false, "Unknown severity level!");
+	}
+
 
 	Renderer_OpenGL::Renderer_OpenGL()
 	{
@@ -23,33 +46,32 @@ namespace Alexio
 
 		AIO_LOG_INFO("OpenGL Initialized");
 
-		GLfloat vertices[] =
-		{
-		   -0.5f, -0.5f,
-			0.0f,  0.5f,
-			0.5f, -0.5f,
-		};
+#ifdef AIO_DEBUG
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		glDebugMessageCallback(OpenGLMessageCallback, nullptr);
 
-		glGenVertexArrays(1, &va);
-		glBindVertexArray(va);
-		
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+#endif		
+		//glGenVertexArrays(1, &va);
+		//glBindVertexArray(va);
+		//
+		//glGenBuffers(1, &vbo);
+		//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		//
+		//glEnableVertexAttribArray(0);
+		//glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	}
 
 	void Renderer_OpenGL::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
+		glViewport(x, y, width, height);
 	}
 
 	void Renderer_OpenGL::Draw()
 	{
-		glBindVertexArray(va);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glBindVertexArray(0);
+		glDrawElements(GL_TRIANGLES, Engine::GetInstance()->ib->GetCount(), GL_UNSIGNED_INT, 0);
 	}
 
 	void Renderer_OpenGL::ClearColor(float r, float g, float b, float a)

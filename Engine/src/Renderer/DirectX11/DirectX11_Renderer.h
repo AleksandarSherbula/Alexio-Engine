@@ -23,7 +23,6 @@ namespace Alexio
 		void Draw() override;
 		void ClearColor(float r, float g, float b, float a) override;
 		void SwapBuffer() override;
-		void ResizeBuffer(uint32_t width, uint32_t height) override;
 
 		// Getters
 		inline Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice() { return mDevice; }

@@ -10,7 +10,6 @@ namespace Alexio
 		Win32_Window(const std::string& title, uint32_t width, uint32_t height);
 		~Win32_Window();
 		void Initialize() override;
-		void Update() override;
 
 		void PollEvents() override;
 

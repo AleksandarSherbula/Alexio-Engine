@@ -14,7 +14,6 @@ namespace Alexio
 		void Draw() override;
 		void ClearColor(float r, float g, float b, float a) override;
 		void SwapBuffer() override;
-		void ResizeBuffer(uint32_t width, uint32_t height) override {}
 
 		inline std::string GetName() override { return "OpenGL"; };
 	private:
@@ -25,7 +24,5 @@ namespace Alexio
 
 	private:
 		static Renderer_OpenGL* sInstance;
-	private:
-		GLuint vbo, va;
 	};
 }

@@ -1,12 +1,6 @@
 #include "aio_pch.h"
 #include "Engine.h"
-#include "Log.h"
-#include "Input.h"
-#include "Math.h"
-#include "Renderer.h"
 
-#include "Events/AppEvent.h"
-#include "Window/GLFW_Window.h"
 
 namespace Alexio
 {
@@ -56,6 +50,30 @@ namespace Alexio
 
 		Renderer::Begin(mWindow.get());
 
+		float vertices[] =
+		{
+		   -0.5f, -0.5f,
+			0.0f,  0.5f,
+			0.5f, -0.5f
+		};
+
+		uint32_t indices[3] =
+		{
+			0, 1, 2
+		};
+
+		glGenVertexArrays(1, &va);
+		glBindVertexArray(va);
+
+		vb = VertexBuffer::Create(vertices, sizeof(vertices));
+		vb->Bind();
+
+		ib = IndexBuffer::Create(indices, 3);
+		ib->Bind();
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+
 		AIO_ASSERT(OnStart(),"Initialization failed");
 
 		while (mRunning)
@@ -71,7 +89,7 @@ namespace Alexio
 			// Because Win32 API needs to make my life hard
 				(Window::GetAPI() == WindowAPI::Win32 && Input::KeyHeld(Alexio::L_ALT) && Input::KeyPressed(Alexio::F4)))
 				mRunning = false;
-
+			
 			Renderer::DrawFrame();
 		}
 
@@ -87,7 +105,7 @@ namespace Alexio
 	bool Engine::OnWindowResize(WindowResizeEvent& e)
 	{
 		if (Renderer::GetAPI() != nullptr)
-			Renderer::GetAPI()->ResizeBuffer(e.GetWidth(), e.GetHeight());
+			Renderer::GetAPI()->SetViewport(0, 0, e.GetWidth(), e.GetHeight());
 		return true;
 	}
 }

@@ -76,11 +76,6 @@ namespace Alexio
 		Initialize();
 	}
 
-	void Win32_Window::Update()
-	{
-		PollEvents();
-	}
-
 	void Win32_Window::PollEvents()
 	{
 		MSG msg;

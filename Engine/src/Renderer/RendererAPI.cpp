@@ -10,13 +10,13 @@
 
 namespace Alexio
 {
-    RendererAPI* RendererAPI::Create()
+    std::shared_ptr<RendererAPI> RendererAPI::Create()
     {
 		switch (Renderer::GetAPIflag())
 		{
 		case GraphicsAPIflag::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
-		case GraphicsAPIflag::OpenGL: return new Renderer_OpenGL();
-		case GraphicsAPIflag::DirectX11: return new Renderer_DirectX11();
+		case GraphicsAPIflag::OpenGL: return  std::make_shared<Renderer_OpenGL>();
+		case GraphicsAPIflag::DirectX11: return std::make_shared<Renderer_DirectX11>();
 		}
 
 		AIO_ASSERT(false, "Error in selecting a Graphics API for Rendering.\n");

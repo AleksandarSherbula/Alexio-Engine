@@ -39,6 +39,9 @@ namespace Alexio
             glfwSetErrorCallback(GLFWErrorCallback);
             sGLFW_Initialize = true;
         }
+#ifdef AIO_DEBUG
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif // AIO_DEBUG
 
         mHandle = glfwCreateWindow(mWidth, mHeight, mTitle.c_str(), NULL, NULL);
         AIO_ASSERT(mHandle, "Failed to create a GLFW window");
@@ -47,11 +50,6 @@ namespace Alexio
         glfwSetWindowUserPointer(mHandle, &mData);
 
         EventProcess();
-    }
-
-    void GLFW_Window::Update()
-    {
-        glfwSwapBuffers(mHandle);
     }
 
     void GLFW_Window::PollEvents()

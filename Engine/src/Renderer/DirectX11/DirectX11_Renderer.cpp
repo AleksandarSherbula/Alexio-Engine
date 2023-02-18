@@ -71,6 +71,9 @@ namespace Alexio
 
 	void Renderer_DirectX11::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
+		CleanRenderTarget();
+		mSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+		CreateRenderTarget();
 	}
 
 	void Renderer_DirectX11::Draw()
@@ -86,14 +89,6 @@ namespace Alexio
 	void Renderer_DirectX11::SwapBuffer()
 	{
 		mSwapChain->Present((UINT)mVSync, 0);
-	}
-
-	void Renderer_DirectX11::ResizeBuffer(uint32_t width, uint32_t height)
-	{
-		CleanRenderTarget();
-		HRESULT hr = mSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
-		AIO_ASSERT(!FAILED(hr), "Failed to resize the buffer: " + ResultInfo(hr) + "\n");
-		CreateRenderTarget();
 	}
 
 	void Renderer_DirectX11::ImGuiBackendInit()

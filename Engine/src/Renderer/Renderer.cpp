@@ -6,7 +6,7 @@
 namespace Alexio
 {
 	GraphicsAPIflag Renderer::sAPI_flag = GraphicsAPIflag::None;
-	RendererAPI* Renderer::sRendererAPI = nullptr;
+	std::shared_ptr<RendererAPI> Renderer::sRendererAPI = nullptr;
 	ImGUI* Renderer::imgui = nullptr;
 
 	void Renderer::Begin(Window* window)
@@ -42,7 +42,5 @@ namespace Alexio
 	{
 		imgui->OnDetach();
 		delete imgui;
-
-		delete sRendererAPI;
 	}
 }

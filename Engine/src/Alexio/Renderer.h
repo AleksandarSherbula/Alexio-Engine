@@ -1,8 +1,11 @@
 #pragma once
 
 #include "Alexio/Window.h"
+
 #include "Alexio/ImGuiLayer.h"
+
 #include "Renderer/RendererAPI.h"
+#include "Renderer/Buffer.h"
 
 namespace Alexio
 {
@@ -15,10 +18,10 @@ namespace Alexio
 
 		inline static void SetAPIflag(GraphicsAPIflag api) { sAPI_flag = api; }
 		inline static GraphicsAPIflag GetAPIflag() { return sAPI_flag; }
-		inline static RendererAPI* GetAPI() { return sRendererAPI; };
+		inline static RendererAPI* GetAPI() { return sRendererAPI.get(); };
 	private:
 		static GraphicsAPIflag sAPI_flag;
-		static RendererAPI* sRendererAPI;	
+		static std::shared_ptr<RendererAPI> sRendererAPI;	
 		static ImGUI* imgui;
 	};
 }
