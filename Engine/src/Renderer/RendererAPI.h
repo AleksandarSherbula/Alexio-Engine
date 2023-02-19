@@ -7,6 +7,8 @@ namespace Alexio
 	class RendererAPI
 	{
 	public:
+		virtual ~RendererAPI() = default;
+
 		static std::shared_ptr<RendererAPI> Create();
 
 		virtual void Initialize() = 0;
@@ -25,6 +27,7 @@ namespace Alexio
 		inline void SetWindow(Window* window) { mWindow = window; }
 		inline void SetVSync(bool vSync) { mVSync = vSync; }
 		inline bool IsVSync() { return mVSync; }
+
 	protected:
 		bool mVSync;
 		Window* mWindow;

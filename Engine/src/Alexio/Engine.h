@@ -28,8 +28,6 @@ namespace Alexio
 		void PushOverlay(Layer* layer);
 
 		inline Window* GetWindow() { return mWindow.get(); }
-	
-		
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
@@ -38,11 +36,8 @@ namespace Alexio
 		bool mRunning;
 		
 		LayerStack mLayerStack;
-		std::unique_ptr<Shader> shader;
 	public:
-		std::unique_ptr<VertexBuffer> vb;
-		std::unique_ptr<IndexBuffer> ib;
-		unsigned int va;
+		
 	private:
 		static Engine* sInstance;
 	};

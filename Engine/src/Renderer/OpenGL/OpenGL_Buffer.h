@@ -15,7 +15,7 @@ namespace Alexio
 		void Bind() override;
 		void Unbind() override;
 
-		const BufferLayout& GetLayout() override { return mLayout; }
+		BufferLayout& GetLayout() override { return mLayout; }
 		void SetLayout(const BufferLayout& layout) override { mLayout = layout; }
 
 		void SetData(const void* data, uint32_t size) override;
