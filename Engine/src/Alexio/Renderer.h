@@ -6,6 +6,7 @@
 
 #include "Renderer/RendererAPI.h"
 #include "Renderer/Buffer.h"
+#include "Renderer/Shader.h"
 
 namespace Alexio
 {

@@ -4,10 +4,10 @@ workspace "AlexioEngine"
    architecture "x64"
 
 IncludeDir = {}
-IncludeDir["GLFW"] = "Engine/dependecies/GLFW/include"
-IncludeDir["GLAD"] = "Engine/dependecies/GLAD/include"
+IncludeDir["GLFW"]  = "Engine/dependecies/GLFW/include"
+IncludeDir["GLAD"]  = "Engine/dependecies/GLAD/include"
 IncludeDir["ImGUI"] = "Engine/dependecies/imgui"
-IncludeDir["GLM"] = "Engine/dependecies/glm"
+IncludeDir["GLM"]   = "Engine/dependecies/glm"
 
 group "Dependencies"
    include "Engine/dependecies/GLFW"

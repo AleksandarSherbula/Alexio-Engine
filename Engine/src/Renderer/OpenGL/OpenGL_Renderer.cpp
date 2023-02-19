@@ -44,24 +44,15 @@ namespace Alexio
 		int gladLoad = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		AIO_ASSERT(gladLoad, "Failed to initialize GLAD");
 
-		AIO_LOG_INFO("OpenGL Initialized");
-
 #ifdef AIO_DEBUG
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		glDebugMessageCallback(OpenGLMessageCallback, nullptr);
 
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
-#endif		
-		//glGenVertexArrays(1, &va);
-		//glBindVertexArray(va);
-		//
-		//glGenBuffers(1, &vbo);
-		//glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-		//
-		//glEnableVertexAttribArray(0);
-		//glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+#endif
+		
+		AIO_LOG_INFO("OpenGL Initialized");
 	}
 
 	void Renderer_OpenGL::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
