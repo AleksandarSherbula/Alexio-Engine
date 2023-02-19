@@ -40,7 +40,7 @@ namespace Alexio
 		mapKeys[GLFW_KEY_EQUAL] =		   Key::EQUALS;			// the '+' key on any keyboard
 		mapKeys[GLFW_KEY_COMMA] =		   Key::COMMA;			// the comma key on any keyboard
 		mapKeys[GLFW_KEY_MINUS] =		   Key::MINUS;			// the minus key on any keyboard
-		mapKeys[GLFW_KEY_PERIOD] =		   Key::PERIOD;		// the period key on any keyboard
+		mapKeys[GLFW_KEY_PERIOD] =		   Key::PERIOD;			// the period key on any keyboard
 		mapKeys[GLFW_KEY_CAPS_LOCK] =	   Key::CAPS_LOCK;
 	}
 

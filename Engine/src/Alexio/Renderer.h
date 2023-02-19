@@ -10,6 +10,13 @@
 
 namespace Alexio
 {
+	enum class GraphicsAPI
+	{
+		None,
+		OpenGL,
+		DirectX11
+	};
+
 	class Renderer
 	{
 	public:
@@ -17,12 +24,12 @@ namespace Alexio
 		static void DrawFrame();
 		static void End();
 
-		inline static void SetAPIflag(GraphicsAPIflag api) { sAPI_flag = api; }
-		inline static GraphicsAPIflag GetAPIflag() { return sAPI_flag; }
+		static void SetAPI(GraphicsAPI api);
+		static GraphicsAPI GetGraphicsAPI() { return s_API; }
 		inline static RendererAPI* GetAPI() { return sRendererAPI.get(); };
 	private:
-		static GraphicsAPIflag sAPI_flag;
 		static std::shared_ptr<RendererAPI> sRendererAPI;	
 		static ImGUI* imgui;
+		static GraphicsAPI s_API;
 	};
 }

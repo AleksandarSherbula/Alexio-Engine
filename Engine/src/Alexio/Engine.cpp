@@ -39,11 +39,11 @@ namespace Alexio
 
 	void Engine::Run()
 	{
-		Renderer::SetAPIflag(GraphicsAPIflag::OpenGL);
+		Renderer::SetAPI(GraphicsAPI::OpenGL);
 
-		std::string apiName = (Renderer::GetAPIflag() == GraphicsAPIflag::DirectX11) ? "DirectX 11" : "OpenGL";
+		std::string apiName = (Renderer::GetGraphicsAPI() == GraphicsAPI::OpenGL) ? "OpenGL" : "DirectX11";
 
-		mWindow = Window::Create("Alexio Engine (" + apiName + ")", 1280, 720, Renderer::GetAPIflag());
+		mWindow = Window::Create("Alexio Engine (" + apiName + ")", 1280, 720);
 		mWindow->SetEventCallback(std::bind(&Engine::OnEvent, this, std::placeholders::_1));
 		Input::SetKeyCodes();
 
@@ -60,8 +60,8 @@ namespace Alexio
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate();
 			
-			if (!OnUpdate() || 
-			// Because Win32 API needs to make my life hard
+			if (!OnUpdate() ||
+				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked
 				(Window::GetAPI() == WindowAPI::Win32 && Input::KeyHeld(Alexio::L_ALT) && Input::KeyPressed(Alexio::F4)))
 				mRunning = false;
 			

@@ -9,10 +9,16 @@ namespace Alexio
 {
 	using EventCallbackFn = std::function<void(Event&)>;
 
+	enum class WindowAPI
+	{
+		None,
+		GLFW,
+		Win32
+	};
+
 	class Window
 	{
 	public:
-
 		virtual ~Window() = 0;
 		virtual void Initialize() = 0;
 
@@ -25,11 +31,12 @@ namespace Alexio
 		inline void SetHeight(uint32_t height) { mHeight = height; }
 
 		inline static WindowAPI GetAPI() { return sAPI; }
+		inline static void SetAPI(WindowAPI api) { sAPI = api; }
 
 		virtual inline void* GetHandle() = 0;
 		virtual inline void SetEventCallback(const EventCallbackFn& callback) = 0;
 	public:
-		static std::unique_ptr<Window> Create(const std::string& title, uint32_t width, uint32_t height, GraphicsAPIflag api);
+		static std::unique_ptr<Window> Create(const std::string& title, uint32_t width, uint32_t height);
 	private:
 		static WindowAPI sAPI;
 	protected:

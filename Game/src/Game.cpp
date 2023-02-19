@@ -24,7 +24,8 @@ class Game : public Alexio::Engine
 public:
 	Game::Game()
 	{
-		
+		// Set Graphics API here
+		// Example: Alexio::Renderer::SetAPI(Alexio::GraphicsAPI::DirectX11);
 	}
 
 	bool Game::OnStart() override

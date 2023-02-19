@@ -57,6 +57,9 @@ namespace Alexio
 #endif
 		AIO_LOG_INFO("OpenGL Initialized");
 
+
+		/// Test code ///
+
 		float vertices[] =
 		{
 		   -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
@@ -181,7 +184,6 @@ namespace Alexio
 			)";
 
 		blueSquareShader = std::make_unique<Shader>(blueSquareVertexSrc, blueSquareFragmentSrc);
-
 	}
 
 	void Renderer_OpenGL::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -191,6 +193,8 @@ namespace Alexio
 
 	void Renderer_OpenGL::Draw()
 	{
+		/// Test code ///
+
 		blueSquareVA->Bind();
 		blueSquareShader->Bind();
 		glDrawElements(GL_TRIANGLES, blueSquareIB->GetCount(), GL_UNSIGNED_INT, 0);

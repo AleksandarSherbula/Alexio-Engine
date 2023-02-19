@@ -11,10 +11,10 @@ namespace Alexio
 {
     std::unique_ptr<VertexBuffer> VertexBuffer::Create(uint32_t size)
     {
-        switch (Renderer::GetAPIflag())
+        switch (Renderer::GetGraphicsAPI())
         {
-        case GraphicsAPIflag::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
-        case GraphicsAPIflag::OpenGL: return std::make_unique<OpenGL_VertexBuffer>(size);
+        case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
+        case GraphicsAPI::OpenGL: return std::make_unique<OpenGL_VertexBuffer>(size);
         //case GraphicsAPIflag::DirectX11: return new Renderer_DirectX11();
         }
 
@@ -24,10 +24,10 @@ namespace Alexio
 
     std::unique_ptr<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
     {
-        switch (Renderer::GetAPIflag())
+        switch (Renderer::GetGraphicsAPI())
         {
-        case GraphicsAPIflag::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
-        case GraphicsAPIflag::OpenGL: return std::make_unique<OpenGL_VertexBuffer>(vertices, size);
+        case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
+        case GraphicsAPI::OpenGL: return std::make_unique<OpenGL_VertexBuffer>(vertices, size);
         //case GraphicsAPIflag::DirectX11: return new Renderer_DirectX11();
         }
 
@@ -37,10 +37,10 @@ namespace Alexio
 
     std::unique_ptr<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
     {
-        switch (Renderer::GetAPIflag())
+        switch (Renderer::GetGraphicsAPI())
         {
-        case GraphicsAPIflag::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
-        case GraphicsAPIflag::OpenGL: return std::make_unique<OpenGL_IndexBuffer>(indices, count);
+        case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
+        case GraphicsAPI::OpenGL: return std::make_unique<OpenGL_IndexBuffer>(indices, count);
         //case GraphicsAPIflag::DirectX11: return new Renderer_DirectX11();
         }
 
