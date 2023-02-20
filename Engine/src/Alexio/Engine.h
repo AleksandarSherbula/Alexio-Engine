@@ -27,7 +27,7 @@ namespace Alexio
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
-		inline Window* GetWindow() { return mWindow.get(); }
+		inline Window* GetWindow() const { return mWindow.get(); }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);

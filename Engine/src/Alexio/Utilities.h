@@ -4,7 +4,12 @@
 
 #define BIT(x) (1 << x)
 
-
+enum class GraphicsAPI
+{
+	None,
+	OpenGL,
+	DirectX11
+};
 
 inline std::wstring StringToWide(const std::string& str)
 {

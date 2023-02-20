@@ -9,9 +9,9 @@
 
 namespace Alexio
 {
-	Renderer_DirectX11* Renderer_DirectX11::sInstance = nullptr;
+	DirectX11_Renderer* DirectX11_Renderer::sInstance = nullptr;
 
-	Renderer_DirectX11::Renderer_DirectX11()
+	DirectX11_Renderer::DirectX11_Renderer()
 	{
 		mWindow = nullptr;
 		AIO_ASSERT(!sInstance, "OpenGL API object was already been made");
@@ -20,7 +20,7 @@ namespace Alexio
 		GetAdapters();
 	}
 
-	void Renderer_DirectX11::Initialize()
+	void DirectX11_Renderer::Initialize()
 	{
 		if (mAdapters.empty())
 			AIO_LOG_ERROR("NO IDXGI Adapter found");
@@ -69,42 +69,42 @@ namespace Alexio
 		AIO_LOG_INFO("DirectX 11 Initialized");
 	}
 
-	void Renderer_DirectX11::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+	void DirectX11_Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
 		CleanRenderTarget();
 		mSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
 		CreateRenderTarget();
 	}
 
-	void Renderer_DirectX11::Draw()
+	void DirectX11_Renderer::Draw()
 	{
 	}
 
-	void Renderer_DirectX11::ClearColor(float r, float g, float b, float a)
+	void DirectX11_Renderer::ClearColor(float r, float g, float b, float a)
 	{
 		FLOAT bgColor[] = { r, g, b, a };
 		mDeviceContext->ClearRenderTargetView(mRenderTargetView.Get(), bgColor);
 	}
 
-	void Renderer_DirectX11::SwapBuffer()
+	void DirectX11_Renderer::SwapBuffer()
 	{
 		mSwapChain->Present((UINT)mVSync, 0);
 	}
 
-	void Renderer_DirectX11::ImGuiBackendInit()
+	void DirectX11_Renderer::ImGuiBackendInit()
 	{
 		HWND hwnd = (HWND)Engine::GetInstance()->GetWindow()->GetHandle();
 		ImGui_ImplWin32_Init(hwnd);
 		ImGui_ImplDX11_Init(mDevice.Get(), mDeviceContext.Get());
 	}
 
-	void Renderer_DirectX11::ImGuiBackendBegin()
+	void DirectX11_Renderer::ImGuiBackendBegin()
 	{
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 	}
 
-	void Renderer_DirectX11::ImGuiBackendUpdate()
+	void DirectX11_Renderer::ImGuiBackendUpdate()
 	{
 		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), NULL);
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -116,26 +116,26 @@ namespace Alexio
 		}
 	}
 
-	void Renderer_DirectX11::ImGuiBackendShutDown()
+	void DirectX11_Renderer::ImGuiBackendShutDown()
 	{
 		ImGui_ImplDX11_Shutdown();
 		ImGui_ImplWin32_Shutdown();
 	}
 
-	void Renderer_DirectX11::CreateRenderTarget()
+	void DirectX11_Renderer::CreateRenderTarget()
 	{
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
 		mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(backBuffer.GetAddressOf()));
 		mDevice->CreateRenderTargetView(backBuffer.Get(), NULL, mRenderTargetView.GetAddressOf());
 	}
 
-	void Renderer_DirectX11::CleanRenderTarget()
+	void DirectX11_Renderer::CleanRenderTarget()
 	{
 		if (mRenderTargetView)
 			mRenderTargetView->Release();
 	}
 
-	void Renderer_DirectX11::GetAdapters()
+	void DirectX11_Renderer::GetAdapters()
 	{
 		if (!mAdapters.empty())
 			mAdapters.clear();

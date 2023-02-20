@@ -7,11 +7,11 @@ namespace Alexio
 	class Shader
 	{
 	public:
-		Shader(const std::string& vertexSrc, const std::string& fragmentSrc);
-		~Shader();
+		virtual ~Shader() = default;
 
-		void Bind() const;
-		void Unbind() const;
+		static std::unique_ptr<Shader> Create(const std::string& vertexSrc, const std::string& pixelSrc);
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
 	private:
 		uint32_t mID;
 	};

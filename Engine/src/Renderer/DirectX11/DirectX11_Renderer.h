@@ -13,10 +13,10 @@ struct AdapterData
 
 namespace Alexio
 {
-	class Renderer_DirectX11 : public RendererAPI 
+	class DirectX11_Renderer : public RendererAPI 
 	{
 	public:
-		Renderer_DirectX11();
+		DirectX11_Renderer();
 
 		void Initialize() override;
 		void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
@@ -25,10 +25,10 @@ namespace Alexio
 		void SwapBuffer() override;
 
 		// Getters
-		inline Microsoft::WRL::ComPtr<ID3D11Device>& GetDevice() { return mDevice; }
-		inline Microsoft::WRL::ComPtr<ID3D11DeviceContext>& GetDeviceContext() { return mDeviceContext; }
-		inline Microsoft::WRL::ComPtr<IDXGISwapChain>& GetSwapChain() { return mSwapChain; }
-		inline std::string GetName() override { return "DirectX 11"; };
+		inline Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const { return mDevice; }
+		inline Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetDeviceContext() const { return mDeviceContext; }
+		inline Microsoft::WRL::ComPtr<IDXGISwapChain> GetSwapChain() const { return mSwapChain; }
+		inline std::string GetName() const override { return "DirectX 11"; }
 
 		void CreateRenderTarget();
 		void CleanRenderTarget();
@@ -41,7 +41,7 @@ namespace Alexio
 		void ImGuiBackendUpdate() override;
 		void ImGuiBackendShutDown() override;
 	private:
-		static Renderer_DirectX11* sInstance;
+		static DirectX11_Renderer* sInstance;
 	private:
 		std::vector<AdapterData> mAdapters;
 		Microsoft::WRL::ComPtr<ID3D11Device> mDevice;

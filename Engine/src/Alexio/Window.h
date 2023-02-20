@@ -24,8 +24,8 @@ namespace Alexio
 
 		virtual void PollEvents() = 0;
 
-		inline uint32_t GetWidth() { return mWidth; }
-		inline uint32_t GetHeight() { return mHeight; }
+		inline uint32_t GetWidth()  const { return mWidth; }
+		inline uint32_t GetHeight() const { return mHeight; }
 
 		inline void SetWidth(uint32_t width) { mWidth = width; }
 		inline void SetHeight(uint32_t height) { mHeight = height; }
@@ -33,7 +33,7 @@ namespace Alexio
 		inline static WindowAPI GetAPI() { return sAPI; }
 		inline static void SetAPI(WindowAPI api) { sAPI = api; }
 
-		virtual inline void* GetHandle() = 0;
+		virtual inline void* GetHandle() const = 0;
 		virtual inline void SetEventCallback(const EventCallbackFn& callback) = 0;
 	public:
 		static std::unique_ptr<Window> Create(const std::string& title, uint32_t width, uint32_t height);

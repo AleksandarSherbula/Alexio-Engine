@@ -6,11 +6,11 @@
 
 namespace Alexio
 {
-	class Renderer_OpenGL : public RendererAPI
+	class OpenGL_Renderer : public RendererAPI
 	{
 	public:
-		Renderer_OpenGL();
-		~Renderer_OpenGL();
+		OpenGL_Renderer();
+		~OpenGL_Renderer();
 
 		void Initialize() override;
 		void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
@@ -18,7 +18,7 @@ namespace Alexio
 		void ClearColor(float r, float g, float b, float a) override;
 		void SwapBuffer() override;
 
-		inline std::string GetName() override { return "OpenGL"; };
+		inline std::string GetName() const override { return "OpenGL"; };
 	private:
 		void ImGuiBackendInit() override;
 		void ImGuiBackendBegin() override;
@@ -26,7 +26,7 @@ namespace Alexio
 		void ImGuiBackendShutDown() override;
 
 	private:
-		static Renderer_OpenGL* sInstance;
+		static OpenGL_Renderer* sInstance;
 	private:
 		std::unique_ptr<VertexArray> va;
 		std::shared_ptr<VertexBuffer> vb;

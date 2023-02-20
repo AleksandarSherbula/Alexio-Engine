@@ -9,7 +9,7 @@ namespace Alexio
 	public:
 		virtual ~RendererAPI() = default;
 
-		static std::shared_ptr<RendererAPI> Create();
+		static std::unique_ptr<RendererAPI> Create();
 
 		virtual void Initialize() = 0;
 		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
@@ -22,11 +22,11 @@ namespace Alexio
 		virtual void ImGuiBackendUpdate() = 0;
 		virtual void ImGuiBackendShutDown() = 0;
 
-		virtual std::string GetName() = 0;
+		virtual std::string GetName() const = 0;
 
 		inline void SetWindow(Window* window) { mWindow = window; }
 		inline void SetVSync(bool vSync) { mVSync = vSync; }
-		inline bool IsVSync() { return mVSync; }
+		inline bool IsVSync() const { return mVSync; }
 
 	protected:
 		bool mVSync;

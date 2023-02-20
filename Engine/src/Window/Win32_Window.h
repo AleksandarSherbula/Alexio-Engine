@@ -13,7 +13,7 @@ namespace Alexio
 
 		void PollEvents() override;
 
-		inline void* GetHandle() override { return mHandle; }
+		inline void* GetHandle() const override { return mHandle; }
 		void SetEventCallback(const EventCallbackFn& callback) override;
 	private:
 		HWND mHandle;

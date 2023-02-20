@@ -5,7 +5,7 @@
 
 namespace Alexio
 {	
-	std::shared_ptr<RendererAPI> Renderer::sRendererAPI = nullptr;
+	std::unique_ptr<RendererAPI> Renderer::sRendererAPI = nullptr;
 	ImGUI* Renderer::imgui = nullptr;
 	GraphicsAPI Renderer::s_API = GraphicsAPI::OpenGL;
 
@@ -23,19 +23,9 @@ namespace Alexio
 		imgui->OnAttach();
 	}
 
-	void Renderer::DrawFrame()
+	void Renderer::Draw()
 	{
-		sRendererAPI->ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-		imgui->Begin();
-
-		imgui->OnUpdate();
-
 		sRendererAPI->Draw();
-
-		imgui->End();
-
-		sRendererAPI->SwapBuffer();
 	}
 
 	void Renderer::End()
@@ -44,7 +34,22 @@ namespace Alexio
 		delete imgui;
 	}
 
-	void Renderer::SetAPI(GraphicsAPI api)
+	void Renderer::ClearColor(float r, float g, float b, float a)
+	{
+		sRendererAPI->ClearColor(r, g, b, a);
+	}
+
+	void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+	{
+		sRendererAPI->SetViewport(x, y, width, height);
+	}
+
+	void Renderer::SwapBuffer()
+	{
+		sRendererAPI->SwapBuffer();
+	}
+
+	void Renderer::SetGraphicsAPI(GraphicsAPI api)
 	{
 		s_API = api;
 

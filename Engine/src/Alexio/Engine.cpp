@@ -39,7 +39,7 @@ namespace Alexio
 
 	void Engine::Run()
 	{
-		Renderer::SetAPI(GraphicsAPI::OpenGL);
+		Renderer::SetGraphicsAPI(GraphicsAPI::DirectX11);
 
 		std::string apiName = (Renderer::GetGraphicsAPI() == GraphicsAPI::OpenGL) ? "OpenGL" : "DirectX11";
 
@@ -65,7 +65,15 @@ namespace Alexio
 				(Window::GetAPI() == WindowAPI::Win32 && Input::KeyHeld(Alexio::L_ALT) && Input::KeyPressed(Alexio::F4)))
 				mRunning = false;
 			
-			Renderer::DrawFrame();
+			Renderer::ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+			Renderer::Draw();
+
+			Renderer::imgui->Begin();
+			Renderer::imgui->OnUpdate();
+			Renderer::imgui->End();
+
+			Renderer::SwapBuffer();
 		}
 
 		Renderer::End();
