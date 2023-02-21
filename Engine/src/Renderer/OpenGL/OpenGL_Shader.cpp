@@ -35,38 +35,38 @@ namespace Alexio
 			return;
 		}
 
-		// Create an empty fragment shader handle
-		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		// Create an empty pixel shader handle
+		GLuint pixelShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-		// Send the fragment shader source code to GL
+		// Send the pixel shader source code to GL
 		// Note that std::string's .c_str is NULL character terminated.
 		source = pixelSrc.c_str();
-		glShaderSource(fragmentShader, 1, &source, 0);
+		glShaderSource(pixelShader, 1, &source, 0);
 
-		// Compile the fragment shader
-		glCompileShader(fragmentShader);
+		// Compile the pixel shader
+		glCompileShader(pixelShader);
 
-		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &isCompiled);
+		glGetShaderiv(pixelShader, GL_COMPILE_STATUS, &isCompiled);
 		if (isCompiled == GL_FALSE)
 		{
 			GLint maxLength = 0;
-			glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
+			glGetShaderiv(pixelShader, GL_INFO_LOG_LENGTH, &maxLength);
 
 			// The maxLength includes the NULL character
 			std::vector<GLchar> infoLog(maxLength);
-			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &infoLog[0]);
+			glGetShaderInfoLog(pixelShader, maxLength, &maxLength, &infoLog[0]);
 
 			// We don't need the shader anymore.
-			glDeleteShader(fragmentShader);
+			glDeleteShader(pixelShader);
 			// Either of them. Don't leak shaders.
 			glDeleteShader(vertexShader);
 
 			AIO_LOG_ERROR("{0}", infoLog.data());
-			AIO_ASSERT(false, "Fragment shader compilation failure!");
+			AIO_ASSERT(false, "pixel shader compilation failure!");
 			return;
 		}
 
-		// Vertex and fragment shaders are successfully compiled.
+		// Vertex and pixel shaders are successfully compiled.
 		// Now time to link them together into a program.
 		// Get a program object.
 		mID = glCreateProgram();
@@ -74,7 +74,7 @@ namespace Alexio
 
 		// Attach our shaders to our program
 		glAttachShader(program, vertexShader);
-		glAttachShader(program, fragmentShader);
+		glAttachShader(program, pixelShader);
 
 		// Link our program
 		glLinkProgram(program);
@@ -95,7 +95,7 @@ namespace Alexio
 			glDeleteProgram(program);
 			// Don't leak shaders either.
 			glDeleteShader(vertexShader);
-			glDeleteShader(fragmentShader);
+			glDeleteShader(pixelShader);
 
 			AIO_LOG_ERROR("{0}", infoLog.data());
 			AIO_ASSERT(false, "Shader link failure!");
@@ -104,12 +104,16 @@ namespace Alexio
 
 		// Always detach shaders after a successful link.
 		glDetachShader(program, vertexShader);
-		glDetachShader(program, fragmentShader);
+		glDetachShader(program, pixelShader);
 	}
 
 	OpenGL_Shader::~OpenGL_Shader()
-	{
+	{		
 		glDeleteProgram(mID);
+	}
+
+	void OpenGL_Shader::Initialize()
+	{
 	}
 
 	void OpenGL_Shader::Bind() const

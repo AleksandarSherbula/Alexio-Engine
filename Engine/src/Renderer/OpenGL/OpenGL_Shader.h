@@ -10,8 +10,11 @@ namespace Alexio
 		OpenGL_Shader(const std::string& vertexSrc, const std::string& pixelSrc);
 		~OpenGL_Shader();
 
+
+		void Initialize() override;
 		void Bind() const override;
 		void Unbind() const override;
+		
 	private:
 		uint32_t mID;
 	};

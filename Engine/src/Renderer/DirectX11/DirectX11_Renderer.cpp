@@ -76,7 +76,7 @@ namespace Alexio
 		CreateRenderTarget();
 	}
 
-	void DirectX11_Renderer::Draw()
+	void DirectX11_Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexData>& vertexData)
 	{
 	}
 

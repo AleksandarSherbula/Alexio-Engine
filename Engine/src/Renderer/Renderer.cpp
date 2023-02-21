@@ -23,9 +23,9 @@ namespace Alexio
 		imgui->OnAttach();
 	}
 
-	void Renderer::Draw()
+	void Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexData>& vertexData)
 	{
-		sRendererAPI->Draw();
+		sRendererAPI->Draw(shader, vertexData);
 	}
 
 	void Renderer::End()

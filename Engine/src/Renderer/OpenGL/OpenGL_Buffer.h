@@ -12,8 +12,8 @@ namespace Alexio
 
 		~OpenGL_VertexBuffer();
 
-		void Bind() override;
-		void Unbind() override;
+		void Bind() const override;
+		void Unbind() const override;
 
 		BufferLayout& GetLayout() override { return mLayout; }
 		void SetLayout(const BufferLayout& layout) override { mLayout = layout; }
@@ -37,6 +37,22 @@ namespace Alexio
 	private:
 		uint32_t mID;
 		uint32_t mCount;
+	};
+
+	class VertexArray : public VertexData
+	{
+	public:
+		VertexArray();
+		~VertexArray();
+
+		void Bind() const override;
+		void Unbind() const override;
+
+		void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer);
+		void SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer);
+
+	private:
+		uint32_t mID;
 	};
 
 }

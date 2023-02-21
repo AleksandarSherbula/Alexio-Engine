@@ -14,7 +14,7 @@ namespace Alexio
 	{
 	public:
 		static void Begin(Window* window);
-		static void Draw();
+		static void Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexData>& vertexData);
 		static void End();
 
 		static void ClearColor(float r, float g, float b, float a);

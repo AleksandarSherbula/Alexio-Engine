@@ -58,8 +58,8 @@ namespace Alexio
 			case ShaderDataType::Float2:  return 2;
 			case ShaderDataType::Float3:  return 3;
 			case ShaderDataType::Float4:  return 4;
-			case ShaderDataType::Mat3:    return 3; // 3* float3
-			case ShaderDataType::Mat4:    return 4; // 4* float4
+			case ShaderDataType::Mat3:    return 3 * 3; // 3* float3
+			case ShaderDataType::Mat4:    return 4 * 4; // 4* float4
 			case ShaderDataType::Int:     return 1;
 			case ShaderDataType::Int2:    return 2;
 			case ShaderDataType::Int3:    return 3;
@@ -112,8 +112,8 @@ namespace Alexio
 	public:
 		virtual ~VertexBuffer() = default;
 
-		virtual void Bind() = 0;
-		virtual void Unbind() = 0;
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
 
 		virtual void SetData(const void* data, uint32_t size) = 0;
 
@@ -137,4 +137,22 @@ namespace Alexio
 		static std::unique_ptr<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 	};
 
+	class VertexData
+	{
+	public:
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+
+		virtual void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer) = 0;
+		virtual void SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer) = 0;
+
+		inline std::vector<std::shared_ptr<VertexBuffer>> GetVertexBuffers() { return mVertexBuffers; }
+		inline std::shared_ptr<IndexBuffer> GetIndexBuffer() { return mIndexBuffer; }
+
+		static std::unique_ptr<VertexData> Create();
+
+	protected:
+		std::vector<std::shared_ptr<VertexBuffer>> mVertexBuffers;
+		std::shared_ptr<IndexBuffer> mIndexBuffer;
+	};
 }

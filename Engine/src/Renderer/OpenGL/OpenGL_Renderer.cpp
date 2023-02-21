@@ -55,135 +55,7 @@ namespace Alexio
 
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 #endif
-		AIO_LOG_INFO("OpenGL Initialized");
-
-
-		/// Test code ///
-
-		float vertices[] =
-		{
-		   -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
-			0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
-			0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f
-		};
-
-		uint32_t indices[] =
-		{
-			0, 1, 2
-		};
-
-		va = std::make_unique<VertexArray>();
-		va->Bind();
-
-		vb = VertexBuffer::Create(vertices, sizeof(vertices));
-		vb->Bind();
-
-		ib = IndexBuffer::Create(indices, 3);
-		ib->Bind();
-
-		{
-			BufferLayout layout =
-			{
-				{ShaderDataType::Float2, "aPosition" },
-				{ShaderDataType::Float4, "aColor" }
-			};
-			vb->SetLayout(layout);
-		}
-
-		va->AddVertexBuffer(vb);
-		va->SetIndexBuffer(ib);
-
-		std::string vertexSrc = R"(
-			#version 330 core
-			
-			layout(location = 0) in vec3 aPosition;
-			layout(location = 1) in vec4 aColor;
-
-			out vec3 vPosition;
-			out vec4 vColor;
-
-			void main()
-			{
-				vPosition = aPosition;
-				vColor = aColor;
-				gl_Position = vec4(aPosition, 1.0);	
-			}
-			)";
-
-		std::string fragmentSrc = R"(
-			#version 330 core
-			
-			layout(location = 0) out vec4 color;
-
-			in vec3 vPosition;
-			in vec4 vColor;
-
-			void main()
-			{
-				color = vColor;
-			}
-			)";
-
-		shader = Shader::Create(vertexSrc, fragmentSrc);
-		va->Unbind();
-
-		float blueSquareVertices[] =
-		{
-		   -0.5f, -0.5f,
-			0.5f, -0.5f,
-			0.5f,  0.5f,
-		   -0.5f,  0.5f
-		};
-
-		uint32_t blueSquareIndices[] =
-		{
-			0, 1, 2,
-			2, 3, 0
-		};
-
-		blueSquareVA = std::make_unique<VertexArray>();
-		blueSquareVA->Bind();
-
-		blueSquareVB = VertexBuffer::Create(blueSquareVertices, sizeof(blueSquareVertices));
-		blueSquareVB->Bind();
-
-		blueSquareIB = IndexBuffer::Create(blueSquareIndices, 6);
-		blueSquareIB->Bind();
-
-		{
-			BufferLayout layout =
-			{
-				{ShaderDataType::Float2, "aPosition" }
-			};
-			blueSquareVB->SetLayout(layout);
-		}
-
-		blueSquareVA->AddVertexBuffer(blueSquareVB);
-		blueSquareVA->SetIndexBuffer(blueSquareIB);
-
-		std::string blueSquareVertexSrc = R"(
-			#version 330 core
-			
-			layout(location = 0) in vec3 aPosition;
-
-			void main()
-			{				
-				gl_Position = vec4(aPosition, 1.0);	
-			}
-			)";
-
-		std::string blueSquareFragmentSrc = R"(
-			#version 330 core
-			
-			layout(location = 0) out vec4 color;
-
-			void main()
-			{
-				color = vec4(0.0, 0.8, 1.0, 1.0);
-			}
-			)";
-
-		blueSquareShader = Shader::Create(blueSquareVertexSrc, blueSquareFragmentSrc);
+		AIO_LOG_INFO("OpenGL Initialized");		
 	}
 
 	void OpenGL_Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -191,20 +63,13 @@ namespace Alexio
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGL_Renderer::Draw()
+	void OpenGL_Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexData>& vertexData)
 	{
-		/// Test code ///
-		blueSquareVA->Bind();
-		blueSquareShader->Bind();
-		glDrawElements(GL_TRIANGLES, blueSquareIB->GetCount(), GL_UNSIGNED_INT, 0);
-		blueSquareShader->Unbind();
-		blueSquareVA->Unbind();
-
-		va->Bind();
+		vertexData->Bind();
 		shader->Bind();
-		glDrawElements(GL_TRIANGLES, ib->GetCount(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, vertexData->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 		shader->Unbind();
-		va->Unbind();
+		vertexData->Unbind();
 	}
 
 	void OpenGL_Renderer::ClearColor(float r, float g, float b, float a)
