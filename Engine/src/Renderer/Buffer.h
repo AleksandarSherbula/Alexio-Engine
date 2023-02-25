@@ -117,11 +117,13 @@ namespace Alexio
 
 		virtual void SetData(const void* data, uint32_t size) = 0;
 
-		virtual const BufferLayout& GetLayout() = 0;
-		virtual void SetLayout(const BufferLayout& layout) = 0;
+		void SetLayout(const BufferLayout& layout) { mLayout = layout; }
+		const BufferLayout& GetLayout() const { return mLayout; }
 
-		static std::unique_ptr<VertexBuffer> Create(uint32_t size);
-		static std::unique_ptr<VertexBuffer> Create(float* vertices, uint32_t size);
+		static std::shared_ptr<VertexBuffer> Create(uint32_t size);
+		static std::shared_ptr<VertexBuffer> Create(float* vertices, uint32_t size);
+	protected:
+		BufferLayout mLayout;
 	};
 
 	class IndexBuffer
@@ -132,12 +134,13 @@ namespace Alexio
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 
-		virtual uint32_t GetCount() = 0;
-
-		static std::unique_ptr<IndexBuffer> Create(uint32_t* indices, uint32_t count);
+		inline uint32_t GetCount() const { return mCount; }
+		static std::shared_ptr<IndexBuffer> Create(uint32_t* indices, uint32_t count);
+	protected:
+		uint32_t mCount;
 	};
 
-	class VertexData
+	class VertexResources
 	{
 	public:
 		virtual void Bind() const = 0;
@@ -149,7 +152,7 @@ namespace Alexio
 		inline std::vector<std::shared_ptr<VertexBuffer>> GetVertexBuffers() { return mVertexBuffers; }
 		inline std::shared_ptr<IndexBuffer> GetIndexBuffer() { return mIndexBuffer; }
 
-		static std::unique_ptr<VertexData> Create();
+		static std::shared_ptr<VertexResources> Create();
 
 	protected:
 		std::vector<std::shared_ptr<VertexBuffer>> mVertexBuffers;

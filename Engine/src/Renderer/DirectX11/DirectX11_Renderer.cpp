@@ -62,27 +62,61 @@ namespace Alexio
 			mDevice.GetAddressOf(),
 			&featureLevel, // Supported feature level
 			mDeviceContext.GetAddressOf());
-		AIO_ASSERT(!FAILED(hr), "Failed to create device and swapchain: " + ResultInfo(hr) + "\n");
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create device and swapchain: " + ResultInfo(hr) + "\n");
 
 		CreateRenderTarget();
+
+		D3D11_VIEWPORT viewport;
+		ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+		viewport.TopLeftX = 0;
+		viewport.TopLeftY = 0;
+		viewport.Width = (FLOAT)Engine::GetInstance()->GetWindow()->GetWidth();
+		viewport.Height = (FLOAT)Engine::GetInstance()->GetWindow()->GetHeight();
+
+		mDeviceContext->RSSetViewports(1, &viewport);
+
+		D3D11_RASTERIZER_DESC rasterizerDesc;
+		ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
+		rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+		rasterizerDesc.CullMode = D3D11_CULL_NONE;
+
+		hr = mDevice->CreateRasterizerState(&rasterizerDesc, mRasterizerState.GetAddressOf());
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create rasterizer state: " + ResultInfo(hr) + "\n");
 
 		AIO_LOG_INFO("DirectX 11 Initialized");
 	}
 
 	void DirectX11_Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
-		CleanRenderTarget();
-		mSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
-		CreateRenderTarget();
+		if (mDevice != nullptr)
+		{
+			CleanRenderTarget();
+			mSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+			CreateRenderTarget();
+		}
+
+		D3D11_VIEWPORT viewport;
+		ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+		viewport.TopLeftX = 0;
+		viewport.TopLeftY = 0;
+		viewport.Width = (FLOAT)width;
+		viewport.Height = (FLOAT)height;
+
+		mDeviceContext->RSSetViewports(1, &viewport);
 	}
 
-	void DirectX11_Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexData>& vertexData)
+	void DirectX11_Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexResources>& vertexData)
 	{
+		mDeviceContext->RSSetState(mRasterizerState.Get());
+
+		shader->Bind();
+		mDeviceContext->DrawIndexed(shader->GetVertexResources()->GetIndexBuffer()->GetCount(), 0, 0);		
 	}
 
 	void DirectX11_Renderer::ClearColor(float r, float g, float b, float a)
 	{
 		FLOAT bgColor[] = { r, g, b, a };
+		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), NULL);
 		mDeviceContext->ClearRenderTargetView(mRenderTargetView.Get(), bgColor);
 	}
 
@@ -105,8 +139,7 @@ namespace Alexio
 	}
 
 	void DirectX11_Renderer::ImGuiBackendUpdate()
-	{
-		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), NULL);
+	{		
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

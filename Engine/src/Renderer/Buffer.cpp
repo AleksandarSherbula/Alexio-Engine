@@ -10,52 +10,52 @@
 
 namespace Alexio
 {
-    std::unique_ptr<VertexBuffer> VertexBuffer::Create(uint32_t size)
+    std::shared_ptr<VertexBuffer> VertexBuffer::Create(uint32_t size)
     {
         switch (Renderer::GetGraphicsAPI())
         {
         case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
-        case GraphicsAPI::OpenGL: return std::make_unique<OpenGL_VertexBuffer>(size);
-        //case GraphicsAPIflag::DirectX11: return new Renderer_DirectX11();
+        case GraphicsAPI::OpenGL: return std::make_shared<OpenGL_VertexBuffer>(size);
+        case GraphicsAPI::DirectX11: return std::make_shared<DirectX11_VertexBuffer>(size);
         }
 
         AIO_ASSERT(false, "Unknown Rendering API");
         return nullptr;
     }
 
-    std::unique_ptr<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
+    std::shared_ptr<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
     {
         switch (Renderer::GetGraphicsAPI())
         {
         case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
-        case GraphicsAPI::OpenGL: return std::make_unique<OpenGL_VertexBuffer>(vertices, size);
-        //case GraphicsAPI::DirectX11: return std::make_unique<DirectX11_VertexBuffer>(vertices, size);
+        case GraphicsAPI::OpenGL: return std::make_shared<OpenGL_VertexBuffer>(vertices, size);
+        case GraphicsAPI::DirectX11: return std::make_shared<DirectX11_VertexBuffer>(vertices, size);
         }
 
         AIO_ASSERT(false, "Unknown Rendering API");
         return nullptr;
     }
 
-    std::unique_ptr<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
+    std::shared_ptr<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
     {
         switch (Renderer::GetGraphicsAPI())
         {
         case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
-        case GraphicsAPI::OpenGL: return std::make_unique<OpenGL_IndexBuffer>(indices, count);
-        case GraphicsAPI::DirectX11: return std::make_unique<DirectX11_IndexBuffer>(indices, count);
+        case GraphicsAPI::OpenGL: return std::make_shared<OpenGL_IndexBuffer>(indices, count);
+        case GraphicsAPI::DirectX11: return std::make_shared<DirectX11_IndexBuffer>(indices, count);
         }
 
         AIO_ASSERT(false, "Unknown Rendering API");
         return nullptr;
     }
 
-    std::unique_ptr<VertexData> VertexData::Create()
+    std::shared_ptr<VertexResources> VertexResources::Create()
     {
         switch (Renderer::GetGraphicsAPI())
         {
         case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
-        case GraphicsAPI::OpenGL: return std::make_unique<VertexArray>();
-        case GraphicsAPI::DirectX11: return std::make_unique<DirectX11_VertexData>();
+        case GraphicsAPI::OpenGL: return std::make_shared<VertexArray>();
+        case GraphicsAPI::DirectX11: return std::make_shared<DirectX11_VertexResources>();
         }
 
         AIO_ASSERT(false, "Unknown Rendering API");

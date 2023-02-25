@@ -13,17 +13,17 @@ namespace Alexio
     {
     }
 
-    std::unique_ptr<Window> Window::Create(const std::string& title, uint32_t width, uint32_t height)
+    std::shared_ptr<Window> Window::Create(const std::string& title, uint32_t width, uint32_t height)
     {
 #ifdef AIO_PLATFORM_WINDOWS
         switch (sAPI)
         {
-        case WindowAPI::GLFW:  return std::make_unique<GLFW_Window>(title, width, height);
-        case WindowAPI::Win32: return std::make_unique<Win32_Window>(title, width, height);
+        case WindowAPI::GLFW:  return std::make_shared<GLFW_Window>(title, width, height);
+        case WindowAPI::Win32: return std::make_shared<Win32_Window>(title, width, height);
         }
 #else
         if (Renderer::GetGraphicsAPI() == GraphicsAPI::OpenGL)
-            return std::make_unique<GLFW_Window>(title, width, height);
+            return std::make_shared<GLFW_Window>(title, width, height);
         else
             AIO_LOG_ERROR("DirectX11 is only supported on Windows");
 #endif

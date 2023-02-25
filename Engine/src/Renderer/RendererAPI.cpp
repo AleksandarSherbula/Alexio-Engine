@@ -10,12 +10,12 @@
 
 namespace Alexio
 {
-    std::unique_ptr<RendererAPI> RendererAPI::Create()
+    std::shared_ptr<RendererAPI> RendererAPI::Create()
     {
 		switch (Renderer::GetGraphicsAPI())
 		{
-		case GraphicsAPI::OpenGL:    return  std::make_unique<OpenGL_Renderer>();
-		case GraphicsAPI::DirectX11: return std::make_unique<DirectX11_Renderer>();
+		case GraphicsAPI::OpenGL:    return  std::make_shared<OpenGL_Renderer>();
+		case GraphicsAPI::DirectX11: return  std::make_shared<DirectX11_Renderer>();
 		}
 
 		AIO_ASSERT(false, "Unknown API has been selected.\n");

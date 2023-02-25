@@ -22,5 +22,6 @@
 	#include <Windows.h>
 	#include <comdef.h>
 	#include <d3d11.h>
+	#include <d3dcompiler.h>
 	#include <wrl/client.h>
 #endif // AIO_PLATFORM_WINDOWS

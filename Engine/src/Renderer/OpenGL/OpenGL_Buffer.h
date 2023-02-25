@@ -15,13 +15,10 @@ namespace Alexio
 		void Bind() const override;
 		void Unbind() const override;
 
-		BufferLayout& GetLayout() override { return mLayout; }
-		void SetLayout(const BufferLayout& layout) override { mLayout = layout; }
-
 		void SetData(const void* data, uint32_t size) override;
 	private:
 		uint32_t mID;
-		BufferLayout mLayout;
+		
 	};
 
 	class OpenGL_IndexBuffer : public IndexBuffer
@@ -33,13 +30,11 @@ namespace Alexio
 		void Bind() override;
 		void Unbind() override;
 
-		inline uint32_t GetCount() override { return mCount; };
 	private:
 		uint32_t mID;
-		uint32_t mCount;
 	};
 
-	class VertexArray : public VertexData
+	class VertexArray : public VertexResources
 	{
 	public:
 		VertexArray();

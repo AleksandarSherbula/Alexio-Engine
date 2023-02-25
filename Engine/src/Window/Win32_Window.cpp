@@ -97,14 +97,11 @@ namespace Alexio
 		{
 		case WM_SIZE:
 		{			
-			if (wParam != SIZE_MINIMIZED)
-			{
-				UINT width = LOWORD(lParam);
-				UINT height = HIWORD(lParam);
+			UINT width = LOWORD(lParam);
+			UINT height = HIWORD(lParam);
 
-				WindowResizeEvent event(width, height);
-				ecFn(event);
-			}
+			WindowResizeEvent event(width, height);
+			ecFn(event);
 			return 0;
 		}
 		case WM_CLOSE:

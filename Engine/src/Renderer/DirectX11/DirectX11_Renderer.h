@@ -20,7 +20,7 @@ namespace Alexio
 
 		void Initialize() override;
 		void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
-		void Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexData>& vertexData) override;
+		void Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexResources>& vertexResources = nullptr) override;
 		void ClearColor(float r, float g, float b, float a) override;
 		void SwapBuffer() override;
 
@@ -48,5 +48,8 @@ namespace Alexio
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> mDeviceContext;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> mRenderTargetView;
+		Microsoft::WRL::ComPtr<ID3D11RasterizerState> mRasterizerState;
 	};
+
+	std::string ResultInfo(HRESULT hr);
 }

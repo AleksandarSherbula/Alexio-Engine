@@ -5,7 +5,7 @@
 
 namespace Alexio
 {	
-	std::unique_ptr<RendererAPI> Renderer::sRendererAPI = nullptr;
+	std::shared_ptr<RendererAPI> Renderer::sRendererAPI = nullptr;
 	ImGUI* Renderer::imgui = nullptr;
 	GraphicsAPI Renderer::s_API = GraphicsAPI::OpenGL;
 
@@ -23,9 +23,9 @@ namespace Alexio
 		imgui->OnAttach();
 	}
 
-	void Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexData>& vertexData)
+	void Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexResources>& vertexResources)
 	{
-		sRendererAPI->Draw(shader, vertexData);
+		sRendererAPI->Draw(shader, vertexResources);
 	}
 
 	void Renderer::End()
@@ -40,8 +40,9 @@ namespace Alexio
 	}
 
 	void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
-	{
-		sRendererAPI->SetViewport(x, y, width, height);
+	{	
+		if (sRendererAPI != nullptr)
+			sRendererAPI->SetViewport(x, y, width, height);
 	}
 
 	void Renderer::SwapBuffer()

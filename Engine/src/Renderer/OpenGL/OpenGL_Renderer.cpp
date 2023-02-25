@@ -63,13 +63,13 @@ namespace Alexio
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGL_Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexData>& vertexData)
+	void OpenGL_Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexResources>& vertexResources)
 	{
-		vertexData->Bind();
+		vertexResources->Bind();
 		shader->Bind();
-		glDrawElements(GL_TRIANGLES, vertexData->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, vertexResources->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 		shader->Unbind();
-		vertexData->Unbind();
+		vertexResources->Unbind();
 	}
 
 	void OpenGL_Renderer::ClearColor(float r, float g, float b, float a)

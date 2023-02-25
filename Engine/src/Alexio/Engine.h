@@ -32,20 +32,12 @@ namespace Alexio
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 	private:
-		std::unique_ptr<Window> mWindow;
+		std::shared_ptr<Window> mWindow;
 		bool mRunning;
 		
 		LayerStack mLayerStack;
 	public:
-		std::shared_ptr<VertexData> vd;
-		std::shared_ptr<VertexBuffer> vb;
-		std::shared_ptr<IndexBuffer> ib;
-		std::shared_ptr<Shader> shader;
-
-		std::shared_ptr<VertexData> blueSquareVD;
-		std::shared_ptr<VertexBuffer> blueSquareVB;
-		std::shared_ptr<IndexBuffer> blueSquareIB;
-		std::shared_ptr<Shader> blueSquareShader;
+		
 	private:
 		static Engine* sInstance;
 	};

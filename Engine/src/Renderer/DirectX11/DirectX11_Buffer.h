@@ -16,8 +16,9 @@ namespace Alexio
 		void Unbind() const override;
 
 		void SetData(const void* data, uint32_t size) override;
+
 	private:
-		uint32_t mID;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> mBuffer;
 	};
 
 	class DirectX11_IndexBuffer : public IndexBuffer
@@ -28,15 +29,15 @@ namespace Alexio
 
 		void Bind() override;
 		void Unbind() override;
-
-		uint32_t GetCount() override;
+	private:
+		Microsoft::WRL::ComPtr<ID3D11Buffer> mBuffer;
 	};
 
-	class DirectX11_VertexData : public VertexData
+	class DirectX11_VertexResources : public VertexResources
 	{
 	public:
-		DirectX11_VertexData();
-		~DirectX11_VertexData();
+		DirectX11_VertexResources();
+		~DirectX11_VertexResources();
 
 		void Bind() const override;
 		void Unbind() const override;
