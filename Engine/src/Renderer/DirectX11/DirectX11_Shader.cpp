@@ -28,7 +28,7 @@ namespace Alexio
 	DirectX11_Shader::DirectX11_Shader(const std::string& name)
 	{
 		mName = name;
-		std::string filepath = "../Game/res/shaders/DX11/" + name + ".hlsl";
+		std::string filepath = "res/shaders/DX11/" + name + ".hlsl";
 		mVertexSource = filepath;
 		mPixelSource = filepath;
 	}

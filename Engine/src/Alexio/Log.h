@@ -16,8 +16,6 @@ namespace Alexio
 	};
 }
 
-#ifdef AIO_DEBUG
-
 #define AIO_LOG_TRACE(...)       Alexio::Log::sLogger->trace(__VA_ARGS__)
 #define AIO_LOG_INFO(...)        Alexio::Log::sLogger->info(__VA_ARGS__)
 #define AIO_LOG_WARN(...)        Alexio::Log::sLogger->warn(__VA_ARGS__)
@@ -25,15 +23,3 @@ namespace Alexio
 #define AIO_LOG_CRITICAL(...)    Alexio::Log::sLogger->critical(__VA_ARGS__)
 
 #define AIO_ASSERT(x, ...)  if(!(x)) { AIO_LOG_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } 
-
-#else
-
-#define AIO_LOG_TRACE(...)
-#define AIO_LOG_INFO(...)
-#define AIO_LOG_WARN(...)
-#define AIO_LOG_ERROR(...)
-#define AIO_LOG_CRITICAL(...)
-
-#define AIO_ASSERT(x, ...)
-
-#endif

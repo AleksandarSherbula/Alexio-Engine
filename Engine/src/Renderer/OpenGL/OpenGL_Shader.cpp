@@ -18,7 +18,7 @@ namespace Alexio
 	OpenGL_Shader::OpenGL_Shader(const std::string& name)
 	{
 		mName = name;
-		std::string filepath = "../Game/res/shaders/OpenGL/" + name + ".glsl";
+		std::string filepath = "res/shaders/OpenGL/" + name + ".glsl";
 
 		std::string source = ReadFile(filepath);
 		mShaderSource = PreProcess(source);
