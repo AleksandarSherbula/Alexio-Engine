@@ -12,11 +12,11 @@ namespace Alexio
 	public:
 		virtual ~RendererAPI() = default;
 
-		static std::shared_ptr<RendererAPI> Create();
+		static Ref<RendererAPI> Create();
 
 		virtual void Initialize() = 0;
 		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
-		virtual void Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexResources>& vertexResources = nullptr) = 0;
+		virtual void Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources = nullptr) = 0;
 		virtual void ClearColor(float r, float g, float b, float a) = 0;
 		virtual void SwapBuffer() = 0;
 

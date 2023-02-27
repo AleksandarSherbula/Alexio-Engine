@@ -1,8 +1,8 @@
 #include "aio_pch.h"
-#include "DirectX11_Shader.h"
+#include "DX11_Shader.h"
 
 #include "Alexio/Renderer.h"
-#include "Renderer/DirectX11/DirectX11_Renderer.h"
+#include "Renderer/DX11/DX11_Renderer.h"
 
 namespace Alexio
 {
@@ -25,35 +25,33 @@ namespace Alexio
 	}
 
 
-	DirectX11_Shader::DirectX11_Shader(const std::string& name)
+	DX11_Shader::DX11_Shader(const std::string& name)
 	{
 		mName = name;
-		std::string filepath = "res/shaders/DX11/" + name + ".hlsl";
+		mVertexSource = mPixelSource = "assets/shaders/DX11/" + name + ".hlsl";
+	}
+
+	DX11_Shader::DX11_Shader(const std::string& name, const std::string& filepath)
+	{
+		mName = name;
 		mVertexSource = filepath;
 		mPixelSource = filepath;
 	}
 
-	DirectX11_Shader::DirectX11_Shader(const std::string& name, const std::string& filepath)
-	{
-		mName = name;
-		mVertexSource = filepath;
-		mPixelSource = filepath;
-	}
-
-	DirectX11_Shader::DirectX11_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc)
+	DX11_Shader::DX11_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc)
 	{
 		mName = name;
 		mVertexSource = vertexSrc;
 		mPixelSource = pixelSrc;
 	}
 
-	DirectX11_Shader::~DirectX11_Shader()
+	DX11_Shader::~DX11_Shader()
 	{
 	}
 
-	void DirectX11_Shader::Compile()
+	void DX11_Shader::Compile()
 	{
-		Microsoft::WRL::ComPtr<ID3D11Device>& device = dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDevice();
+		Microsoft::WRL::ComPtr<ID3D11Device>& device = dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDevice();
 
 		////////// VERTEX SHADER /////////////////
 		ID3DBlob* vertexErrorMessage;
@@ -62,8 +60,7 @@ namespace Alexio
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to load shader: " + mVertexSource + "\n" + ResultInfo(hr));
 
 		std::vector<D3D11_INPUT_ELEMENT_DESC> layoutDesc;
-
-		for (auto& vertexBuffer : mVertexResources->GetVertexBuffers())
+				for (auto& vertexBuffer : mVertexResources->GetVertexBuffers())
 		{
 			auto& layout = vertexBuffer->GetLayout();
 			for (auto& element : layout)
@@ -92,25 +89,39 @@ namespace Alexio
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create pixel shader: " + mPixelSource + "\n" + ResultInfo(hr));
 	}
 
-	void DirectX11_Shader::Bind() const
+	void DX11_Shader::Bind() const
 	{
-		dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->IASetInputLayout(mVertexLayout.Get());
-		dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->IASetInputLayout(mVertexLayout.Get());
+		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->VSSetShader(mVertexShader.Get(), NULL, 0);
-		dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->PSSetShader(mPixelShader.Get(), NULL, 0);
+		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->VSSetShader(mVertexShader.Get(), NULL, 0);
+		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->PSSetShader(mPixelShader.Get(), NULL, 0);
 
-		for (auto& vertexBuffer : mVertexResources->GetVertexBuffers())
-		{
-			vertexBuffer->Bind();
-		}
-		mVertexResources->GetIndexBuffer()->Bind();
+		mVertexResources->Bind();
 	}
 
-	void DirectX11_Shader::Unbind() const
+	void DX11_Shader::Unbind() const
 	{
-		dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->VSSetShader(nullptr, NULL, 0);
-		dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->PSSetShader(nullptr, NULL, 0);
+		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->VSSetShader(nullptr, NULL, 0);
+		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->PSSetShader(nullptr, NULL, 0);
+	}
+	void DX11_Shader::SetInt(const std::string& name, int32_t value)
+	{
+	}
+	void DX11_Shader::SetIntArray(const std::string& name, int32_t* values, uint32_t count)
+	{
+	}
+	void DX11_Shader::SetFloat(const std::string& name, float value)
+	{
+	}
+	void DX11_Shader::SetFloat2(const std::string& name, const Vector2f& value)
+	{
+	}
+	void DX11_Shader::SetFloat3(const std::string& name, const Vector3f& value)
+	{
+	}
+	void DX11_Shader::SetFloat4(const std::string& name, const Vector4f& value)
+	{
 	}
 }
 

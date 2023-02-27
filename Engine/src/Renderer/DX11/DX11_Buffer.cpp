@@ -1,11 +1,11 @@
 #include "aio_pch.h"
-#include "DirectX11_Buffer.h"
+#include "DX11_Buffer.h"
 #include "Alexio/Renderer.h"
-#include "DirectX11_Renderer.h"
+#include "DX11_Renderer.h"
 
 namespace Alexio
 {
-	DirectX11_VertexBuffer::DirectX11_VertexBuffer(uint32_t size)
+	DX11_VertexBuffer::DX11_VertexBuffer(uint32_t size)
 	{
 		// Possible subject to change code
 		D3D11_BUFFER_DESC vertexBufferDesc;
@@ -20,11 +20,11 @@ namespace Alexio
 		D3D11_SUBRESOURCE_DATA vertexBufferData;
 		ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
 
-		HRESULT hr = dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
+		HRESULT hr = dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex buffer: " + ResultInfo(hr) + "\n");
 	}
 
-	DirectX11_VertexBuffer::DirectX11_VertexBuffer(float* vertices, uint32_t size)
+	DX11_VertexBuffer::DX11_VertexBuffer(float* vertices, uint32_t size)
 	{
 		D3D11_BUFFER_DESC vertexBufferDesc;
 		ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
@@ -39,27 +39,27 @@ namespace Alexio
 		ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
 		vertexBufferData.pSysMem = vertices;
 
-		HRESULT hr = dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
+		HRESULT hr = dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex buffer: " + ResultInfo(hr) + "\n");
 	}
 
-	DirectX11_VertexBuffer::~DirectX11_VertexBuffer()
+	DX11_VertexBuffer::~DX11_VertexBuffer()
 	{
 	}
 
-	void DirectX11_VertexBuffer::Bind() const
+	void DX11_VertexBuffer::Bind() const
 	{
 		UINT stride = mLayout.GetStride();
 		UINT offset = 0;
 
-		dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->IASetVertexBuffers(0, 1, mBuffer.GetAddressOf(), &stride, &offset);
+		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->IASetVertexBuffers(0, 1, mBuffer.GetAddressOf(), &stride, &offset);
 	}
 
-	void DirectX11_VertexBuffer::Unbind() const
+	void DX11_VertexBuffer::Unbind() const
 	{
 	}
 
-	void DirectX11_VertexBuffer::SetData(const void* data, uint32_t size)
+	void DX11_VertexBuffer::SetData(const void* data, uint32_t size)
 	{
 	}
 
@@ -67,7 +67,7 @@ namespace Alexio
 	///////////INDEX BUFFER//////////////////////////////
 	/////////////////////////////////////////////////////
 
-	DirectX11_IndexBuffer::DirectX11_IndexBuffer(uint32_t* indices, uint32_t count)
+	DX11_IndexBuffer::DX11_IndexBuffer(uint32_t* indices, uint32_t count)
 	{
 		mCount = count;
 
@@ -84,20 +84,20 @@ namespace Alexio
 		ZeroMemory(&indexBufferData, sizeof(indexBufferData));
 		indexBufferData.pSysMem = indices;
 
-		HRESULT hr = dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, mBuffer.GetAddressOf());
+		HRESULT hr = dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, mBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create index buffer: " + ResultInfo(hr) + "\n");
 	}
 
-	DirectX11_IndexBuffer::~DirectX11_IndexBuffer()
+	DX11_IndexBuffer::~DX11_IndexBuffer()
 	{
 	}
 
-	void DirectX11_IndexBuffer::Bind()
+	void DX11_IndexBuffer::Bind()
 	{
-		dynamic_cast<DirectX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->IASetIndexBuffer(mBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->IASetIndexBuffer(mBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	}
 
-	void DirectX11_IndexBuffer::Unbind()
+	void DX11_IndexBuffer::Unbind()
 	{
 	}
 
@@ -105,15 +105,15 @@ namespace Alexio
 	///////////VERTEX DATA///////////////////////////////
 	/////////////////////////////////////////////////////
 
-	DirectX11_VertexResources::DirectX11_VertexResources()
+	DX11_VertexResources::DX11_VertexResources()
 	{
 	}
 
-	DirectX11_VertexResources::~DirectX11_VertexResources()
+	DX11_VertexResources::~DX11_VertexResources()
 	{
 	}
 
-	void DirectX11_VertexResources::Bind() const
+	void DX11_VertexResources::Bind() const
 	{
 		for (auto& vertexBuffer : mVertexBuffers)
 		{
@@ -122,16 +122,16 @@ namespace Alexio
 		mIndexBuffer->Bind();
 	}
 
-	void DirectX11_VertexResources::Unbind() const
+	void DX11_VertexResources::Unbind() const
 	{
 	}
 
-	void DirectX11_VertexResources::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
+	void DX11_VertexResources::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
 		mVertexBuffers.push_back(vertexBuffer);	
 	}
 
-	void DirectX11_VertexResources::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)
+	void DX11_VertexResources::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{		
 		mIndexBuffer = indexBuffer;
 	}

@@ -5,17 +5,17 @@
 
 #include "OpenGL/OpenGL_Renderer.h"
 #ifdef AIO_PLATFORM_WINDOWS
-	#include "DirectX11/DirectX11_Renderer.h"
+	#include "DX11/DX11_Renderer.h"
 #endif // AIO_PLATFORM_WINDOWS
 
 namespace Alexio
 {
-    std::shared_ptr<RendererAPI> RendererAPI::Create()
+    Ref<RendererAPI> RendererAPI::Create()
     {
 		switch (Renderer::GetGraphicsAPI())
 		{
-		case GraphicsAPI::OpenGL:    return  std::make_shared<OpenGL_Renderer>();
-		case GraphicsAPI::DirectX11: return  std::make_shared<DirectX11_Renderer>();
+		case GraphicsAPI::OpenGL:    return CreateRef<OpenGL_Renderer>();
+		case GraphicsAPI::DirectX11: return CreateRef<DX11_Renderer>();
 		}
 
 		AIO_ASSERT(false, "Unknown API has been selected.\n");

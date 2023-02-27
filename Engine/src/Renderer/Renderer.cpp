@@ -5,7 +5,7 @@
 
 namespace Alexio
 {	
-	std::shared_ptr<RendererAPI> Renderer::sRendererAPI = nullptr;
+	Ref<RendererAPI> Renderer::sRendererAPI = nullptr;
 	ImGUI* Renderer::imgui = nullptr;
 	GraphicsAPI Renderer::s_API = GraphicsAPI::OpenGL;
 
@@ -23,7 +23,7 @@ namespace Alexio
 		imgui->OnAttach();
 	}
 
-	void Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexResources>& vertexResources)
+	void Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources)
 	{
 		sRendererAPI->Draw(shader, vertexResources);
 	}

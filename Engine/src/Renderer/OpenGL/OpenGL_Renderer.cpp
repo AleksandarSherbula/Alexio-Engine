@@ -63,7 +63,7 @@ namespace Alexio
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGL_Renderer::Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexResources>& vertexResources)
+	void OpenGL_Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources)
 	{
 		vertexResources->Bind();
 		shader->Bind();

@@ -4,41 +4,40 @@
 
 namespace Alexio
 {
-	class OpenGL_VertexBuffer : public VertexBuffer
+	class DX11_VertexBuffer : public VertexBuffer
 	{
 	public:
-		OpenGL_VertexBuffer(uint32_t size);
-		OpenGL_VertexBuffer(float* vertices, uint32_t size);
+		DX11_VertexBuffer(uint32_t size);
+		DX11_VertexBuffer(float* vertices, uint32_t size);
 
-		~OpenGL_VertexBuffer();
+		~DX11_VertexBuffer();
 
 		void Bind() const override;
 		void Unbind() const override;
 
 		void SetData(const void* data, uint32_t size) override;
+
 	private:
-		uint32_t mID;
-		
+		Microsoft::WRL::ComPtr<ID3D11Buffer> mBuffer;
 	};
 
-	class OpenGL_IndexBuffer : public IndexBuffer
+	class DX11_IndexBuffer : public IndexBuffer
 	{
 	public:
-		OpenGL_IndexBuffer(uint32_t* indices, uint32_t count);
-		~OpenGL_IndexBuffer();
+		DX11_IndexBuffer(uint32_t* indices, uint32_t count);
+		~DX11_IndexBuffer();
 
 		void Bind() override;
 		void Unbind() override;
-
 	private:
-		uint32_t mID;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> mBuffer;
 	};
 
-	class VertexArray : public VertexResources
+	class DX11_VertexResources : public VertexResources
 	{
 	public:
-		VertexArray();
-		~VertexArray();
+		DX11_VertexResources();
+		~DX11_VertexResources();
 
 		void Bind() const override;
 		void Unbind() const override;
@@ -50,4 +49,5 @@ namespace Alexio
 		uint32_t mID;
 	};
 
+	
 }

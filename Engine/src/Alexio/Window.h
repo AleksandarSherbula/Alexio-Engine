@@ -36,7 +36,7 @@ namespace Alexio
 		virtual inline void* GetHandle() const = 0;
 		virtual inline void SetEventCallback(const EventCallbackFn& callback) = 0;
 	
-		static std::shared_ptr<Window> Create(const std::string& title, uint32_t width, uint32_t height);
+		static Ref<Window> Create(const std::string& title, uint32_t width, uint32_t height);
 	private:
 		static WindowAPI sAPI;
 	protected:

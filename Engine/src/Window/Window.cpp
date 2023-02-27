@@ -13,13 +13,13 @@ namespace Alexio
     {
     }
 
-    std::shared_ptr<Window> Window::Create(const std::string& title, uint32_t width, uint32_t height)
+    Ref<Window> Window::Create(const std::string& title, uint32_t width, uint32_t height)
     {
 #ifdef AIO_PLATFORM_WINDOWS
         switch (sAPI)
         {
-        case WindowAPI::GLFW:  return std::make_shared<GLFW_Window>(title, width, height);
-        case WindowAPI::Win32: return std::make_shared<Win32_Window>(title, width, height);
+        case WindowAPI::GLFW:  return CreateRef<GLFW_Window>(title, width, height);
+        case WindowAPI::Win32: return CreateRef<Win32_Window>(title, width, height);
         }
 #else
         if (Renderer::GetGraphicsAPI() == GraphicsAPI::OpenGL)

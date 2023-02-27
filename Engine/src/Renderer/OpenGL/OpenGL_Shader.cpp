@@ -1,6 +1,8 @@
 #include "aio_pch.h"
 #include "OpenGL_Shader.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace Alexio
 {
 	static GLenum ShaderTypeFromString(const std::string& type)
@@ -18,9 +20,7 @@ namespace Alexio
 	OpenGL_Shader::OpenGL_Shader(const std::string& name)
 	{
 		mName = name;
-		std::string filepath = "res/shaders/OpenGL/" + name + ".glsl";
-
-		std::string source = ReadFile(filepath);
+		std::string source = ReadFile("assets/shaders/OpenGL/" + name + ".glsl");
 		mShaderSource = PreProcess(source);
 	}
 
@@ -38,7 +38,7 @@ namespace Alexio
 	}
 
 	OpenGL_Shader::~OpenGL_Shader()
-	{		
+	{
 		glDeleteProgram(mID);
 	}
 
@@ -122,6 +122,46 @@ namespace Alexio
 	{
 		glUseProgram(0);
 	}
+
+	void OpenGL_Shader::SetInt(const std::string& name, int32_t value)
+	{
+		glUniform1i(glGetUniformLocation(mID, name.c_str()), value);
+	}
+
+	void OpenGL_Shader::SetIntArray(const std::string& name, int32_t* values, uint32_t count)
+	{
+		glUniform1iv(glGetUniformLocation(mID, name.c_str()), count, values);
+	}
+
+	void OpenGL_Shader::SetFloat(const std::string& name, float value)
+	{
+		glUniform1f(glGetUniformLocation(mID, name.c_str()), value);
+	}
+
+	void OpenGL_Shader::SetFloat2(const std::string& name, const Vector2f& value)
+	{
+		glUniform2f(glGetUniformLocation(mID, name.c_str()), value.x, value.y);
+	}
+
+	void OpenGL_Shader::SetFloat3(const std::string& name, const Vector3f& value)
+	{
+		glUniform3f(glGetUniformLocation(mID, name.c_str()), value.x, value.y, value.z);
+	}
+
+	void OpenGL_Shader::SetFloat4(const std::string& name, const Vector4f& value)
+	{		
+		glUniform4f(glGetUniformLocation(mID, name.c_str()), value.x, value.y, value.z, value.w);
+	}
+
+	//void OpenGL_Shader::SetMat3(const std::string& name, const glm::mat3& matrix)
+	//{
+	//	glUniformMatrix3fv(glGetUniformLocation(mID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+	//}
+	//
+	//void OpenGL_Shader::SetMat4(const std::string& name, const glm::mat4& matrix)
+	//{
+	//	glUniformMatrix4fv(glGetUniformLocation(mID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+	//}
 
 	std::string OpenGL_Shader::ReadFile(const std::string& filepath)
 	{

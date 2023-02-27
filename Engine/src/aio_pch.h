@@ -14,6 +14,7 @@
 #include <unordered_set>
 
 #include "Alexio/Log.h"
+#include "Alexio/Utilities.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"

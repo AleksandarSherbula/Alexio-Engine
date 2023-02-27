@@ -32,7 +32,7 @@ namespace Alexio
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 	private:
-		std::shared_ptr<Window> mWindow;
+		Ref<Window> mWindow;
 		bool mRunning;
 		
 		LayerStack mLayerStack;
@@ -43,4 +43,4 @@ namespace Alexio
 	};
 }
 
-Alexio::Engine* Create();
+std::unique_ptr<Alexio::Engine> Create();

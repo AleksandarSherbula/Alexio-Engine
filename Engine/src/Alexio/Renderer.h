@@ -14,7 +14,7 @@ namespace Alexio
 	{
 	public:
 		static void Begin(Window* window);
-		static void Draw(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexResources>& vertexResources = nullptr);
+		static void Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources = nullptr);
 		static void End();
 
 		static void ClearColor(float r, float g, float b, float a);
@@ -27,7 +27,7 @@ namespace Alexio
 	public:
 		static ImGUI* imgui;
 	private:
-		static std::shared_ptr<RendererAPI> sRendererAPI;
+		static Ref<RendererAPI> sRendererAPI;
 		static GraphicsAPI s_API;
 	};
 }
