@@ -142,7 +142,10 @@ public:
 	}
 };
 
-std::unique_ptr<Alexio::Engine> Create()
+int main(int argc, char** agrv)
 {
-	return std::make_unique<Game>();
+	Game* game = new Game();
+	game->Run();
+	delete game;
+	return 0;
 }

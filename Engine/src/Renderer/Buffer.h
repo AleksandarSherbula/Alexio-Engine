@@ -93,7 +93,7 @@ namespace Alexio
 	private:
 		void CalculateOffsetsAndStride()
 		{
-			size_t offset = 0;
+			uint32_t offset = 0;
 			mStride = 0;
 			for (auto& element : mElements)
 			{

@@ -1,5 +1,5 @@
 workspace "AlexioEngine"
-   startproject "Engine"
+   startproject "Game"
    configurations { "Debug", "Release" }
    architecture "x64"
 
@@ -17,7 +17,7 @@ group ""
 
 project "Engine"
    location "Engine"
-   kind "ConsoleApp"
+   kind "StaticLib"
    language "C++"
    cppdialect "C++17"
    staticruntime "On"
@@ -34,10 +34,15 @@ project "Engine"
       "%{prj.name}/src/**.cpp"
    }
 
+   defines
+	{
+		"_CRT_SECURE_NO_WARNINGS"
+	}
+
    includedirs
    {
-      "%{prj.name}/dependecies/spdlog/include",
       "%{prj.name}/src",
+      "%{prj.name}/dependecies/spdlog/include",
       "%{IncludeDir.GLFW}",
       "%{IncludeDir.GLAD}",
       "%{IncludeDir.ImGUI}",
@@ -46,7 +51,6 @@ project "Engine"
 
    links
    {
-      "Game",
       "GLFW",
       "GLAD",
       "ImGUI",
@@ -77,7 +81,7 @@ project "Engine"
 
 project "Game"
    location "Game"
-   kind "StaticLib"
+   kind "ConsoleApp"
    language "C++"
    cppdialect "C++17"
    staticruntime "On"
@@ -94,7 +98,15 @@ project "Game"
    includedirs
    {
       "Engine/dependecies/spdlog/include",
-      "Engine/src"
+      "Engine/src",
+      "Engine/dependecies/",
+      "%{IncludeDir.ImGUI}",
+      "%{IncludeDir.GLM}"
+   }
+
+   links
+   {
+      "Engine"
    }
 
    filter "configurations:Debug"

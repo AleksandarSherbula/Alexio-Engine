@@ -42,5 +42,3 @@ namespace Alexio
 		static Engine* sInstance;
 	};
 }
-
-std::unique_ptr<Alexio::Engine> Create();
