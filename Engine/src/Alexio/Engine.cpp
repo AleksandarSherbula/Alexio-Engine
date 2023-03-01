@@ -17,7 +17,7 @@ namespace Alexio
 
 	void Engine::Run()
 	{
-		Renderer::SetGraphicsAPI(GraphicsAPI::OpenGL);
+		Renderer::SetGraphicsAPI(GraphicsAPI::DirectX11);
 
 		std::string apiName = (Renderer::GetGraphicsAPI() == GraphicsAPI::OpenGL) ? "OpenGL" : "DirectX11";
 
@@ -27,6 +27,9 @@ namespace Alexio
 
 		Renderer::Begin(mWindow.get());
 
+		imgui = new ImGUI();
+		PushOverlay(imgui);
+
 		AIO_ASSERT(OnStart(),"Initialization failed");
 
 		while (mRunning)
@@ -34,17 +37,18 @@ namespace Alexio
 			mWindow->PollEvents();
 			Input::Scan();
 
-			for (Layer* layer : mLayerStack)
-				layer->OnUpdate();
-			
 			if (!OnUpdate() ||
 				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked
 				(Window::GetAPI() == WindowAPI::Win32 && (Input::KeyHeld(Alexio::L_ALT) && Input::KeyPressed(Alexio::F4))))
 				mRunning = false;
 
-			Renderer::imgui->Begin();
-			Renderer::imgui->OnUpdate();
-			Renderer::imgui->End();
+			for (Layer* layer : mLayerStack)
+				layer->OnUpdate();
+
+			imgui->Begin();
+			for (Layer* layer : mLayerStack)
+				layer->OnImGuiRender();
+			imgui->End();
 
 			Renderer::SwapBuffer();
 		}
@@ -74,6 +78,7 @@ namespace Alexio
 	void Engine::PushOverlay(Layer* layer)
 	{
 		mLayerStack.PushOverlay(layer);
+		layer->OnAttach();
 	}
 
 	bool Engine::OnWindowClose(WindowCloseEvent& e)

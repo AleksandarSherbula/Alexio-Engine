@@ -35,9 +35,8 @@ namespace Alexio
 		Ref<Window> mWindow;
 		bool mRunning;
 		
-		LayerStack mLayerStack;
-	public:
-		
+		LayerStack mLayerStack;	
+		ImGUI* imgui;
 	private:
 		static Engine* sInstance;
 	};

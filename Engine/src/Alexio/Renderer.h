@@ -23,9 +23,7 @@ namespace Alexio
 
 		static void SetGraphicsAPI(GraphicsAPI api);
 		inline static GraphicsAPI GetGraphicsAPI() { return s_API; }
-		inline static RendererAPI* GetAPI() { return sRendererAPI.get(); };
-	public:
-		static ImGUI* imgui;
+		inline static RendererAPI* GetAPI() { return sRendererAPI.get(); };	
 	private:
 		static Ref<RendererAPI> sRendererAPI;
 		static GraphicsAPI s_API;

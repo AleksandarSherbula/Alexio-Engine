@@ -1,4 +1,9 @@
 #include "Alexio.h"
+#include "imgui/imgui.h"
+
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
 
 class ExampleLayer : public Alexio::Layer
 {
@@ -13,9 +18,13 @@ public:
 	Alexio::Ref<Alexio::IndexBuffer> blueSquareIB;
 	Alexio::Ref<Alexio::Shader> blueSquareShader;
 
+	glm::vec4 clearColor;
+
 	ExampleLayer()
 		: Layer("Example")
 	{
+		clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
+
 		/// Test code ///
 		float vertices[] =
 		{
@@ -88,7 +97,7 @@ public:
 	void OnUpdate() override
 	{
 		//AIO_LOG_INFO("Example Layer: Updated");
-		Alexio::Renderer::ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		Alexio::Renderer::ClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		
 		Alexio::Renderer::Draw(blueSquareShader, blueSquareVD);
 		Alexio::Renderer::Draw(shader, vd);
@@ -97,6 +106,13 @@ public:
 	void OnEvent(Alexio::Event& event) override
 	{
 		
+	}
+
+	void OnImGuiRender() override
+	{
+		ImGui::Begin("Hello, world!");
+		ImGui::ColorEdit3("Color Picker", glm::value_ptr(clearColor));
+		ImGui::End();
 	}
 };
 

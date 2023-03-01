@@ -12,7 +12,7 @@ namespace Alexio
 			struct { T r, g, b, a; };
 		};
 	public:
-		inline Vector4() : x(0), y(0), z(0) {}
+		inline Vector4() : x(0), y(0), z(0), w(0) {}
 		inline Vector4(T value) : x(value), y(value), z(value), w(value) {}
 		inline Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
 

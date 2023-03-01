@@ -27,19 +27,12 @@ namespace Alexio
         }
 
         Renderer::GetAPI()->ImGuiBackendInit();
-        showWindow = true;
     }
 
     void ImGUI::Begin()
     {
         Renderer::GetAPI()->ImGuiBackendBegin();
         ImGui::NewFrame();
-    }
-
-    void ImGUI::OnUpdate()
-    {
-        if (showWindow)
-            ImGui::ShowDemoWindow(&showWindow);
     }
 
     void ImGUI::End()
@@ -52,5 +45,12 @@ namespace Alexio
     {
         Renderer::GetAPI()->ImGuiBackendShutDown();
         ImGui::DestroyContext();
+    }
+
+    void ImGUI::OnImGuiRender()
+    {
+        bool showWindow = true;
+        if (showWindow)
+            ImGui::ShowDemoWindow(&showWindow);
     }
 }

@@ -6,7 +6,6 @@
 namespace Alexio
 {	
 	Ref<RendererAPI> Renderer::sRendererAPI = nullptr;
-	ImGUI* Renderer::imgui = nullptr;
 	GraphicsAPI Renderer::s_API = GraphicsAPI::OpenGL;
 
 	void Renderer::Begin(Window* window)
@@ -18,9 +17,6 @@ namespace Alexio
 		sRendererAPI->Initialize();
 
 		sRendererAPI->SetVSync(true);
-
-		imgui = new ImGUI();
-		imgui->OnAttach();
 	}
 
 	void Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources)
@@ -30,8 +26,6 @@ namespace Alexio
 
 	void Renderer::End()
 	{
-		imgui->OnDetach();
-		delete imgui;
 	}
 
 	void Renderer::ClearColor(float r, float g, float b, float a)
