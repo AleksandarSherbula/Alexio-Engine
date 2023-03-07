@@ -51,9 +51,6 @@ namespace Alexio
 
 		RegisterClassEx(&wc);
 
-		//int ResX = ;
-		//int ResY = GetSystemMetrics(SM_CYSCREEN);
-
 		RECT windowRect;
 		
 		windowRect.left = 50;
@@ -65,18 +62,6 @@ namespace Alexio
 
 		DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 		DWORD dwStyle = WS_CAPTION | WS_SYSMENU | WS_VISIBLE | WS_THICKFRAME;
-
-		//if (bFullScreen)
-		//{
-		//	dwExStyle = 0;
-		//	dwStyle = WS_VISIBLE | WS_POPUP;
-		//	HMONITOR hmon = MonitorFromWindow(olc_hWnd, MONITOR_DEFAULTTONEAREST);
-		//	MONITORINFO mi = { sizeof(mi) };
-		//	if (!GetMonitorInfo(hmon, &mi)) return olc::rcode::FAIL;
-		//	vWindowSize = { mi.rcMonitor.right, mi.rcMonitor.bottom };
-		//	vTopLeft.x = 0;
-		//	vTopLeft.y = 0;
-		//}
 
 		mHandle = CreateWindowEx(0, mWindowClass, StringToWide(mTitle).c_str(), WS_OVERLAPPEDWINDOW,
 			windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,

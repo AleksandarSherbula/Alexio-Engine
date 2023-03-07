@@ -62,8 +62,6 @@ namespace Alexio
 		}
 
 		Renderer::End();
-		//if (mWindow->IsFullScreen())
-		//	mWindow->SetFullScreen(false);
 	}
 
 	void Engine::OnEvent(Event& e)
