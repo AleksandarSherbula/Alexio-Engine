@@ -32,10 +32,18 @@ namespace Alexio
 
 		AIO_ASSERT(OnStart(),"Initialization failed");
 
+		bool fullscreen = false;
+
 		while (mRunning)
 		{
 			mWindow->PollEvents();
 			Input::Scan();
+
+			if (Input::KeyPressed(Alexio::F))
+			{
+				fullscreen = !fullscreen;
+				mWindow->SetFullScreen(fullscreen);
+			}
 
 			if (!OnUpdate() ||
 				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked
@@ -54,6 +62,8 @@ namespace Alexio
 		}
 
 		Renderer::End();
+		//if (mWindow->IsFullScreen())
+		//	mWindow->SetFullScreen(false);
 	}
 
 	void Engine::OnEvent(Event& e)

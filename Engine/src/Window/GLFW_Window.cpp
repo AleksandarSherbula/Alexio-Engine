@@ -1,6 +1,8 @@
 #include "aio_pch.h"
 #include "GLFW_Window.h"
 
+#include "Alexio/Renderer.h"
+
 #include "Events/AppEvent.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
@@ -49,12 +51,38 @@ namespace Alexio
         glfwMakeContextCurrent(mHandle);
         glfwSetWindowUserPointer(mHandle, &mData);
 
+        mMonitor = glfwGetPrimaryMonitor();
+
         EventProcess();
     }
 
     void GLFW_Window::PollEvents()
     {
         glfwPollEvents();
+    }
+
+    void GLFW_Window::SetFullScreen(bool fullscreen)
+    {
+        if (IsFullScreen() == fullscreen)
+            return;
+
+        if (fullscreen)
+        {
+            // backup window position and window size
+            glfwGetWindowPos(mHandle, &mPosX, &mPosY);
+            glfwGetWindowSize(mHandle, (int32_t*)&mWidth, (int32_t*)&mHeight);
+
+            // get resolution of monitor
+            const GLFWvidmode* mode = glfwGetVideoMode(mMonitor);
+
+            // switch to full screen
+            glfwSetWindowMonitor(mHandle, mMonitor, 0, 0, mode->width, mode->height, 0);
+        }
+        else
+        {
+            // restore last window size and position
+            glfwSetWindowMonitor(mHandle, nullptr, mPosX, mPosY, mWidth, mHeight, (int32_t)Renderer::GetAPI()->IsVSync());
+        }
     }
 
     void GLFW_Window::EventProcess()

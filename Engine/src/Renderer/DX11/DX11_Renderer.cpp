@@ -27,7 +27,7 @@ namespace Alexio
 
 		DXGI_SWAP_CHAIN_DESC scd;
 		ZeroMemory(&scd, sizeof(scd));
-		scd.BufferCount = 2;
+		scd.BufferCount = 1;
 		scd.BufferDesc.Width = 0;
 		scd.BufferDesc.Height = 0;
 		scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -50,17 +50,17 @@ namespace Alexio
 #endif // AIO_DEBUG
 
 		HRESULT hr;
-		hr = D3D11CreateDeviceAndSwapChain(mAdapters[0].ptr, // IDXGI Adapter
-			D3D_DRIVER_TYPE_UNKNOWN,
-			NULL, // FOR SOFTWARE DRIVER TYPE
-			flags, // FLAGS FOR RUNTIME LAYERS
-			featureLevelArray, // FEATURE LEVELS ARRAY
-			2,    // # OF FEATURE LEVELS IN ARRAY
+		hr = D3D11CreateDeviceAndSwapChain(nullptr,
+			D3D_DRIVER_TYPE_HARDWARE,
+			nullptr, 
+			flags, 
+			featureLevelArray, 
+			2,    
 			D3D11_SDK_VERSION,
-			&scd, // SwapChain description
+			&scd, 
 			mSwapChain.GetAddressOf(),
 			mDevice.GetAddressOf(),
-			&featureLevel, // Supported feature level
+			&featureLevel, 
 			mDeviceContext.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create device and swapchain: " + ResultInfo(hr) + "\n");
 
@@ -121,7 +121,7 @@ namespace Alexio
 	}
 
 	void DX11_Renderer::SwapBuffer()
-	{
+	{		
 		mSwapChain->Present((UINT)mVSync, 0);
 	}
 

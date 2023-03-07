@@ -3,6 +3,9 @@
 #include "Alexio/Engine.h"
 #include "Alexio/Input.h"
 
+#include "Alexio/Renderer.h"
+#include "Renderer/DX11/DX11_Renderer.h"
+
 #include "Events/AppEvent.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
@@ -48,19 +51,35 @@ namespace Alexio
 
 		RegisterClassEx(&wc);
 
-		int ResX = GetSystemMetrics(SM_CXSCREEN);
-		int ResY = GetSystemMetrics(SM_CYSCREEN);
+		//int ResX = ;
+		//int ResY = GetSystemMetrics(SM_CYSCREEN);
 
-		RECT wr; 
-		wr.left = 50;
-		wr.top = 50;
-		wr.right = wr.left + mWidth;
-		wr.bottom = wr.top + mHeight;		
-		if (!AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE))
+		RECT windowRect;
+		
+		windowRect.left = 50;
+		windowRect.top = 50;
+		windowRect.right = windowRect.left + mWidth;
+		windowRect.bottom = windowRect.top + mHeight;
+		if (!AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE))
 			std::cout << "Failed to adjust window" << std::endl;
 
+		DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+		DWORD dwStyle = WS_CAPTION | WS_SYSMENU | WS_VISIBLE | WS_THICKFRAME;
+
+		//if (bFullScreen)
+		//{
+		//	dwExStyle = 0;
+		//	dwStyle = WS_VISIBLE | WS_POPUP;
+		//	HMONITOR hmon = MonitorFromWindow(olc_hWnd, MONITOR_DEFAULTTONEAREST);
+		//	MONITORINFO mi = { sizeof(mi) };
+		//	if (!GetMonitorInfo(hmon, &mi)) return olc::rcode::FAIL;
+		//	vWindowSize = { mi.rcMonitor.right, mi.rcMonitor.bottom };
+		//	vTopLeft.x = 0;
+		//	vTopLeft.y = 0;
+		//}
+
 		mHandle = CreateWindowEx(0, mWindowClass, StringToWide(mTitle).c_str(), WS_OVERLAPPEDWINDOW,
-			wr.left, wr.top, wr.right - wr.left, wr.bottom - wr.top,
+			windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 			NULL, NULL, m_hInstance, NULL);
 		
 		AIO_ASSERT(mHandle, "Failed to create a Window: {0}", ResultInfo(GetLastError()));
@@ -74,6 +93,35 @@ namespace Alexio
 	{		
 		ecFn = callback;
 		Initialize();
+	}
+
+	void Win32_Window::SetFullScreen(bool fullscreen)
+	{
+		static RECT windowRect = {};
+
+		DWORD style = fullscreen ? WS_POPUP : WS_OVERLAPPEDWINDOW;
+		SetWindowLong(mHandle, GWL_STYLE, style);
+
+		if (fullscreen)
+		{
+			MONITORINFO mi = { sizeof(mi) };
+			if (GetMonitorInfo(MonitorFromWindow(mHandle,
+					MONITOR_DEFAULTTOPRIMARY), &mi))
+			{
+				GetWindowRect(mHandle, &windowRect);
+				SetWindowPos(mHandle, HWND_TOP,
+					mi.rcMonitor.left, mi.rcMonitor.top,
+					mi.rcMonitor.right - mi.rcMonitor.left,
+					mi.rcMonitor.bottom - mi.rcMonitor.top,
+					SWP_SHOWWINDOW);
+			}
+		}
+		else 
+		{
+			SetWindowPos(mHandle, NULL,
+				windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
+				SWP_SHOWWINDOW);
+		}
 	}
 
 	void Win32_Window::PollEvents()

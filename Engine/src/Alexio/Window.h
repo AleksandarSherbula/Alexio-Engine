@@ -33,8 +33,10 @@ namespace Alexio
 		inline static WindowAPI GetAPI() { return sAPI; }
 		inline static void SetAPI(WindowAPI api) { sAPI = api; }
 
-		virtual inline void* GetHandle() const = 0;
-		virtual inline void SetEventCallback(const EventCallbackFn& callback) = 0;
+		virtual void* GetHandle() const = 0;
+		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
+		virtual bool IsFullScreen() const = 0;
+		virtual void SetFullScreen(bool fullscreen) = 0;
 	
 		static Ref<Window> Create(const std::string& title, uint32_t width, uint32_t height);
 	private:

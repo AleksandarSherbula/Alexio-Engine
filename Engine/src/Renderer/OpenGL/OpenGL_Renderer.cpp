@@ -87,7 +87,7 @@ namespace Alexio
 	void OpenGL_Renderer::ImGuiBackendInit()
 	{
 		ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)Engine::GetInstance()->GetWindow()->GetHandle(), true);
-		ImGui_ImplOpenGL3_Init("#version 410 core");
+		ImGui_ImplOpenGL3_Init("#version 460 core");
 	}
 
 	void OpenGL_Renderer::ImGuiBackendBegin()

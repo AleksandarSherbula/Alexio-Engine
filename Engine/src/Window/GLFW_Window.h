@@ -13,11 +13,16 @@ namespace Alexio
 		void PollEvents() override;
 
 		inline void* GetHandle() const override { return mHandle; }
-		void SetEventCallback(const EventCallbackFn& callback) override { mData.eventCallback = callback; }
+		inline void SetEventCallback(const EventCallbackFn& callback) override { mData.eventCallback = callback; }
+		inline bool IsFullScreen() const override { return glfwGetWindowMonitor(mHandle) != nullptr; }
+		void SetFullScreen(bool fullscreen) override;
 	private:
 		void EventProcess();
 	private:
 		GLFWwindow* mHandle;
+		GLFWmonitor* mMonitor;
+		int32_t mPosX;
+		int32_t mPosY;
 
 		struct WindowData
 		{
