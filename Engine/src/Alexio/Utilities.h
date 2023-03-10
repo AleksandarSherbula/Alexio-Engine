@@ -43,6 +43,13 @@ namespace Alexio
 	}
 }
 
+#ifdef AIO_PLATFORM_WINDOWS
+#define AIO_DX11_DEVICE         dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDevice()
+#define AIO_DX11_DEVICE_CONTEXT dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()
+#define AIO_DX11_SWAP_CHAIN     dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetSwapChain()
+#endif // AIO_PLATFORM_WINDOWS
+
+
 #ifndef AIO_PLATFORM_WINDOWS
 #error Alexio Engine only supports Windows
 #endif

@@ -3,6 +3,7 @@
 #include "Window/Win32_Window.h"
 
 #include "Alexio/Engine.h"
+#include "DX11_Buffer.h"
 
 #include <backends/imgui_impl_win32.h>
 #include <backends/imgui_impl_dx11.h>
@@ -107,7 +108,6 @@ namespace Alexio
 
 	void DX11_Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexData)
 	{
-		
 		mDeviceContext->DrawIndexed(shader->GetVertexResources()->GetIndexBuffer()->GetCount(), 0, 0);		
 	}
 

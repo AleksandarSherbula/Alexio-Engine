@@ -25,9 +25,9 @@ namespace Alexio
 		void SwapBuffer() override;
 
 		// Getters
-		inline Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const { return mDevice; }
-		inline Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetDeviceContext() const { return mDeviceContext; }
-		inline Microsoft::WRL::ComPtr<IDXGISwapChain> GetSwapChain() const { return mSwapChain; }
+		inline ID3D11Device* GetDevice() const { return mDevice.Get(); }
+		inline ID3D11DeviceContext* GetDeviceContext() const { return mDeviceContext.Get(); }
+		inline IDXGISwapChain* GetSwapChain() const { return mSwapChain.Get(); }
 		inline std::string GetName() const override { return "DirectX 11"; }
 
 		void CreateRenderTarget();

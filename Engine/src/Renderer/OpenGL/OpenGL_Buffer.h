@@ -50,4 +50,14 @@ namespace Alexio
 		uint32_t mID;
 	};
 
+	class UniformBuffer : public ConstantBuffer
+	{
+	public:
+		UniformBuffer(uint32_t block_size, uint32_t binding);
+		~UniformBuffer();
+
+		void SetData(const void* data, uint32_t data_size, uint32_t offset) override;
+	private:
+		uint32_t mID;
+	};
 }
