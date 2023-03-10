@@ -16,6 +16,8 @@ namespace Alexio
 		inline Vector4(T value) : x(value), y(value), z(value), w(value) {}
 		inline Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
 
+		inline float* ptr() { return &x; }
+
 		inline Vector4 operator+(T scaler) { return Vector4(this->x + scaler, this->y + scaler, this->z + scaler, this->w + scaler); }
 		inline Vector4 operator-(T scaler) { return Vector4(this->x - scaler, this->y - scaler, this->z - scaler, this->w - scaler); }
 		inline Vector4 operator*(T scaler) { return Vector4(this->x * scaler, this->y * scaler, this->z * scaler, this->w * scaler); }
@@ -42,8 +44,8 @@ namespace Alexio
 		inline friend std::ostream& operator<< (std::ostream& os, const Vector4& vec4) { os << vec4.x << " : " << vec4.y << " : " << vec4.z << " : " << vec4.w; return os; }
 	};
 
-	typedef Vector4<int32_t> Vector4i;
-	typedef Vector4<uint32_t> Vector4ui;
-	typedef Vector4<float> Vector4f;
-	typedef Vector4<double> Vector4d;
+	using Vector4i  = Vector4<int32_t>;
+	using Vector4ui = Vector4<uint32_t>;
+	using Vector4f  = Vector4<float>;
+	using Vector4d  = Vector4<double>;
 }

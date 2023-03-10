@@ -8,38 +8,38 @@ namespace Alexio
 	DX11_VertexBuffer::DX11_VertexBuffer(uint32_t size)
 	{
 		// Possible subject to change code
-		D3D11_BUFFER_DESC vertexBufferDesc;
-		ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
+		D3D11_BUFFER_DESC bufferDesc;
+		ZeroMemory(&bufferDesc, sizeof(bufferDesc));
 
-		vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		vertexBufferDesc.ByteWidth = size;
-		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		vertexBufferDesc.CPUAccessFlags = 0;
-		vertexBufferDesc.MiscFlags = 0;
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.ByteWidth = size;
+		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bufferDesc.CPUAccessFlags = 0;
+		bufferDesc.MiscFlags = 0;
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData;
 		ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
 
-		HRESULT hr = dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
+		HRESULT hr = dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDevice()->CreateBuffer(&bufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex buffer: " + ResultInfo(hr) + "\n");
 	}
 
 	DX11_VertexBuffer::DX11_VertexBuffer(float* vertices, uint32_t size)
 	{
-		D3D11_BUFFER_DESC vertexBufferDesc;
-		ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
+		D3D11_BUFFER_DESC bufferDesc;
+		ZeroMemory(&bufferDesc, sizeof(bufferDesc));
 
-		vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		vertexBufferDesc.ByteWidth = size;
-		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		vertexBufferDesc.CPUAccessFlags = 0;
-		vertexBufferDesc.MiscFlags = 0;
+		bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		bufferDesc.ByteWidth = size;
+		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		bufferDesc.MiscFlags = 0;
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData;
 		ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
 		vertexBufferData.pSysMem = vertices;
 
-		HRESULT hr = dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
+		HRESULT hr = dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDevice()->CreateBuffer(&bufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex buffer: " + ResultInfo(hr) + "\n");
 	}
 
@@ -61,6 +61,10 @@ namespace Alexio
 
 	void DX11_VertexBuffer::SetData(const void* data, uint32_t size)
 	{
+		D3D11_MAPPED_SUBRESOURCE resource;
+		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->Map(mBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+		memcpy(resource.pData, data, size);
+		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->Unmap(mBuffer.Get(), 0);
 	}
 
 	/////////////////////////////////////////////////////

@@ -107,9 +107,7 @@ namespace Alexio
 
 	void DX11_Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexData)
 	{
-		mDeviceContext->RSSetState(mRasterizerState.Get());
-
-		shader->Bind();
+		
 		mDeviceContext->DrawIndexed(shader->GetVertexResources()->GetIndexBuffer()->GetCount(), 0, 0);		
 	}
 
@@ -118,6 +116,7 @@ namespace Alexio
 		FLOAT bgColor[] = { r, g, b, a };
 		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), NULL);
 		mDeviceContext->ClearRenderTargetView(mRenderTargetView.Get(), bgColor);
+		mDeviceContext->RSSetState(mRasterizerState.Get());
 	}
 
 	void DX11_Renderer::SwapBuffer()

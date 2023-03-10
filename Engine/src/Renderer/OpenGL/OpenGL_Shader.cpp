@@ -71,13 +71,13 @@ namespace Alexio
 				glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
 
 				// The maxLength includes the NULL character
-				std::vector<GLchar> infoLog(maxLength);
-				glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
+				GLchar* message = (GLchar*)alloca(maxLength * sizeof(GLchar));
+				glGetShaderInfoLog(shader, maxLength, &maxLength, message);
 
 				// We don't need the shader anymore.
 				glDeleteShader(shader);
 
-				AIO_LOG_ERROR("{0}", infoLog.data());
+				AIO_LOG_ERROR("{0}", message);
 				AIO_ASSERT(false, "Vertex shader compilation failure!");
 			}
 			glAttachShader(program, shader);
@@ -153,15 +153,15 @@ namespace Alexio
 		glUniform4f(glGetUniformLocation(mID, name.c_str()), value.x, value.y, value.z, value.w);
 	}
 
-	//void OpenGL_Shader::SetMat3(const std::string& name, const glm::mat3& matrix)
-	//{
-	//	glUniformMatrix3fv(glGetUniformLocation(mID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
-	//}
-	//
-	//void OpenGL_Shader::SetMat4(const std::string& name, const glm::mat4& matrix)
-	//{
-	//	glUniformMatrix4fv(glGetUniformLocation(mID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
-	//}
+	void OpenGL_Shader::SetMat3x3(const std::string& name, const glm::mat3x3& matrix)
+	{
+		glUniformMatrix3fv(glGetUniformLocation(mID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+	}
+
+	void OpenGL_Shader::SetMat4x4(const std::string& name, const glm::mat4x4& matrix)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(mID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+	}
 
 	std::string OpenGL_Shader::ReadFile(const std::string& filepath)
 	{

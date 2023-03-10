@@ -16,6 +16,8 @@ namespace Alexio
 		inline Vector3(T value) : x(value), y(value), z(value) {}
 		inline Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
 
+		inline float* ptr() { return &x; }
+
 		inline Vector3 operator+(T scaler) { return Vector3(this->x + scaler, this->y + scaler, this->z + scaler); }
 		inline Vector3 operator-(T scaler) { return Vector3(this->x - scaler, this->y - scaler, this->z - scaler); }
 		inline Vector3 operator*(T scaler) { return Vector3(this->x * scaler, this->y * scaler, this->z * scaler); }
@@ -49,9 +51,8 @@ namespace Alexio
 		inline friend std::ostream& operator<< (std::ostream& os, const Vector3& vec3) { os << vec3.x << " : " << vec3.y << " : " << vec3.z; return os; }
 	};
 
-	typedef Vector3<int32_t> Vector3i;
-	typedef Vector3<uint32_t> Vector3ui;
-	typedef Vector3<float> Vector3f;
-	typedef Vector3<double> Vector3d;
-
+	using Vector3i  = Vector3<int32_t>;
+	using Vector3ui = Vector3<uint32_t>;
+	using Vector3f  = Vector3<float>;
+	using Vector3d  = Vector3<double>;
 }

@@ -24,8 +24,8 @@ namespace Alexio
 		void SetFloat3(const std::string& name, const Vector3f& value) override;
 		void SetFloat4(const std::string& name, const Vector4f& value) override;
 
-		//void SetMat3(const std::string& name, const glm::mat3& matrix) override;
-		//void SetMat4(const std::string& name, const glm::mat4& matrix) override;
+		void SetMat3x3(const std::string& name, const glm::mat3x3& matrix) override;
+		void SetMat4x4(const std::string& name, const glm::mat4x4& matrix) override;
 	private:
 		std::string ReadFile(const std::string& filepath);
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);

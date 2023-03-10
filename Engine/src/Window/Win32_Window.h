@@ -22,8 +22,6 @@ namespace Alexio
 		const WCHAR* mWindowClass;
 	};
 	
-	LRESULT CALLBACK WindowsProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	LRESULT CALLBACK KeyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	LRESULT CALLBACK MouseProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	std::string ResultInfo(HRESULT hr);
 }

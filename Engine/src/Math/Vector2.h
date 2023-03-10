@@ -16,6 +16,8 @@ namespace Alexio
 		inline Vector2(T value) : x(value), y(value) {}
 		inline Vector2(T x, T y) : x(x), y(y) {}
 
+		inline float* ptr() { return &x; }
+
 		inline Vector2 operator+(T scaler) { return Vector2(this->x + scaler, this->y + scaler); }
 		inline Vector2 operator-(T scaler) { return Vector2(this->x - scaler, this->y - scaler); }
 		inline Vector2 operator*(T scaler) { return Vector2(this->x * scaler, this->y * scaler); }
@@ -43,8 +45,8 @@ namespace Alexio
 	};
 
 
-	typedef Vector2<int32_t> Vector2i;
-	typedef Vector2<uint32_t> Vector2ui;
-	typedef Vector2<float> Vector2f;
-	typedef Vector2<double> Vector2d;
+	using Vector2i = Vector2<int32_t>;
+	using Vector2ui = Vector2<uint32_t>;
+	using Vector2f = Vector2<float>;
+	using Vector2d = Vector2<double>;
 }

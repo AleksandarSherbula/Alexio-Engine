@@ -48,6 +48,4 @@ namespace Alexio
 	private:
 		uint32_t mID;
 	};
-
-	
 }

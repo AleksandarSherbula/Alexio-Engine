@@ -158,4 +158,15 @@ namespace Alexio
 		std::vector<std::shared_ptr<VertexBuffer>> mVertexBuffers;
 		std::shared_ptr<IndexBuffer> mIndexBuffer;
 	};
+
+
+	class ConstantBuffers
+	{
+	public:
+		static Ref<ConstantBuffers> Create();
+	public:
+		virtual void SetData(const void* data, uint32_t size);
+	private:
+		static uint32_t sBindings;
+	};
 }

@@ -23,6 +23,9 @@ namespace Alexio
 		void SetFloat2(const std::string& name, const Vector2f& value) override;
 		void SetFloat3(const std::string& name, const Vector3f& value) override;
 		void SetFloat4(const std::string& name, const Vector4f& value) override;
+
+		void SetMat3x3(const std::string& name, const glm::mat3x3& matrix) override {}
+		void SetMat4x4(const std::string& name, const glm::mat4x4& matrix) override {}
 	private:
 		std::string mVertexSource;
 		std::string mPixelSource;

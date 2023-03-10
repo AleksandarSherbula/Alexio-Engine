@@ -17,7 +17,7 @@ namespace Alexio
 
 	void Engine::Run()
 	{
-		Renderer::SetGraphicsAPI(GraphicsAPI::DirectX11);
+		Renderer::SetGraphicsAPI(GraphicsAPI::OpenGL);
 
 		std::string apiName = (Renderer::GetGraphicsAPI() == GraphicsAPI::OpenGL) ? "OpenGL" : "DirectX11";
 
@@ -32,18 +32,10 @@ namespace Alexio
 
 		AIO_ASSERT(OnStart(),"Initialization failed");
 
-		bool fullscreen = false;
-
 		while (mRunning)
 		{
 			mWindow->PollEvents();
 			Input::Scan();
-
-			if (Input::KeyPressed(Alexio::F))
-			{
-				fullscreen = !fullscreen;
-				mWindow->SetFullScreen(fullscreen);
-			}
 
 			if (!OnUpdate() ||
 				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked

@@ -7,6 +7,7 @@
 #include "Renderer/RendererAPI.h"
 #include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"
+#include "Renderer/Camera.h"
 
 namespace Alexio
 {
@@ -24,8 +25,10 @@ namespace Alexio
 		static void SetGraphicsAPI(GraphicsAPI api);
 		inline static GraphicsAPI GetGraphicsAPI() { return s_API; }
 		inline static RendererAPI* GetAPI() { return sRendererAPI.get(); };	
+		inline static Camera* GetCamera() { return sCamera.get(); }
 	private:
 		static Ref<RendererAPI> sRendererAPI;
 		static GraphicsAPI s_API;
+		static Scope<Camera> sCamera;
 	};
 }

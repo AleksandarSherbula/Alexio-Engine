@@ -37,7 +37,7 @@ namespace Alexio
 	{
 		WNDCLASSEX wc;
 		wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-		wc.lpfnWndProc = WindowsProc;
+		wc.lpfnWndProc = WndProc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
 		wc.hInstance = m_hInstance;
@@ -121,11 +121,12 @@ namespace Alexio
 		}		
 	}
 
-	LRESULT WindowsProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
 			return true;
 
+		// WINDOW EVENTS
 		switch (uMsg)
 		{
 		case WM_SIZE:
@@ -143,15 +144,9 @@ namespace Alexio
 			ecFn(event);
 			return 0;
 		}
-		default:
-			return KeyProc(hwnd, uMsg, wParam, lParam);
-		};
-	}
 
-	LRESULT KeyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-	{
-		switch (uMsg)
-		{
+
+		// KEY EVENTS
 		case WM_SYSKEYDOWN:
 		{
 			int32_t keycode;
@@ -240,15 +235,6 @@ namespace Alexio
 			Input::UpdateKeyState(keycode, false);
 			return 0;
 		}
-		default:
-			return MouseProc(hwnd, uMsg, wParam, lParam);
-		};		
-	}
-
-	LRESULT MouseProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-	{
-		switch (uMsg)
-		{
 
 		// MOUSE PRESS EVENTS
 		case WM_LBUTTONDOWN:
@@ -317,7 +303,7 @@ namespace Alexio
 			if (xbuttoncode == 32)
 				xbuttoncode = X_BUTTON1;
 			else if (xbuttoncode == 64)
-				xbuttoncode = X_BUTTON2;			
+				xbuttoncode = X_BUTTON2;
 			Input::UpdateMouseState(xbuttoncode, false);
 			return 0;
 		}
@@ -325,7 +311,7 @@ namespace Alexio
 		// MOUSE SCROLL EVENTS
 		case WM_MOUSEWHEEL:
 		{
-			// Have no mouse to test the x-axis scrolling so for now it's set to 0.
+			// I have no mouse to test the x-axis scrolling so for now it's set to 0.
 			MouseScrolledEvent event(0, GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA);
 			ecFn(event);
 			return 0;
@@ -338,6 +324,7 @@ namespace Alexio
 			ecFn(event);
 			return 0;
 		}
+
 		default:
 			return DefWindowProc(hwnd, uMsg, wParam, lParam);
 		};

@@ -4,6 +4,8 @@
 #include "OpenGL_Renderer.h"
 #include "OpenGL_Buffer.h"
 
+
+
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
@@ -54,8 +56,17 @@ namespace Alexio
 		glDebugMessageCallback(OpenGLMessageCallback, nullptr);
 
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
-#endif
-		AIO_LOG_INFO("OpenGL Initialized");		
+#endif		
+		AIO_LOG_INFO("OpenGL ({0}) Initialized", (const char*)glGetString(GL_VERSION));
+
+
+		unsigned int uboExampleBlock;
+		glGenBuffers(1, &uboExampleBlock);
+		glBindBuffer(GL_UNIFORM_BUFFER, uboExampleBlock);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4x4), NULL, GL_STATIC_DRAW); // allocate 152 bytes of memory
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboExampleBlock);
 	}
 
 	void OpenGL_Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -65,8 +76,6 @@ namespace Alexio
 
 	void OpenGL_Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources)
 	{
-		vertexResources->Bind();
-		shader->Bind();
 		glDrawElements(GL_TRIANGLES, vertexResources->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 		shader->Unbind();
 		vertexResources->Unbind();
