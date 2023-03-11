@@ -1,14 +1,16 @@
 #include "aio_pch.h"
 #include "Alexio/Renderer.h"
+#include "Alexio/Input.h"
 
 #include <imgui.h>
 
 namespace Alexio
 {	
-	Ref<RendererAPI> Renderer::sRendererAPI = nullptr;
 	GraphicsAPI Renderer::s_API = GraphicsAPI::OpenGL;
+
+	Ref<RendererAPI> Renderer::sRendererAPI = nullptr;
 	Scope<Camera> Renderer::sCamera = nullptr;
-	Scope<ConstantBuffer> Renderer::sProjectionBuffer = nullptr;
+	Ref<ConstantBuffer> Renderer::sCameraBuffer = nullptr;	
 
 	void Renderer::Begin(Window* window)
 	{
@@ -20,15 +22,28 @@ namespace Alexio
 
 		sCamera = CreateScope<Camera>(0.0f, (float)window->GetWidth(), (float)window->GetHeight(), 0.0f);
 		
-		sProjectionBuffer = ConstantBuffer::Create(sizeof(glm::mat4x4), 0);
+		sCameraBuffer = ConstantBuffer::Create(sizeof(glm::mat4x4), 0);
 
 		sRendererAPI->SetVSync(true);
 	}
 
+	glm::vec2 cameraPosition = { 0.0f, 0.0f };
+	float moveSpeed = 5.0f;
 	void Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources)
 	{
 		vertexResources->Bind();
 		shader->Bind();
+
+		if (Input::KeyHeld(A))
+			cameraPosition.x -= moveSpeed;
+		if (Input::KeyHeld(D))
+			cameraPosition.x += moveSpeed;
+		if (Input::KeyHeld(W))
+			cameraPosition.y -= moveSpeed;
+		if (Input::KeyHeld(S))
+			cameraPosition.y += moveSpeed;
+
+		sCamera->SetPosition(cameraPosition);
 		
 		//test code ----- yet again
 		glm::vec2 position = { 0.0f, 0.0f };
@@ -36,16 +51,10 @@ namespace Alexio
 		
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(position, 0.0f));
-		
-		model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
 		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
-		
 		model = glm::scale(model, glm::vec3(size, 1.0f));
 
-		glm::mat4x4 modProjection = sCamera->GetProjection() * model;
-		sProjectionBuffer->SetData(&modProjection, sizeof(glm::mat4x4));
-		sProjectionBuffer->Bind(0);
+		sCamera->Update(model);
 		sRendererAPI->Draw(shader, vertexResources);
 	}
 

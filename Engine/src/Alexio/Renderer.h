@@ -26,10 +26,11 @@ namespace Alexio
 		inline static GraphicsAPI GetGraphicsAPI() { return s_API; }
 		inline static RendererAPI* GetAPI() { return sRendererAPI.get(); };	
 		inline static Camera* GetCamera() { return sCamera.get(); }
+		inline static ConstantBuffer* GetCameraBuffer() { return sCameraBuffer.get(); }
 	private:
 		static Ref<RendererAPI> sRendererAPI;
 		static GraphicsAPI s_API;
 		static Scope<Camera> sCamera;
-		static Scope<ConstantBuffer> sProjectionBuffer;
+		static Ref<ConstantBuffer> sCameraBuffer;
 	};
 }
