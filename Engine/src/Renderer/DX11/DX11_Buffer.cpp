@@ -140,14 +140,37 @@ namespace Alexio
 		mIndexBuffer = indexBuffer;
 	}
 
-	DX11_ConstantBuffer::DX11_ConstantBuffer(uint32_t block_size, uint32_t binding)
+	/////////////////////////////////////////////////////
+	///////////CONSTANT BUFFER///////////////////////////
+	/////////////////////////////////////////////////////
+
+	DX11_ConstantBuffer::DX11_ConstantBuffer(uint32_t block_size, uint32_t slot)
 	{
+		D3D11_BUFFER_DESC bufferDesc;
+		ZeroMemory(&bufferDesc, sizeof(bufferDesc));
+		bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		bufferDesc.MiscFlags = 0;
+		bufferDesc.ByteWidth = static_cast<UINT>(block_size + (16 - (block_size % 16)));
+		bufferDesc.StructureByteStride = 0;
 		
+		HRESULT hr = AIO_DX11_DEVICE->CreateBuffer(&bufferDesc, 0, mBuffer.GetAddressOf());
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create constant buffer: " + ResultInfo(hr) + "\n");
 	}
 
-	void DX11_ConstantBuffer::SetData(const void* data, uint32_t data_size, uint32_t offset)
+	void DX11_ConstantBuffer::SetData(const void* data, uint32_t data_size)
 	{
-		
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT hr = AIO_DX11_DEVICE_CONTEXT->Map(mBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to map constant buffer: " + ResultInfo(hr) + "\n");
+		CopyMemory(mappedResource.pData, data, data_size);
+		AIO_DX11_DEVICE_CONTEXT->Unmap(mBuffer.Get(), 0);
+	}
+
+	void DX11_ConstantBuffer::Bind(uint32_t binding)
+	{
+		AIO_DX11_DEVICE_CONTEXT->VSSetConstantBuffers(binding, 1, mBuffer.GetAddressOf());
 	}
 }
 

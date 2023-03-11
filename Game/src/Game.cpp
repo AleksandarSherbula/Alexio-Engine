@@ -27,11 +27,18 @@ public:
 		/// Test code ///
 		float vertices[] =
 		{
-			0.0f,  1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			0.5f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-			1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f
+			0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f
 		};
-		
+
+		//float vertices[] =
+		//{
+		//   -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
+		//    0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
+		//    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f
+		//};
+
 		uint32_t indices[] =
 		{
 			0, 1, 2
@@ -48,6 +55,14 @@ public:
 			0.0f, 1.0f,  0.0f, 0.8f, 1.0f, 1.0f,   //bottom-left
 			1.0f, 1.0f,  0.0f, 0.8f, 1.0f, 1.0f,   //bottom-right
 		};
+
+		//float blueSquareVertices[] =
+		//{
+		//   -0.5f, -0.5f, 0.0f, 0.8f, 1.0f, 1.0f,
+		//    0.5f, -0.5f, 0.0f, 0.8f, 1.0f, 1.0f,
+		//    0.5f,  0.5f, 0.0f, 0.8f, 1.0f, 1.0f,
+		//   -0.5f,  0.5f, 0.0f, 0.8f, 1.0f, 1.0f
+		//};
 
 		uint32_t blueSquareIndices[] =
 		{
@@ -78,7 +93,12 @@ public:
 		shader = Alexio::Shader::Create("basic");
 		shader->SetVertexResources(vd);
 		shader->Compile();
-		shader->Bind();
+		//shader->Bind();
+
+		blueSquareShader = Alexio::Shader::Create("basic");
+		blueSquareShader->SetVertexResources(blueSquareVD);
+		blueSquareShader->Compile();
+		//blueSquareShader->Bind();
 	}
 
 	float blue = 0.0f;
@@ -106,7 +126,7 @@ public:
 		//
 		//blueSquareVB->SetData(blueSquareVertices, sizeof(blueSquareVertices));
 		
-		Alexio::Renderer::Draw(shader, blueSquareVD);
+		Alexio::Renderer::Draw(blueSquareShader, blueSquareVD);
 		Alexio::Renderer::Draw(shader, vd);
 	}
 

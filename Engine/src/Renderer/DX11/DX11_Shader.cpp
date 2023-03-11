@@ -57,7 +57,7 @@ namespace Alexio
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to load shader: " + mVertexSource + "\n" + ResultInfo(hr));
 
 		std::vector<D3D11_INPUT_ELEMENT_DESC> layoutDesc;
-				for (auto& vertexBuffer : mVertexResources->GetVertexBuffers())
+		for (auto& vertexBuffer : mVertexResources->GetVertexBuffers())
 		{
 			auto& layout = vertexBuffer->GetLayout();
 			for (auto& element : layout)

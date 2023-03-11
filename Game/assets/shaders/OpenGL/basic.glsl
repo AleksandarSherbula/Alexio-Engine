@@ -8,7 +8,7 @@ out vec4 vColor;
 uniform mat4 uModel;
 uniform mat4 uProjection;
 
-layout (std140, binding = 0, row_major) uniform matrices
+layout (std140, binding = 0) uniform Camera
 {
 	mat4 projection;
 };
@@ -16,7 +16,7 @@ layout (std140, binding = 0, row_major) uniform matrices
 void main()
 {	
 	vColor = aColor;
-	gl_Position = vec4(aPosition, 0.0, 1.0)* uModel * projection;
+	gl_Position = projection * vec4(aPosition, 0.0, 1.0);
 }
 
 #type pixel

@@ -144,11 +144,11 @@ namespace Alexio
 		mIndexBuffer = indexBuffer;
 	}
 
-	UniformBuffer::UniformBuffer(uint32_t block_size, uint32_t binding)
+	UniformBuffer::UniformBuffer(uint32_t block_size, uint32_t slot)
 	{
 		glCreateBuffers(1, &mID);
 		glNamedBufferData(mID, block_size, nullptr, GL_DYNAMIC_DRAW);
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, mID);
+		glBindBufferBase(GL_UNIFORM_BUFFER, slot, mID);
 	}
 
 	UniformBuffer::~UniformBuffer()
@@ -156,8 +156,13 @@ namespace Alexio
 		glDeleteBuffers(1, &mID);
 	}
 
-	void UniformBuffer::SetData(const void* data, uint32_t data_size, uint32_t offset)
+	void UniformBuffer::SetData(const void* data, uint32_t data_size)
 	{
-		glBufferSubData(GL_UNIFORM_BUFFER, offset, data_size, data);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, data_size, data);
+	}
+
+	void UniformBuffer::Bind(uint32_t binding)
+	{
+		glBindBufferBase(GL_UNIFORM_BUFFER, binding, mID);
 	}
 }

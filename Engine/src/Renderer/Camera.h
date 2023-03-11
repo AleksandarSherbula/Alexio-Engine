@@ -17,6 +17,6 @@ namespace Alexio
 	private:
 		glm::mat4x4 mProjection;
 	public:
-		static Scope<ConstantBuffer> sProjectionBuffer;
+		
 	};
 }
