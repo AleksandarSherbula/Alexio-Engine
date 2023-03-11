@@ -48,4 +48,16 @@ namespace Alexio
 	private:
 		uint32_t mID;
 	};
+
+	class DX11_ConstantBuffer : public ConstantBuffer
+	{
+	public:
+		DX11_ConstantBuffer(uint32_t block_size, uint32_t slot);
+
+		void SetData(const void* data, uint32_t data_size) override;
+
+		void Bind(uint32_t binding) override;
+	private:
+		Microsoft::WRL::ComPtr<ID3D11Buffer> mBuffer;
+	};
 }

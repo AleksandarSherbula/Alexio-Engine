@@ -24,7 +24,6 @@ namespace Alexio
 		return DXGI_FORMAT_UNKNOWN;
 	}
 
-
 	DX11_Shader::DX11_Shader(const std::string& name)
 	{
 		mName = name;
@@ -51,8 +50,6 @@ namespace Alexio
 
 	void DX11_Shader::Compile()
 	{
-		Microsoft::WRL::ComPtr<ID3D11Device>& device = dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDevice();
-
 		////////// VERTEX SHADER /////////////////
 		ID3DBlob* vertexErrorMessage;
 		HRESULT hr = D3DCompileFromFile(StringToWide(mVertexSource).c_str(), NULL, NULL, "VSMain", "vs_5_0", D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_WARNINGS_ARE_ERRORS,
@@ -60,7 +57,7 @@ namespace Alexio
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to load shader: " + mVertexSource + "\n" + ResultInfo(hr));
 
 		std::vector<D3D11_INPUT_ELEMENT_DESC> layoutDesc;
-				for (auto& vertexBuffer : mVertexResources->GetVertexBuffers())
+		for (auto& vertexBuffer : mVertexResources->GetVertexBuffers())
 		{
 			auto& layout = vertexBuffer->GetLayout();
 			for (auto& element : layout)
@@ -69,14 +66,14 @@ namespace Alexio
 			}
 		}
 
-		hr = device->CreateInputLayout(layoutDesc.data(),
+		hr = AIO_DX11_DEVICE->CreateInputLayout(layoutDesc.data(),
 			layoutDesc.size(),
 			mVertexShaderBuffer->GetBufferPointer(),
 			mVertexShaderBuffer->GetBufferSize(),
 			mVertexLayout.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex layout: " + mVertexSource + "\n" + ResultInfo(hr));
 
-		hr = device->CreateVertexShader(mVertexShaderBuffer->GetBufferPointer(), mVertexShaderBuffer->GetBufferSize(), NULL, &mVertexShader);
+		hr = AIO_DX11_DEVICE->CreateVertexShader(mVertexShaderBuffer->GetBufferPointer(), mVertexShaderBuffer->GetBufferSize(), NULL, &mVertexShader);
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex shader: " + mVertexSource + "\n" + ResultInfo(hr));
 
 		////////// PIXEL SHADER /////////////////
@@ -85,25 +82,25 @@ namespace Alexio
 			0, mPixelShaderBuffer.GetAddressOf(), &pixelErrorMessage);
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to load shader: " + mPixelSource + "\n" + ResultInfo(hr));
 
-		hr = device->CreatePixelShader(mPixelShaderBuffer->GetBufferPointer(), mPixelShaderBuffer->GetBufferSize(), NULL, &mPixelShader);
+		hr = AIO_DX11_DEVICE->CreatePixelShader(mPixelShaderBuffer->GetBufferPointer(), mPixelShaderBuffer->GetBufferSize(), NULL, &mPixelShader);
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create pixel shader: " + mPixelSource + "\n" + ResultInfo(hr));
 	}
 
 	void DX11_Shader::Bind() const
 	{
-		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->IASetInputLayout(mVertexLayout.Get());
-		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		AIO_DX11_DEVICE_CONTEXT->IASetInputLayout(mVertexLayout.Get());
+		AIO_DX11_DEVICE_CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->VSSetShader(mVertexShader.Get(), NULL, 0);
-		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->PSSetShader(mPixelShader.Get(), NULL, 0);
+		AIO_DX11_DEVICE_CONTEXT->VSSetShader(mVertexShader.Get(), NULL, 0);
+		AIO_DX11_DEVICE_CONTEXT->PSSetShader(mPixelShader.Get(), NULL, 0);
 
 		mVertexResources->Bind();
 	}
 
 	void DX11_Shader::Unbind() const
 	{
-		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->VSSetShader(nullptr, NULL, 0);
-		dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()->PSSetShader(nullptr, NULL, 0);
+		AIO_DX11_DEVICE_CONTEXT->VSSetShader(nullptr, NULL, 0);
+		AIO_DX11_DEVICE_CONTEXT->PSSetShader(nullptr, NULL, 0);
 	}
 	void DX11_Shader::SetInt(const std::string& name, int32_t value)
 	{

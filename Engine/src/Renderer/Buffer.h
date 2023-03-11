@@ -120,8 +120,8 @@ namespace Alexio
 		void SetLayout(const BufferLayout& layout) { mLayout = layout; }
 		const BufferLayout& GetLayout() const { return mLayout; }
 
-		static std::shared_ptr<VertexBuffer> Create(uint32_t size);
-		static std::shared_ptr<VertexBuffer> Create(float* vertices, uint32_t size);
+		static Ref<VertexBuffer> Create(uint32_t size);
+		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
 	protected:
 		BufferLayout mLayout;
 	};
@@ -135,7 +135,7 @@ namespace Alexio
 		virtual void Unbind() = 0;
 
 		inline uint32_t GetCount() const { return mCount; }
-		static std::shared_ptr<IndexBuffer> Create(uint32_t* indices, uint32_t count);
+		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 	protected:
 		uint32_t mCount;
 	};
@@ -146,27 +146,26 @@ namespace Alexio
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
-		virtual void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer) = 0;
-		virtual void SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer) = 0;
+		virtual void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) = 0;
+		virtual void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) = 0;
 
-		inline std::vector<std::shared_ptr<VertexBuffer>> GetVertexBuffers() { return mVertexBuffers; }
-		inline std::shared_ptr<IndexBuffer> GetIndexBuffer() { return mIndexBuffer; }
+		inline std::vector<Ref<VertexBuffer>> GetVertexBuffers() { return mVertexBuffers; }
+		inline Ref<IndexBuffer> GetIndexBuffer() { return mIndexBuffer; }
 
-		static std::shared_ptr<VertexResources> Create();
+		static Ref<VertexResources> Create();
 
 	protected:
-		std::vector<std::shared_ptr<VertexBuffer>> mVertexBuffers;
-		std::shared_ptr<IndexBuffer> mIndexBuffer;
+		std::vector<Ref<VertexBuffer>> mVertexBuffers;
+		Ref<IndexBuffer> mIndexBuffer;
 	};
 
-
-	class ConstantBuffers
+	class ConstantBuffer
 	{
 	public:
-		static Ref<ConstantBuffers> Create();
+		virtual ~ConstantBuffer() {}
+		static Scope<ConstantBuffer> Create(uint32_t block_size, uint32_t slot);
 	public:
-		virtual void SetData(const void* data, uint32_t size);
-	private:
-		static uint32_t sBindings;
+		virtual void SetData(const void* data, uint32_t data_size) = 0;
+		virtual void Bind(uint32_t binding) = 0;
 	};
 }

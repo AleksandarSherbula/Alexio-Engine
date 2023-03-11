@@ -61,6 +61,19 @@ namespace Alexio
         AIO_ASSERT(false, "Unknown Rendering API");
         return nullptr;
     }
+
+    Scope<ConstantBuffer> ConstantBuffer::Create(uint32_t block_size, uint32_t slot)
+    {
+        switch (Renderer::GetGraphicsAPI())
+        {
+        case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
+        case GraphicsAPI::OpenGL:    return CreateScope<UniformBuffer>(block_size, slot);
+        case GraphicsAPI::DirectX11: return CreateScope<DX11_ConstantBuffer>(block_size, slot);
+        }
+
+        AIO_ASSERT(false, "Unknown Rendering API");
+        return nullptr;
+    }
 }
 
 

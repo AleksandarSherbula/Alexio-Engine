@@ -14,7 +14,7 @@ namespace Alexio
 	{
 		glCreateBuffers(1, &mID);
 		glBindBuffer(GL_ARRAY_BUFFER, mID);
-		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_DYNAMIC_DRAW);
 	}
 
 	OpenGL_VertexBuffer::~OpenGL_VertexBuffer()
@@ -142,5 +142,27 @@ namespace Alexio
 
 		indexBuffer->Bind();
 		mIndexBuffer = indexBuffer;
+	}
+
+	UniformBuffer::UniformBuffer(uint32_t block_size, uint32_t slot)
+	{
+		glCreateBuffers(1, &mID);
+		glNamedBufferData(mID, block_size, nullptr, GL_DYNAMIC_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, slot, mID);
+	}
+
+	UniformBuffer::~UniformBuffer()
+	{
+		glDeleteBuffers(1, &mID);
+	}
+
+	void UniformBuffer::SetData(const void* data, uint32_t data_size)
+	{
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, data_size, data);
+	}
+
+	void UniformBuffer::Bind(uint32_t binding)
+	{
+		glBindBufferBase(GL_UNIFORM_BUFFER, binding, mID);
 	}
 }

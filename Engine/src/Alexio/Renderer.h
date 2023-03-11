@@ -30,5 +30,6 @@ namespace Alexio
 		static Ref<RendererAPI> sRendererAPI;
 		static GraphicsAPI s_API;
 		static Scope<Camera> sCamera;
+		static Scope<ConstantBuffer> sProjectionBuffer;
 	};
 }

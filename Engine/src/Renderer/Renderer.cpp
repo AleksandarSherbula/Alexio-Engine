@@ -8,6 +8,7 @@ namespace Alexio
 	Ref<RendererAPI> Renderer::sRendererAPI = nullptr;
 	GraphicsAPI Renderer::s_API = GraphicsAPI::OpenGL;
 	Scope<Camera> Renderer::sCamera = nullptr;
+	Scope<ConstantBuffer> Renderer::sProjectionBuffer = nullptr;
 
 	void Renderer::Begin(Window* window)
 	{
@@ -18,6 +19,8 @@ namespace Alexio
 		sRendererAPI->Initialize();
 
 		sCamera = CreateScope<Camera>(0.0f, (float)window->GetWidth(), (float)window->GetHeight(), 0.0f);
+		
+		sProjectionBuffer = ConstantBuffer::Create(sizeof(glm::mat4x4), 0);
 
 		sRendererAPI->SetVSync(true);
 	}
@@ -26,21 +29,23 @@ namespace Alexio
 	{
 		vertexResources->Bind();
 		shader->Bind();
-
+		
+		//test code ----- yet again
 		glm::vec2 position = { 0.0f, 0.0f };
 		glm::vec2 size = { 200.0f, 200.f };
-
-		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+		
+		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(position, 0.0f));
-
+		
 		model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
 		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
-
+		
 		model = glm::scale(model, glm::vec3(size, 1.0f));
 
-		shader->SetMat4x4("uModel", model);
-
+		glm::mat4x4 modProjection = sCamera->GetProjection() * model;
+		sProjectionBuffer->SetData(&modProjection, sizeof(glm::mat4x4));
+		sProjectionBuffer->Bind(0);
 		sRendererAPI->Draw(shader, vertexResources);
 	}
 
