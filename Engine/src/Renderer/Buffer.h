@@ -163,7 +163,7 @@ namespace Alexio
 	{
 	public:
 		virtual ~ConstantBuffer() {}
-		static Scope<ConstantBuffer> Create(uint32_t block_size, uint32_t slot);
+		static Ref<ConstantBuffer> Create(uint32_t block_size, uint32_t slot);
 	public:
 		virtual void SetData(const void* data, uint32_t data_size) = 0;
 		virtual void Bind(uint32_t binding) = 0;

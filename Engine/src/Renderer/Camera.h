@@ -12,11 +12,20 @@ namespace Alexio
 	{
 	public:
 		Camera(float left, float right, float bottom, float top);
+		
+		inline glm::vec2 GetPosition() { return mPosition; }
+		inline void SetPosition(const glm::vec2& position) { mPosition = position; }
 
-		inline glm::mat4x4 GetProjection() { return mProjection; }
+		inline float GetRotation() { return mRotation; }
+		inline void SetRotation(float rotation) { mRotation = rotation; }
+
+		void Update(const glm::mat4x4& model);
 	private:
 		glm::mat4x4 mProjection;
-	public:
-		
+		glm::mat4x4 mView;
+		glm::mat4x4 mViewProjection;
+
+		glm::vec2 mPosition;
+		float mRotation;
 	};
 }

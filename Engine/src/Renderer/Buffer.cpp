@@ -62,7 +62,7 @@ namespace Alexio
         return nullptr;
     }
 
-    Scope<ConstantBuffer> ConstantBuffer::Create(uint32_t block_size, uint32_t slot)
+    Ref<ConstantBuffer> ConstantBuffer::Create(uint32_t block_size, uint32_t slot)
     {
         switch (Renderer::GetGraphicsAPI())
         {
