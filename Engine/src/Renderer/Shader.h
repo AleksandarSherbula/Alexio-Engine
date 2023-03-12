@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "Alexio/Math.h"
+#include "Math/Math.h"
 #include "Renderer/Buffer.h"
 
 namespace Alexio
