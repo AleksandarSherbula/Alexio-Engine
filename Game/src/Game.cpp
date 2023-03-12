@@ -1,23 +1,21 @@
 #include "Alexio.h"
-#include "imgui/imgui.h"
-
-#include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
 
 class ExampleLayer : public Alexio::Layer
 {
 public:
-	Alexio::Ref<Alexio::VertexResources> vd;
-	Alexio::Ref<Alexio::VertexBuffer> vb;
-	Alexio::Ref<Alexio::IndexBuffer> ib;
-	Alexio::Ref<Alexio::Shader> shader;
+	std::shared_ptr<Alexio::VertexResources> vd;
+	std::shared_ptr<Alexio::VertexBuffer> vb;
+	std::shared_ptr<Alexio::IndexBuffer> ib;
+	std::shared_ptr<Alexio::Shader> shader;
 	
-	Alexio::Ref<Alexio::VertexResources> blueSquareVD;
-	Alexio::Ref<Alexio::VertexBuffer> blueSquareVB;
-	Alexio::Ref<Alexio::IndexBuffer> blueSquareIB;
-	Alexio::Ref<Alexio::Shader> blueSquareShader;
+	std::shared_ptr<Alexio::VertexResources> blueSquareVD;
+	std::shared_ptr<Alexio::VertexBuffer> blueSquareVB;
+	std::shared_ptr<Alexio::IndexBuffer> blueSquareIB;
+	std::shared_ptr<Alexio::Shader> blueSquareShader;
 
 	glm::vec4 clearColor;
+	glm::vec2 cameraPosition = { 0.0f, 0.0f };
+	float moveSpeed = 15.0f;
 
 	ExampleLayer()
 		: Layer("Example")
@@ -32,13 +30,6 @@ public:
 			1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f
 		};
 
-		//float vertices[] =
-		//{
-		//   -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
-		//    0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
-		//    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f
-		//};
-
 		uint32_t indices[] =
 		{
 			0, 1, 2
@@ -50,19 +41,11 @@ public:
 
 		float blueSquareVertices[] =
 		{
-			0.0f, 0.0f,  0.0f, 0.8f, 1.0f, 1.0f,   //top-left
-			1.0f, 0.0f,  0.0f, 0.8f, 1.0f, 1.0f,   //top-right
-			0.0f, 1.0f,  0.0f, 0.8f, 1.0f, 1.0f,   //bottom-left
-			1.0f, 1.0f,  0.0f, 0.8f, 1.0f, 1.0f,   //bottom-right
+			0.0f, 0.0f,  0.0f, 0.8f, 1.0f, 1.0f,
+			1.0f, 0.0f,  0.0f, 0.8f, 1.0f, 1.0f,
+			0.0f, 1.0f,  0.0f, 0.8f, 1.0f, 1.0f,
+			1.0f, 1.0f,  0.0f, 0.8f, 1.0f, 1.0f,
 		};
-
-		//float blueSquareVertices[] =
-		//{
-		//   -0.5f, -0.5f, 0.0f, 0.8f, 1.0f, 1.0f,
-		//    0.5f, -0.5f, 0.0f, 0.8f, 1.0f, 1.0f,
-		//    0.5f,  0.5f, 0.0f, 0.8f, 1.0f, 1.0f,
-		//   -0.5f,  0.5f, 0.0f, 0.8f, 1.0f, 1.0f
-		//};
 
 		uint32_t blueSquareIndices[] =
 		{
@@ -93,38 +76,28 @@ public:
 		shader = Alexio::Shader::Create("basic");
 		shader->SetVertexResources(vd);
 		shader->Compile();
-		//shader->Bind();
 
 		blueSquareShader = Alexio::Shader::Create("basic");
 		blueSquareShader->SetVertexResources(blueSquareVD);
 		blueSquareShader->Compile();
-		//blueSquareShader->Bind();
 	}
 
-	float blue = 0.0f;
-	float increment = 0.05f;
-	void OnUpdate() override
+	void OnUpdate(float deltaTime) override
 	{
-		Alexio::Renderer::ClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+		AIO_LOG_TRACE("{0}s", deltaTime);
 
-		// Test code currently commented
-		 
-		//if (blue < 0.0f)
-		//	increment = 0.05f;
-		//else if (blue > 1.0f)
-		//	increment = -0.05f;
-		//
-		//blue += increment;
-		//
-		//float blueSquareVertices[] =
-		//{
-		//	0.0f, 0.0f,    0.0f, 0.8f, blue, 1.0f,   //top-left
-		//	1.0f, 0.0f,    0.0f, 0.8f, blue, 1.0f,   //top-right
-		//	1.0f, 1.0f,    0.0f, 0.8f, blue, 1.0f,   //bottom-right
-		//	0.0f, 1.0f,    0.0f, 0.8f, blue, 1.0f    //bottom-left
-		//};
-		//
-		//blueSquareVB->SetData(blueSquareVertices, sizeof(blueSquareVertices));
+		if (Alexio::Input::KeyHeld(A))
+			cameraPosition.x -= moveSpeed * deltaTime;
+		if (Alexio::Input::KeyHeld(D))
+			cameraPosition.x += moveSpeed * deltaTime;
+		if (Alexio::Input::KeyHeld(W))
+			cameraPosition.y -= moveSpeed * deltaTime;
+		if (Alexio::Input::KeyHeld(S))
+			cameraPosition.y += moveSpeed * deltaTime;
+
+		Alexio::Renderer::GetCamera()->SetPosition(cameraPosition);
+
+		Alexio::Renderer::ClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		
 		Alexio::Renderer::Draw(blueSquareShader, blueSquareVD);
 		Alexio::Renderer::Draw(shader, vd);
@@ -157,24 +130,9 @@ public:
 		return true;
 	}
 
-	bool Game::OnUpdate() override
+	bool Game::OnUpdate(float deltaTime) override
 	{
-		if (Alexio::Input::MouseButtonPressed(Alexio::L_BUTTON))
-			AIO_LOG_TRACE("L_BUTTON was pressed");
-		if (Alexio::Input::MouseButtonReleased(Alexio::L_BUTTON))
-			AIO_LOG_TRACE("L_BUTTON is being released");
-		
-		if (Alexio::Input::MouseButtonPressed(Alexio::R_BUTTON))
-			AIO_LOG_TRACE("R_BUTTON was pressed");
-		if (Alexio::Input::MouseButtonReleased(Alexio::R_BUTTON))
-			AIO_LOG_TRACE("R_BUTTON is being released");
-
-		if (Alexio::Input::MouseButtonPressed(Alexio::M_BUTTON))
-			AIO_LOG_TRACE("M_BUTTON was pressed");
-		if (Alexio::Input::MouseButtonReleased(Alexio::M_BUTTON))
-			AIO_LOG_TRACE("M_BUTTON is being released");
-
-		return !Alexio::Input::KeyPressed(Alexio::ESCAPE);
+		return !Alexio::Input::KeyPressed(ESCAPE);
 	}
 };
 

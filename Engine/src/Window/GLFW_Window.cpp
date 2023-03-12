@@ -1,13 +1,13 @@
 #include "aio_pch.h"
 #include "GLFW_Window.h"
 
-#include "Alexio/Renderer.h"
+#include "Renderer/Renderer.h"
 
 #include "Events/AppEvent.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 
-#include "Alexio/Input.h"
+#include "Input/Input.h"
 
 namespace Alexio
 {

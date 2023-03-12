@@ -1,9 +1,9 @@
 #include "aio_pch.h"
 #include "Win32_Window.h"
 #include "Alexio/Engine.h"
-#include "Alexio/Input.h"
+#include "Input/Input.h"
 
-#include "Alexio/Renderer.h"
+#include "Renderer/Renderer.h"
 #include "Renderer/DX11/DX11_Renderer.h"
 
 #include "Events/AppEvent.h"
@@ -241,21 +241,21 @@ namespace Alexio
 		{
 			MouseButtonPressedEvent event(MK_LBUTTON);
 			ecFn(event);
-			Input::UpdateMouseState(Alexio::L_BUTTON, true);
+			Input::UpdateMouseState(L_BUTTON, true);
 			return 0;
 		}
 		case WM_RBUTTONDOWN:
 		{
 			MouseButtonPressedEvent event(MK_RBUTTON);
 			ecFn(event);
-			Input::UpdateMouseState(Alexio::R_BUTTON, true);
+			Input::UpdateMouseState(R_BUTTON, true);
 			return 0;
 		}
 		case WM_MBUTTONDOWN:
 		{
 			MouseButtonPressedEvent event(MK_MBUTTON);
 			ecFn(event);
-			Input::UpdateMouseState(Alexio::M_BUTTON, true);
+			Input::UpdateMouseState(M_BUTTON, true);
 			return 0;
 		}
 		case WM_XBUTTONDOWN:
@@ -276,21 +276,21 @@ namespace Alexio
 		{
 			MouseButtonReleasedEvent event(MK_LBUTTON);
 			ecFn(event);
-			Input::UpdateMouseState(Alexio::L_BUTTON, false);
+			Input::UpdateMouseState(L_BUTTON, false);
 			return 0;
 		}
 		case WM_RBUTTONUP:
 		{
 			MouseButtonReleasedEvent event(MK_RBUTTON);
 			ecFn(event);
-			Input::UpdateMouseState(Alexio::R_BUTTON, false);
+			Input::UpdateMouseState(R_BUTTON, false);
 			return 0;
 		}
 		case WM_MBUTTONUP:
 		{
 			MouseButtonReleasedEvent event(MK_MBUTTON);
 			ecFn(event);
-			Input::UpdateMouseState(Alexio::M_BUTTON, false);
+			Input::UpdateMouseState(M_BUTTON, false);
 			return 0;
 		}
 		case WM_XBUTTONUP:

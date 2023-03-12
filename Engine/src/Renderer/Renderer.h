@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Alexio/Window.h"
+#include "Window/Window.h"
 
-#include "Alexio/ImGuiLayer.h"
+#include "ImGui/ImGuiLayer.h"
 
 #include "Renderer/RendererAPI.h"
 #include "Renderer/Buffer.h"
@@ -30,7 +30,7 @@ namespace Alexio
 	private:
 		static Ref<RendererAPI> sRendererAPI;
 		static GraphicsAPI s_API;
-		static Scope<Camera> sCamera;
+		static Ref<Camera> sCamera;
 		static Ref<ConstantBuffer> sCameraBuffer;
 	};
 }

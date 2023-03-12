@@ -1,7 +1,7 @@
 #include "aio_pch.h"
-#include "Alexio/ImGuiLayer.h"
+#include "ImGui/ImGuiLayer.h"
 #include "Alexio/Engine.h"
-#include "Alexio/Renderer.h"
+#include "Renderer/Renderer.h"
 
 #include <imgui.h>
 #include <backends/imgui_impl_dx11.h>

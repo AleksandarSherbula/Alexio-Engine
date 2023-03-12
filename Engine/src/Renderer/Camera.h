@@ -11,6 +11,7 @@ namespace Alexio
 	class Camera
 	{
 	public:
+		Camera() = default;
 		Camera(float left, float right, float bottom, float top);
 		
 		inline glm::vec2 GetPosition() { return mPosition; }

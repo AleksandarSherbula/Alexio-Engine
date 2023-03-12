@@ -30,20 +30,23 @@ namespace Alexio
 		imgui = new ImGUI();
 		PushOverlay(imgui);
 
+		Time::Start();
 		AIO_ASSERT(OnStart(),"Initialization failed");
 
 		while (mRunning)
 		{
+			Time::UpdateDeltaTime();
+
 			mWindow->PollEvents();
 			Input::Scan();
 
-			if (!OnUpdate() ||
+			if (!OnUpdate(Time::DetlaTime()) ||
 				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked
-				(Window::GetAPI() == WindowAPI::Win32 && (Input::KeyHeld(Alexio::L_ALT) && Input::KeyPressed(Alexio::F4))))
+				(Window::GetAPI() == WindowAPI::Win32 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
 				mRunning = false;
 
 			for (Layer* layer : mLayerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(Time::DetlaTime());
 
 			imgui->Begin();
 			for (Layer* layer : mLayerStack)

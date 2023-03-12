@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Window.h"
+#include "Window/Window.h"
 #include "Input/KeyCodes.h"
 
 namespace Alexio
