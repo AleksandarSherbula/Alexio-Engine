@@ -1,10 +1,9 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
-
 #include "Buffer.h"
+#include "Math/Math.h"
+#include "Events/AppEvent.h"
+#include "Events/MouseEvent.h"
 
 namespace Alexio
 {
@@ -12,21 +11,27 @@ namespace Alexio
 	{
 	public:
 		Camera() = default;
-		Camera(float left, float right, float bottom, float top);
+		Camera(float aspectRatio);
 		
-		inline glm::vec2 GetPosition() { return mPosition; }
-		inline void SetPosition(const glm::vec2& position) { mPosition = position; }
+		inline glm::vec2& Position() { return mPosition; }
+		inline float& Rotation() { return mRotation; }
+		inline float& ZoomLevel() { return mZoomLevel; }
 
-		inline float GetRotation() { return mRotation; }
-		inline void SetRotation(float rotation) { mRotation = rotation; }
+		void OnEvent(Event& e);
+		bool OnWindowResize(WindowResizeEvent& e);
+		bool OnMouseScroll(MouseScrolledEvent& e);
 
-		void Update(const glm::mat4x4& model);
+		void OnUpdate(float dt);
+		void UpdateProjection();
 	private:
+		glm::vec2 mPosition;
+		float mRotation;
+		float mZoomLevel;
+
+		float mAspectRatio;
+
 		glm::mat4x4 mProjection;
 		glm::mat4x4 mView;
 		glm::mat4x4 mViewProjection;
-
-		glm::vec2 mPosition;
-		float mRotation;
 	};
 }

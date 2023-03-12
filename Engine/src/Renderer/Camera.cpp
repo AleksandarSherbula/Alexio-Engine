@@ -1,14 +1,18 @@
 #include "aio_pch.h"
 #include "Camera.h"
 #include "Renderer/Renderer.h"
+#include "Alexio/Engine.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Alexio
 {
-	Camera::Camera(float left, float right, float bottom, float top)
-	{
-		mProjection = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
+	Camera::Camera(float aspectRatio)
+	{		
+		mAspectRatio = aspectRatio;
+		mZoomLevel = 1.0f;
+
+		mProjection = glm::ortho(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, -mZoomLevel, mZoomLevel);
 		mView = glm::mat4x4(1.0f);
 		mViewProjection = glm::mat4x4(1.0f);
 
@@ -16,14 +20,52 @@ namespace Alexio
 		mRotation = 0.0f;
 	}
 
-	void Camera::Update(const glm::mat4x4& model)
+	void Camera::OnEvent(Event& e)
 	{
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowResizeEvent>(std::bind(&Camera::OnWindowResize, this, std::placeholders::_1));
+		dispatcher.Dispatch<MouseScrolledEvent>(std::bind(&Camera::OnMouseScroll, this, std::placeholders::_1));
+	}
+
+	bool Camera::OnWindowResize(WindowResizeEvent& e)
+	{
+		mAspectRatio = e.GetWidth() / e.GetHeight();
+		mProjection = glm::ortho(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, -mZoomLevel, mZoomLevel);
+		return false;
+	}
+
+	bool Camera::OnMouseScroll(MouseScrolledEvent& e)
+	{
+		mZoomLevel -= e.GetYOffset() * 0.25f;
+		mZoomLevel = std::max(mZoomLevel, 0.25f);
+		mProjection = glm::ortho(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, -mZoomLevel, mZoomLevel);
+		return false;
+	}
+
+	void Camera::OnUpdate(float dt)
+	{
+		float moveSpeed = mZoomLevel;
+		
+		if (Alexio::Input::KeyHeld(A))
+			mPosition.x -= moveSpeed * Time::DetlaTime();
+		if (Alexio::Input::KeyHeld(D))
+			mPosition.x += moveSpeed * Time::DetlaTime();
+		if (Alexio::Input::KeyHeld(W))
+			mPosition.y -= moveSpeed * Time::DetlaTime();
+		if (Alexio::Input::KeyHeld(S))
+			mPosition.y += moveSpeed * Time::DetlaTime();
+
 		mView = glm::translate(glm::mat4x4(1.0f), glm::vec3(mPosition, 0.0f)) *
 			glm::rotate(glm::mat4x4(1.0f), glm::radians(mRotation), glm::vec3(0, 0, 1));
 
-		mViewProjection = mProjection * mView * model;
+		mViewProjection = mProjection * mView;
 
 		Renderer::GetCameraBuffer()->SetData(&mViewProjection, sizeof(glm::mat4x4));
 		Renderer::GetCameraBuffer()->Bind(0);
+	}
+
+	void Camera::UpdateProjection()
+	{
+		
 	}
 }
