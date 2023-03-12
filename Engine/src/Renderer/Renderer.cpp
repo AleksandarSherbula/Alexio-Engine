@@ -9,7 +9,7 @@ namespace Alexio
 	GraphicsAPI Renderer::s_API = GraphicsAPI::OpenGL;
 
 	Ref<RendererAPI> Renderer::sRendererAPI = nullptr;
-	Ref<Camera> Renderer::sCamera = nullptr;
+	
 	Ref<ConstantBuffer> Renderer::sCameraBuffer = nullptr;	
 
 	void Renderer::Begin(Window* window)
@@ -18,9 +18,7 @@ namespace Alexio
 
 		sRendererAPI->SetWindow(window);
 
-		sRendererAPI->Initialize();
-
-		sCamera = CreateRef<Camera>(0.0f, (float)window->GetWidth(), (float)window->GetHeight(), 0.0f);
+		sRendererAPI->Initialize();		
 		
 		sCameraBuffer = ConstantBuffer::Create(sizeof(glm::mat4x4), 0);
 
@@ -31,17 +29,7 @@ namespace Alexio
 	{
 		vertexResources->Bind();
 		shader->Bind();
-
-		//test code ----- yet again
-		glm::vec2 position = { 0.0f, 0.0f };
-		glm::vec2 size = { 200.0f, 200.f };
-
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(position, 0.0f));
-		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(size, 1.0f));
-
-		Alexio::Renderer::GetCamera()->Update(model);
+		
 		sRendererAPI->Draw(shader, vertexResources);
 	}
 

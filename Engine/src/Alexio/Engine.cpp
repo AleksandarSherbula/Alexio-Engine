@@ -4,6 +4,7 @@
 namespace Alexio
 {
 	Engine* Engine::sInstance = nullptr;
+	Ref<Camera> Engine::sMainCamera = nullptr;
 
 	Engine::Engine()
 	{
@@ -17,9 +18,11 @@ namespace Alexio
 
 	void Engine::Run()
 	{
-		Renderer::SetGraphicsAPI(GraphicsAPI::DirectX11);
+		Renderer::SetGraphicsAPI(GraphicsAPI::OpenGL);
 
 		std::string apiName = (Renderer::GetGraphicsAPI() == GraphicsAPI::OpenGL) ? "OpenGL" : "DirectX11";
+
+		sMainCamera = CreateRef<Camera>(1280 / 720);
 
 		mWindow = Window::Create("Alexio Engine (" + apiName + ")", 1280, 720);
 		mWindow->SetEventCallback(std::bind(&Engine::OnEvent, this, std::placeholders::_1));
@@ -48,6 +51,8 @@ namespace Alexio
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate(Time::DetlaTime());
 
+			sMainCamera->OnUpdate(Time::DetlaTime());
+
 			imgui->Begin();
 			for (Layer* layer : mLayerStack)
 				layer->OnImGuiRender();
@@ -64,6 +69,8 @@ namespace Alexio
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Engine::OnWindowClose, this, std::placeholders::_1));
 		dispatcher.Dispatch<WindowResizeEvent>(std::bind(&Engine::OnWindowResize, this, std::placeholders::_1));
+
+		sMainCamera->OnEvent(e);
 
 		for (auto it = mLayerStack.end(); it != mLayerStack.begin();)
 		{

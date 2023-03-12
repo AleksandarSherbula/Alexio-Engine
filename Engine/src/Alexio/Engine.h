@@ -6,6 +6,7 @@
 #include "Time.h"
 #include "Input/Input.h"
 #include "Events/AppEvent.h"
+#include "Events/MouseEvent.h"
 #include "Window/Window.h"
 #include "Renderer/Renderer.h"
 #include "ImGui/ImGuiLayer.h"
@@ -29,6 +30,7 @@ namespace Alexio
 		void PushOverlay(Layer* layer);
 
 		inline Window* GetWindow() const { return mWindow.get(); }
+		inline static Camera* GetCamera() { return sMainCamera.get(); }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
@@ -38,9 +40,8 @@ namespace Alexio
 		
 		LayerStack mLayerStack;
 		ImGUI* imgui;
-
-		
 	private:
+		static Ref<Camera> sMainCamera;
 		static Engine* sInstance;
 	};
 }

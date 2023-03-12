@@ -15,7 +15,8 @@ public:
 
 	glm::vec4 clearColor;
 	glm::vec2 cameraPosition = { 0.0f, 0.0f };
-	float moveSpeed = 15.0f;
+	float moveSpeed = 120.0f;
+	float scrollSpeed = 80.0f;
 
 	ExampleLayer()
 		: Layer("Example")
@@ -25,9 +26,9 @@ public:
 		/// Test code ///
 		float vertices[] =
 		{
-			0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-			1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f
+		   -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
+		    0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
+		    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f
 		};
 
 		uint32_t indices[] =
@@ -41,16 +42,16 @@ public:
 
 		float blueSquareVertices[] =
 		{
-			0.0f, 0.0f,  0.0f, 0.8f, 1.0f, 1.0f,
-			1.0f, 0.0f,  0.0f, 0.8f, 1.0f, 1.0f,
-			0.0f, 1.0f,  0.0f, 0.8f, 1.0f, 1.0f,
-			1.0f, 1.0f,  0.0f, 0.8f, 1.0f, 1.0f,
+		   -0.5f, -0.5f,  0.0f, 0.8f, 1.0f, 1.0f,
+		    0.5f, -0.5f,  0.0f, 0.8f, 1.0f, 1.0f,
+		    0.5f,  0.5f,  0.0f, 0.8f, 1.0f, 1.0f,
+		   -0.5f,  0.5f,  0.0f, 0.8f, 1.0f, 1.0f,
 		};
 
 		uint32_t blueSquareIndices[] =
 		{
 			0, 1, 2,
-			2, 3, 1
+			2, 3, 0
 		};
 
 		blueSquareVD = Alexio::VertexResources::Create();
@@ -85,17 +86,6 @@ public:
 	void OnUpdate(float deltaTime) override
 	{
 		AIO_LOG_TRACE("{0}s", deltaTime);
-
-		if (Alexio::Input::KeyHeld(A))
-			cameraPosition.x -= moveSpeed * deltaTime;
-		if (Alexio::Input::KeyHeld(D))
-			cameraPosition.x += moveSpeed * deltaTime;
-		if (Alexio::Input::KeyHeld(W))
-			cameraPosition.y -= moveSpeed * deltaTime;
-		if (Alexio::Input::KeyHeld(S))
-			cameraPosition.y += moveSpeed * deltaTime;
-
-		Alexio::Renderer::GetCamera()->SetPosition(cameraPosition);
 
 		Alexio::Renderer::ClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		
