@@ -8,10 +8,11 @@ public:
 	std::shared_ptr<Alexio::IndexBuffer> ib;
 	std::shared_ptr<Alexio::Shader> shader;
 	
-	std::shared_ptr<Alexio::VertexResources> blueSquareVD;
-	std::shared_ptr<Alexio::VertexBuffer> blueSquareVB;
-	std::shared_ptr<Alexio::IndexBuffer> blueSquareIB;
-	std::shared_ptr<Alexio::Shader> blueSquareShader;
+	std::shared_ptr<Alexio::VertexResources> textureVD;
+	std::shared_ptr<Alexio::VertexBuffer> textureVB;
+	std::shared_ptr<Alexio::IndexBuffer> textureIB;
+	std::shared_ptr<Alexio::Shader> textureShader;
+	std::shared_ptr<Alexio::Texture> texture;
 
 	glm::vec4 clearColor;
 	glm::vec2 cameraPosition = { 0.0f, 0.0f };
@@ -40,23 +41,24 @@ public:
 		vb = Alexio::VertexBuffer::Create(vertices, sizeof(vertices));
 		ib = Alexio::IndexBuffer::Create(indices, 3);
 
-		float blueSquareVertices[] =
+		float textureVertices[] =
 		{
-		   -0.5f, -0.5f,  0.0f, 0.8f, 1.0f, 1.0f,
-		    0.5f, -0.5f,  0.0f, 0.8f, 1.0f, 1.0f,
-		    0.5f,  0.5f,  0.0f, 0.8f, 1.0f, 1.0f,
-		   -0.5f,  0.5f,  0.0f, 0.8f, 1.0f, 1.0f,
+		   -0.5f, -0.5f,   1.0f, 1.0f, 1.0f, 1.0f,   0.0f, 0.0f,
+		    0.5f, -0.5f,   1.0f, 1.0f, 1.0f, 1.0f,   1.0f, 0.0f,
+		    0.5f,  0.5f,   1.0f, 1.0f, 1.0f, 1.0f,   1.0f, 1.0f,
+		   -0.5f,  0.5f,   1.0f, 1.0f, 1.0f, 1.0f,   0.0f, 1.0f
 		};
 
-		uint32_t blueSquareIndices[] =
+		uint32_t textureIndices[] =
 		{
 			0, 1, 2,
 			2, 3, 0
 		};
 
-		blueSquareVD = Alexio::VertexResources::Create();
-		blueSquareVB = Alexio::VertexBuffer::Create(blueSquareVertices, sizeof(blueSquareVertices));
-		blueSquareIB = Alexio::IndexBuffer::Create(blueSquareIndices, 6);
+		textureVD = Alexio::VertexResources::Create();
+		textureVB = Alexio::VertexBuffer::Create(textureVertices, sizeof(textureVertices));
+		textureIB = Alexio::IndexBuffer::Create(textureIndices, 6);
+		texture = Alexio::Texture::Create("assets/img/awesomeface.png");
 
 		{
 			Alexio::BufferLayout layout =
@@ -65,22 +67,34 @@ public:
 				{Alexio::ShaderDataType::Float4, "aColor" }
 			};
 			vb->SetLayout(layout);
-			blueSquareVB->SetLayout(layout);
+		}
+
+		{
+			Alexio::BufferLayout layout =
+			{
+				{Alexio::ShaderDataType::Float2, "aPosition" },
+				{Alexio::ShaderDataType::Float4, "aColor" },
+				{Alexio::ShaderDataType::Float2, "aTexCoord" },
+			};
+			textureVB->SetLayout(layout);
 		}
 
 		vd->AddVertexBuffer(vb);
 		vd->SetIndexBuffer(ib);
 
-		blueSquareVD->AddVertexBuffer(blueSquareVB);
-		blueSquareVD->SetIndexBuffer(blueSquareIB);
+		textureVD->AddVertexBuffer(textureVB);
+		textureVD->SetIndexBuffer(textureIB);
 		
-		shader = Alexio::Shader::Create("basic");
+		shader = Alexio::Shader::Create("flatColor");
 		shader->SetVertexResources(vd);
 		shader->Compile();
 
-		blueSquareShader = Alexio::Shader::Create("basic");
-		blueSquareShader->SetVertexResources(blueSquareVD);
-		blueSquareShader->Compile();
+		textureShader = Alexio::Shader::Create("texture");
+		textureShader->SetVertexResources(textureVD);
+		textureShader->Compile();
+		textureShader->SetInt("uTexture", 0);
+
+		texture->Bind(0);
 	}
 
 	void OnUpdate(float deltaTime) override
@@ -89,8 +103,8 @@ public:
 
 		Alexio::Renderer::ClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		
-		Alexio::Renderer::Draw(blueSquareShader, blueSquareVD);
-		Alexio::Renderer::Draw(shader, vd);
+		Alexio::Renderer::Draw(textureShader, textureVD);
+		//Alexio::Renderer::Draw(shader, vd);
 	}
 
 	void OnEvent(Alexio::Event& event) override

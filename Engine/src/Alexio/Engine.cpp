@@ -24,7 +24,7 @@ namespace Alexio
 
 		sMainCamera = CreateRef<Camera>(1280 / 720);
 
-		mWindow = Window::Create("Alexio Engine (" + apiName + ")", 1280, 720);
+		mWindow = Window::Create("" + apiName + "", 1280, 720);
 		mWindow->SetEventCallback(std::bind(&Engine::OnEvent, this, std::placeholders::_1));
 		Input::SetKeyCodes();
 

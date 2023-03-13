@@ -31,7 +31,9 @@ project "Engine"
    files
    {
       "%{prj.name}/src/**.h",
-      "%{prj.name}/src/**.cpp"
+      "%{prj.name}/src/**.cpp",
+      "%{prj.name}/dependecies/stb_image/stb_image.h",
+      "%{prj.name}/dependecies/stb_image/stb_image.cpp",
    }
 
    defines
@@ -43,6 +45,7 @@ project "Engine"
    {
       "%{prj.name}/src",
       "%{prj.name}/dependecies/spdlog/include",
+      "%{prj.name}/dependecies/",
       "%{IncludeDir.GLFW}",
       "%{IncludeDir.GLAD}",
       "%{IncludeDir.ImGUI}",
