@@ -7,6 +7,7 @@
 #include "Input/Input.h"
 #include "Math/Math.h"
 #include "Renderer/Renderer.h"
+#include "ImGui/ImGuiLayer.h"
 
 #include "Events/Event.h"
 #include "Events/KeyEvent.h"

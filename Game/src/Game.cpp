@@ -1,4 +1,5 @@
 #include "Alexio.h"
+#include <imgui.h>
 
 class ExampleLayer : public Alexio::Layer
 {
@@ -92,6 +93,7 @@ public:
 		textureShader = Alexio::Shader::Create("texture");
 		textureShader->SetVertexResources(textureVD);
 		textureShader->Compile();
+		textureShader->Bind();
 		textureShader->SetInt("uTexture", 0);
 
 		texture->Bind(0);
@@ -99,12 +101,10 @@ public:
 
 	void OnUpdate(float deltaTime) override
 	{
-		AIO_LOG_TRACE("{0}s", deltaTime);
-
 		Alexio::Renderer::ClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		
+		Alexio::Renderer::Draw(shader, vd);
 		Alexio::Renderer::Draw(textureShader, textureVD);
-		//Alexio::Renderer::Draw(shader, vd);
 	}
 
 	void OnEvent(Alexio::Event& event) override
@@ -114,7 +114,9 @@ public:
 
 	void OnImGuiRender() override
 	{
-		
+		ImGui::Begin("Settings");
+		ImGui::ColorEdit4("Clear Color", &clearColor.r);
+		ImGui::End();
 	}
 };
 

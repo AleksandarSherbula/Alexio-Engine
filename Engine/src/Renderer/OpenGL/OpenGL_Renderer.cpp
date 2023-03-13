@@ -59,14 +59,8 @@ namespace Alexio
 #endif		
 		AIO_LOG_INFO("OpenGL ({0}) Initialized", (const char*)glGetString(GL_VERSION));
 
-
-		unsigned int uboExampleBlock;
-		glGenBuffers(1, &uboExampleBlock);
-		glBindBuffer(GL_UNIFORM_BUFFER, uboExampleBlock);
-		glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4x4), NULL, GL_STATIC_DRAW); // allocate 152 bytes of memory
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboExampleBlock);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	void OpenGL_Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

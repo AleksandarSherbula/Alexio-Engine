@@ -18,7 +18,7 @@ namespace Alexio
 
 	void Engine::Run()
 	{
-		Renderer::SetGraphicsAPI(GraphicsAPI::OpenGL);
+		Renderer::SetGraphicsAPI(GraphicsAPI::DirectX11);
 
 		std::string apiName = (Renderer::GetGraphicsAPI() == GraphicsAPI::OpenGL) ? "OpenGL" : "DirectX11";
 
