@@ -22,7 +22,7 @@ namespace Alexio
 		
 		sCameraBuffer = ConstantBuffer::Create(sizeof(glm::mat4x4), 0);
 
-		sRendererAPI->SetVSync(false);
+		sRendererAPI->SetVSync(true);
 	}
 
 	void Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources)
