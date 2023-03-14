@@ -12,5 +12,6 @@ namespace Alexio
 		sLogger = spdlog::stdout_color_mt("Alexio");
 		sLogger->set_level(spdlog::level::trace);
 	}
+
 }
 

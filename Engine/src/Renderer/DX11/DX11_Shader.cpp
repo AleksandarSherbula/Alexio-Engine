@@ -1,8 +1,10 @@
 #include "aio_pch.h"
-#include "DX11_Shader.h"
 
-#include "Renderer/Renderer.h"
-#include "Renderer/DX11/DX11_Renderer.h"
+#if defined(AIO_API_DX11)
+#include "DX11_Shader.h"
+#include "DX11_Backend.h"
+
+#include "Alexio/Engine.h"
 
 namespace Alexio
 {
@@ -66,14 +68,14 @@ namespace Alexio
 			}
 		}
 
-		hr = AIO_DX11_DEVICE->CreateInputLayout(layoutDesc.data(),
+		hr = AIO_DX11_RENDERER->GetDevice()->CreateInputLayout(layoutDesc.data(),
 			layoutDesc.size(),
 			mVertexShaderBuffer->GetBufferPointer(),
 			mVertexShaderBuffer->GetBufferSize(),
 			mVertexLayout.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex layout: " + mVertexSource + "\n" + ResultInfo(hr));
 
-		hr = AIO_DX11_DEVICE->CreateVertexShader(mVertexShaderBuffer->GetBufferPointer(), mVertexShaderBuffer->GetBufferSize(), NULL, &mVertexShader);
+		hr = AIO_DX11_RENDERER->GetDevice()->CreateVertexShader(mVertexShaderBuffer->GetBufferPointer(), mVertexShaderBuffer->GetBufferSize(), NULL, &mVertexShader);
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex shader: " + mVertexSource + "\n" + ResultInfo(hr));
 
 		////////// PIXEL SHADER /////////////////
@@ -82,44 +84,25 @@ namespace Alexio
 			0, mPixelShaderBuffer.GetAddressOf(), &pixelErrorMessage);
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to load shader: " + mPixelSource + "\n" + ResultInfo(hr));
 
-		hr = AIO_DX11_DEVICE->CreatePixelShader(mPixelShaderBuffer->GetBufferPointer(), mPixelShaderBuffer->GetBufferSize(), NULL, &mPixelShader);
+		hr = AIO_DX11_RENDERER->GetDevice()->CreatePixelShader(mPixelShaderBuffer->GetBufferPointer(), mPixelShaderBuffer->GetBufferSize(), NULL, &mPixelShader);
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create pixel shader: " + mPixelSource + "\n" + ResultInfo(hr));
 	}
 
 	void DX11_Shader::Bind() const
 	{
-		AIO_DX11_DEVICE_CONTEXT->IASetInputLayout(mVertexLayout.Get());
-		AIO_DX11_DEVICE_CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		AIO_DX11_RENDERER->GetDeviceContext()->IASetInputLayout(mVertexLayout.Get());
+		AIO_DX11_RENDERER->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		AIO_DX11_DEVICE_CONTEXT->VSSetShader(mVertexShader.Get(), NULL, 0);
-		AIO_DX11_DEVICE_CONTEXT->PSSetShader(mPixelShader.Get(), NULL, 0);
+		AIO_DX11_RENDERER->GetDeviceContext()->VSSetShader(mVertexShader.Get(), NULL, 0);
+		AIO_DX11_RENDERER->GetDeviceContext()->PSSetShader(mPixelShader.Get(), NULL, 0);
 
 		mVertexResources->Bind();
 	}
 
 	void DX11_Shader::Unbind() const
 	{
-		AIO_DX11_DEVICE_CONTEXT->VSSetShader(nullptr, NULL, 0);
-		AIO_DX11_DEVICE_CONTEXT->PSSetShader(nullptr, NULL, 0);
-	}
-	void DX11_Shader::SetInt(const std::string& name, int32_t value)
-	{
-	}
-	void DX11_Shader::SetIntArray(const std::string& name, int32_t* values, uint32_t count)
-	{
-	}
-	void DX11_Shader::SetFloat(const std::string& name, float value)
-	{
-	}
-	void DX11_Shader::SetFloat2(const std::string& name, const Vector2f& value)
-	{
-	}
-	void DX11_Shader::SetFloat3(const std::string& name, const Vector3f& value)
-	{
-	}
-	void DX11_Shader::SetFloat4(const std::string& name, const Vector4f& value)
-	{
+		AIO_DX11_RENDERER->GetDeviceContext()->VSSetShader(nullptr, NULL, 0);
+		AIO_DX11_RENDERER->GetDeviceContext()->PSSetShader(nullptr, NULL, 0);
 	}
 }
-
-
+#endif

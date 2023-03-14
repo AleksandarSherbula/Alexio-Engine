@@ -1,13 +1,9 @@
 #include "aio_pch.h"
+
+#if defined(AIO_API_OPENGL)
 #include "GLFW_Window.h"
 
 #include "Renderer/Renderer.h"
-
-#include "Events/AppEvent.h"
-#include "Events/KeyEvent.h"
-#include "Events/MouseEvent.h"
-
-#include "Input/Input.h"
 
 namespace Alexio
 {
@@ -68,20 +64,15 @@ namespace Alexio
 
         if (fullscreen)
         {
-            // backup window position and window size
             glfwGetWindowPos(mHandle, &mPosX, &mPosY);
             glfwGetWindowSize(mHandle, (int32_t*)&mWidth, (int32_t*)&mHeight);
 
-            // get resolution of monitor
             const GLFWvidmode* mode = glfwGetVideoMode(mMonitor);
-
-            // switch to full screen
             glfwSetWindowMonitor(mHandle, mMonitor, 0, 0, mode->width, mode->height, 0);
         }
         else
         {
-            // restore last window size and position
-            glfwSetWindowMonitor(mHandle, nullptr, mPosX, mPosY, mWidth, mHeight, (int32_t)Renderer::GetAPI()->IsVSync());
+            glfwSetWindowMonitor(mHandle, nullptr, mPosX, mPosY, mWidth, mHeight, (int32_t)Renderer::GetBackend()->IsVSync());
         }
     }
 
@@ -89,7 +80,7 @@ namespace Alexio
     {
         glfwSetWindowSizeCallback(mHandle, [](GLFWwindow* window, int width, int height)
             {
-                WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+                WindowDataFromCallback& data = *(WindowDataFromCallback*)glfwGetWindowUserPointer(window);
                 data.width = width;
                 data.height = height;
 
@@ -100,7 +91,7 @@ namespace Alexio
 
         glfwSetWindowCloseCallback(mHandle, [](GLFWwindow* window)
             {
-                WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+                WindowDataFromCallback& data = *(WindowDataFromCallback*)glfwGetWindowUserPointer(window);
                 WindowCloseEvent event;
                 data.eventCallback(event);
             }
@@ -108,7 +99,7 @@ namespace Alexio
 
         glfwSetKeyCallback(mHandle, [](GLFWwindow* window, int key, int scancode, int action, int mods)
             {
-                WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+                WindowDataFromCallback& data = *(WindowDataFromCallback*)glfwGetWindowUserPointer(window);
 
                 switch (action)
                 {
@@ -138,7 +129,7 @@ namespace Alexio
 
         glfwSetMouseButtonCallback(mHandle, [](GLFWwindow* window, int button, int action, int mods)
             {
-                WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+                WindowDataFromCallback& data = *(WindowDataFromCallback*)glfwGetWindowUserPointer(window);
 
                 switch (action)
                 {
@@ -162,7 +153,7 @@ namespace Alexio
 
         glfwSetScrollCallback(mHandle, [](GLFWwindow* window, double xOffset, double yOffset)
             {
-                WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+                WindowDataFromCallback& data = *(WindowDataFromCallback*)glfwGetWindowUserPointer(window);
 
                 MouseScrolledEvent event((float)xOffset, (float)yOffset);
                 data.eventCallback(event);
@@ -171,12 +162,11 @@ namespace Alexio
 
         glfwSetCursorPosCallback(mHandle, [](GLFWwindow* window, double xPos, double yPos)
             {
-                WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+                WindowDataFromCallback& data = *(WindowDataFromCallback*)glfwGetWindowUserPointer(window);
 
                 MouseMovedEvent event((float)xPos, (float)yPos);
                 data.eventCallback(event);
             });
     }
 }
-
-
+#endif

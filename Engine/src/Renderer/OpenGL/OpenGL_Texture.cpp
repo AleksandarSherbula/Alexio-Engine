@@ -1,4 +1,6 @@
 #include "aio_pch.h"
+
+#if defined(AIO_API_OPENGL)
 #include "OpenGL_Texture.h"
 
 #include "stb_image/stb_image.h"
@@ -85,3 +87,4 @@ namespace Alexio
 		glBindTextureUnit(slot, mID);
 	}
 }
+#endif

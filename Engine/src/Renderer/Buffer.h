@@ -2,8 +2,6 @@
 
 #include <memory>
 
-#include "Alexio/Log.h"
-
 namespace Alexio
 {
 	enum class ShaderDataType

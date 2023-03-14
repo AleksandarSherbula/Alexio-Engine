@@ -2,6 +2,7 @@
 
 #include "Renderer/Buffer.h"
 
+#if defined(AIO_API_DX11)
 namespace Alexio
 {
 	class DX11_VertexBuffer : public VertexBuffer
@@ -61,3 +62,4 @@ namespace Alexio
 		Microsoft::WRL::ComPtr<ID3D11Buffer> mBuffer;
 	};
 }
+#endif

@@ -1,11 +1,5 @@
 #pragma once
 
-/*
-* This entire Event System code seen here was taken from Cherno's Game Engine series.
-* The playlist can be found here: https://www.youtube.com/watch?v=JxIZbV_XjAs&list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT
-* or the particular video this code is from here: https://www.youtube.com/watch?v=xnopUoZbMEk
-*/
-
 #include "Alexio/Utilities.h"
 
 #include <string>
@@ -17,7 +11,6 @@ namespace Alexio
 	{
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
-		AppTick, AppUpdate, AppRender,
 		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
@@ -54,7 +47,7 @@ namespace Alexio
 	{
 	public:
 		EventDispatcher(Event& event)
-			: m_Event(event)
+			: mEvent(event)
 		{
 		}
 
@@ -62,15 +55,15 @@ namespace Alexio
 		template<typename T, typename F>
 		bool Dispatch(const F& func)
 		{
-			if (m_Event.GetEventType() == T::GetStaticType())
+			if (mEvent.GetEventType() == T::GetStaticType())
 			{
-				m_Event.Handled = func((T&)m_Event);
+				mEvent.Handled = func((T&)mEvent);
 				return true;
 			}
 			return false;
 		}
 	private:
-		Event& m_Event;
+		Event& mEvent;
 	};
 
 	inline std::ostream& operator<<(std::ostream& os, const Event& e)
@@ -79,3 +72,7 @@ namespace Alexio
 	}
 
 }
+
+#include "WindowEvent.h"
+#include "KeyEvent.h"
+#include "MouseEvent.h"

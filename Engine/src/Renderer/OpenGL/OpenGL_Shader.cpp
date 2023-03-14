@@ -1,4 +1,5 @@
 #include "aio_pch.h"
+#if defined(AIO_API_OPENGL)
 #include "OpenGL_Shader.h"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -138,17 +139,17 @@ namespace Alexio
 		glUniform1f(glGetUniformLocation(mID, name.c_str()), value);
 	}
 
-	void OpenGL_Shader::SetFloat2(const std::string& name, const Vector2f& value)
+	void OpenGL_Shader::SetFloat2(const std::string& name, const glm::vec2& value)
 	{
 		glUniform2f(glGetUniformLocation(mID, name.c_str()), value.x, value.y);
 	}
 
-	void OpenGL_Shader::SetFloat3(const std::string& name, const Vector3f& value)
+	void OpenGL_Shader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
 		glUniform3f(glGetUniformLocation(mID, name.c_str()), value.x, value.y, value.z);
 	}
 
-	void OpenGL_Shader::SetFloat4(const std::string& name, const Vector4f& value)
+	void OpenGL_Shader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{		
 		glUniform4f(glGetUniformLocation(mID, name.c_str()), value.x, value.y, value.z, value.w);
 	}
@@ -206,4 +207,4 @@ namespace Alexio
 		return shaderSources;
 	}
 }
-
+#endif

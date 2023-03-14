@@ -1,5 +1,4 @@
-#include "Alexio.h"
-#include <imgui.h>
+#include "Alexio/Engine.h"
 
 class ExampleLayer : public Alexio::Layer
 {
@@ -101,7 +100,7 @@ public:
 
 	void OnUpdate(float deltaTime) override
 	{
-		Alexio::Renderer::ClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+		Alexio::Renderer::Clear(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		
 		Alexio::Renderer::Draw(shader, vd);
 		Alexio::Renderer::Draw(textureShader, textureVD);

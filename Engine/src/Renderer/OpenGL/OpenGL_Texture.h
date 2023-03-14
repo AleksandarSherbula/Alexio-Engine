@@ -2,6 +2,7 @@
 
 #include "Renderer/Texture.h"
 
+#if defined(AIO_API_OPENGL)
 namespace Alexio
 {
 	class OpenGL_Texture : public Texture
@@ -20,3 +21,4 @@ namespace Alexio
 		GLenum mInternalFormat, mDataFormat;
 	};
 }
+#endif

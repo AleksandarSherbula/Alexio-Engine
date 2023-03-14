@@ -2,6 +2,7 @@
 
 #include "Renderer/Buffer.h"
 
+#if defined(AIO_API_OPENGL)
 namespace Alexio
 {
 	class OpenGL_VertexBuffer : public VertexBuffer
@@ -62,3 +63,4 @@ namespace Alexio
 		uint32_t mID;
 	};
 }
+#endif

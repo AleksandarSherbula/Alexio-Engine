@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Renderer/Texture.h"
+#if defined(AIO_API_DX11)
 
 namespace Alexio
 {
@@ -18,3 +19,4 @@ namespace Alexio
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mTextureResource;
 	};
 }
+#endif

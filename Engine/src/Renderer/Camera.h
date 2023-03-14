@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Buffer.h"
 #include "Math/Math.h"
-#include "Events/AppEvent.h"
-#include "Events/MouseEvent.h"
+#include "Events/Events.h"
 
 namespace Alexio
 {

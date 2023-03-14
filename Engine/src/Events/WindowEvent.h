@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Event.h"
-
 namespace Alexio
 {
 	class WindowResizeEvent : public Event
@@ -39,45 +37,6 @@ namespace Alexio
 		EventType GetEventType() const override { return GetStaticType(); }
 
 		const char* GetName() const override { return "WindowClose"; }
-
-		int GetCategoryFlags() const override { return EventCategoryApplication; }
-	};
-
-	class AppTickEvent : public Event
-	{
-	public:
-		AppTickEvent() = default;
-
-		static EventType GetStaticType() { return EventType::AppTick; }
-		EventType GetEventType() const override { return GetStaticType(); }
-
-		const char* GetName() const override { return "AppTick"; }
-
-		int GetCategoryFlags() const override { return EventCategoryApplication; }
-	};
-
-	class AppUpdateEvent : public Event
-	{
-	public:
-		AppUpdateEvent() = default;
-
-		static EventType GetStaticType() { return EventType::AppUpdate; }
-		EventType GetEventType() const override { return GetStaticType(); }
-
-		const char* GetName() const override { return "AppUpdate"; }
-
-		int GetCategoryFlags() const override { return EventCategoryApplication; }
-	};
-
-	class AppRenderEvent : public Event
-	{
-	public:
-		AppRenderEvent() = default;
-
-		static EventType GetStaticType() { return EventType::AppRender; }
-		EventType GetEventType() const override { return GetStaticType(); }
-
-		const char* GetName() const override { return "AppRender"; }
 
 		int GetCategoryFlags() const override { return EventCategoryApplication; }
 	};

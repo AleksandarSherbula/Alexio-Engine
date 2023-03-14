@@ -1,14 +1,9 @@
 #include "aio_pch.h"
+
+#if defined(AIO_API_DX11)
 #include "Win32_Window.h"
-#include "Alexio/Engine.h"
-#include "Input/Input.h"
-
 #include "Renderer/Renderer.h"
-#include "Renderer/DX11/DX11_Renderer.h"
-
-#include "Events/AppEvent.h"
-#include "Events/KeyEvent.h"
-#include "Events/MouseEvent.h"
+#include "Renderer/DX11/DX11_Backend.h"
 
 #include <imgui.h>
 
@@ -336,3 +331,4 @@ namespace Alexio
 		return WideToString(error.ErrorMessage());
 	}
 }
+#endif

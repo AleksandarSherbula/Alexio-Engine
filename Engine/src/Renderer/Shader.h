@@ -24,9 +24,9 @@ namespace Alexio
 		virtual void SetInt(const std::string& name, int32_t value) = 0;
 		virtual void SetIntArray(const std::string& name, int32_t* values, uint32_t count) = 0;
 		virtual void SetFloat(const std::string& name, float value) = 0;
-		virtual void SetFloat2(const std::string& name, const Vector2f& value) = 0;
-		virtual void SetFloat3(const std::string& name, const Vector3f& value) = 0;
-		virtual void SetFloat4(const std::string& name, const Vector4f& value) = 0;
+		virtual void SetFloat2(const std::string& name, const glm::vec2& value) = 0;
+		virtual void SetFloat3(const std::string& name, const glm::vec3& value) = 0;
+		virtual void SetFloat4(const std::string& name, const glm::vec4& value) = 0;
 																	 
 		virtual void SetMat3x3(const std::string& name, const glm::mat3x3& matrix) = 0;
 		virtual void SetMat4x4(const std::string& name, const glm::mat4x4& matrix) = 0;
@@ -34,7 +34,7 @@ namespace Alexio
 		inline const std::string& GetName() const { return mName; }
 
 		inline void SetVertexResources(const Ref<VertexResources>& vr) { mVertexResources = vr; }
-		inline VertexResources* GetVertexResources() const { return mVertexResources.get(); }		
+		inline VertexResources* GetVertexResources() const { return mVertexResources.get(); }
 	protected:
 		std::string mName;
 		Ref<VertexResources> mVertexResources;

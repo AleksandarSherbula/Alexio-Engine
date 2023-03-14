@@ -1,4 +1,6 @@
 #include "aio_pch.h"
+
+#if defined(AIO_API_OPENGL)
 #include "OpenGL_Buffer.h"
 
 namespace Alexio
@@ -166,3 +168,4 @@ namespace Alexio
 		glBindBufferBase(GL_UNIFORM_BUFFER, binding, mID);
 	}
 }
+#endif
