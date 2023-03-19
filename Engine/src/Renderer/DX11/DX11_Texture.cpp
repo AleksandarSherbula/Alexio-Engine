@@ -133,10 +133,6 @@ namespace Alexio
 		//CopyMemory(mappedResource.pData, &wtData, sizeof(wtDa));
 		//AIO_DX11_RENDERER->GetDeviceContext()->Unmap(mTextureBuffer.Get(), 0);
 	}
-	//
-	//void DX11_Texture::SetData(const void* data, uint32_t width, uint32_t height)
-	//{
-	//}
 
 	void DX11_Texture::Bind(uint32_t slot)
 	{

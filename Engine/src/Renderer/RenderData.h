@@ -18,8 +18,19 @@ namespace Alexio
 	public:
 		QuadVertex();
 		QuadVertex(const glm::vec3& position, const glm::vec4& color, const glm::vec2& texCoord);
-		
-	private:
+	
+	};
+
+	class CircleVertex
+	{
+	public:
+		glm::vec3 position;
+		glm::vec4 color;
+		float thickness;
+		float fade;
+	public:
+		CircleVertex();
+		CircleVertex(const glm::vec3& position, const glm::vec4& color, float thickness, float fade);
 	};
 
 	class QuadRenderer
@@ -36,5 +47,20 @@ namespace Alexio
 		Ref<Texture>      whiteTexture;
 	public:
 		QuadRenderer();
+	};
+
+	class CircleRenderer
+	{
+	public:
+		std::array<CircleVertex, 4> vertices;
+		std::array<uint32_t, 6> indices;
+		std::array<glm::vec3, 4> localPositions;
+
+		Ref<VertexArray>  vertexArray;
+		Ref<VertexBuffer> vertexBuffer;
+		Ref<IndexBuffer>  indexBuffer;
+		Ref<Shader>       shader;
+	public:
+		CircleRenderer();
 	};
 }

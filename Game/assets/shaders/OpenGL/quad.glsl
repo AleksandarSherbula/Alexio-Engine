@@ -1,12 +1,17 @@
 #type vertex
-#version 460 core
+#version 450 core
 			
 layout (location = 0) in vec3 aPosition;
 layout (location = 1) in vec4 aColor;
 layout (location = 2) in vec2 aTexCoord;
 
-out vec4 vColor;
-out vec2 vTexCoord;
+struct VertexOutput
+{
+	vec4 color;
+	vec2 texCoord;
+};
+
+layout(location = 0) out VertexOutput outVertex;
 
 layout (std140, binding = 0) uniform Camera
 {
@@ -15,22 +20,27 @@ layout (std140, binding = 0) uniform Camera
 
 void main()
 {	
-	vColor = aColor;
-	vTexCoord = aTexCoord;
+	outVertex.color = aColor;
+	outVertex.texCoord = aTexCoord;
 	gl_Position = projection * vec4(aPosition, 1.0);
 }
 
 #type pixel
-#version 460 core
+#version 450 core
 			
-out vec4 color;
+out vec4 pixelColor;
 
-in vec4 vColor;
-in vec2 vTexCoord;
+struct VertexOutput
+{
+	vec4 color;
+	vec2 texCoord;
+};
+
+layout(location = 0) in VertexOutput inVertex;
 
 layout(binding = 0) uniform sampler2D uTexture;
 
 void main()
 {
-	color = texture(uTexture, vTexCoord) * vec4(vColor);
+	pixelColor = texture(uTexture, inVertex.texCoord) * vec4(inVertex.color);
 }
