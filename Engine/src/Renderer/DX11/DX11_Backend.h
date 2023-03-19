@@ -21,7 +21,9 @@ namespace Alexio
 
 		void Initialize() override;
 		void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
-		void Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources = nullptr) override;
+		void Draw(uint32_t vertexCount) override;
+		void DrawIndexed(uint32_t indexCount) override;
+		void DrawIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray) override;
 		void Clear(float r, float g, float b, float a) override;
 		void SwapBuffer() override;
 
@@ -51,6 +53,10 @@ namespace Alexio
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> mRenderTargetView;
 		Microsoft::WRL::ComPtr<ID3D11RasterizerState> mRasterizerState;
 		Microsoft::WRL::ComPtr<ID3D11BlendState> mBlendState;
+
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> mDepthStencilView;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> mDepthStencilBuffer;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> mDepthStencilState;
 	};
 
 	std::string ResultInfo(HRESULT hr);

@@ -13,7 +13,7 @@ namespace Alexio
 		AIO_ASSERT(!sInstance, "An instance of Engine has already been made");
 		sInstance = this;
 
-		Renderer::SetGraphicsAPI(OpenGL);
+		Renderer::SetGraphicsAPI(DirectX11);
 		imgui = new ImGUI();
 		mRunning = true;
 	}
@@ -34,11 +34,11 @@ namespace Alexio
 		Input::SetKeyCodes();
 
 		sMainCamera = CreateRef<Camera>(1280 / 720);
-		Renderer::Begin();
-		
-		PushOverlay(imgui);
+		Renderer::Init();
 
-		AIO_ASSERT(OnStart(),"Initialization failed");
+		AIO_ASSERT(OnStart(), "Failed to initialize application");
+
+		PushOverlay(imgui);
 
 		Time::Start();
 		while (mRunning)
@@ -48,24 +48,24 @@ namespace Alexio
 			mWindow->PollEvents();
 			Input::Scan();
 
-			if (!OnUpdate(Time::DetlaTime()) ||
+			if (!OnUpdate() ||
 				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked
 				(Renderer::GetGraphicsAPI() == DirectX11 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
 				mRunning = false;
-
-			for (Layer* layer : mLayerStack)
-				layer->OnUpdate(Time::DetlaTime());
 
 			sMainCamera->OnUpdate(Time::DetlaTime());
 
 			imgui->Begin();
 			for (Layer* layer : mLayerStack)
 				layer->OnImGuiRender();
+
+			for (Layer* layer : mLayerStack)
+				layer->OnUpdate(Time::DetlaTime());
+
 			imgui->End();
 
 			Renderer::GetBackend()->SwapBuffer();
 		}
-		Renderer::End();
 	}
 
 	void Engine::OnEvent(Event& e)

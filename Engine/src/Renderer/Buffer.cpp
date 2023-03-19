@@ -21,25 +21,25 @@ namespace Alexio
         #elif defined(AIO_API_DX11)
             return CreateRef<DX11_VertexBuffer>(size);
         #endif
-            AIO_ASSERT(false, "API has not been selected.\n");
-            return nullptr;
+        AIO_ASSERT(false, "API has not been selected.\n");
+        return nullptr;
     }
 
-    Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
+    Ref<VertexBuffer> VertexBuffer::Create(const void* data, uint32_t size)
     {
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             switch (Renderer::GetGraphicsAPI())
             {
-                case OpenGL:    return CreateRef<OpenGL_VertexBuffer>(vertices, size);
-                case DirectX11: return CreateRef<DX11_VertexBuffer>(vertices, size);
+                case OpenGL:    return CreateRef<OpenGL_VertexBuffer>(data, size);
+                case DirectX11: return CreateRef<DX11_VertexBuffer>(data, size);
             }
         #elif defined(AIO_API_OPENGL)
-            return CreateRef<OpenGL_VertexBuffer>(vertices, size);
+            return CreateRef<OpenGL_VertexBuffer>(data, size);
         #elif defined(AIO_API_DX11)
-            return CreateRef<DX11_VertexBuffer>(vertices, size);
+            return CreateRef<DX11_VertexBuffer>(data, size);
         #endif
-            AIO_ASSERT(false, "API has not been selected.\n");
-            return nullptr;
+        AIO_ASSERT(false, "API has not been selected.\n");
+        return nullptr;
     }
 
     Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
@@ -55,25 +55,25 @@ namespace Alexio
         #elif defined(AIO_API_DX11)
             return CreateRef<DX11_IndexBuffer>(indices, count);
         #endif
-            AIO_ASSERT(false, "API has not been selected.\n");
-            return nullptr;
+        AIO_ASSERT(false, "API has not been selected.\n");
+        return nullptr;
     }
 
-    Ref<VertexResources> VertexResources::Create()
+    Ref<VertexArray> VertexArray::Create()
     {
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             switch (Renderer::GetGraphicsAPI())
             {
-                case OpenGL:    return CreateRef<VertexArray>();
-                case DirectX11: return CreateRef<DX11_VertexResources>();
+                case OpenGL:    return CreateRef<OpenGL_VertexArray>();
+                case DirectX11: return CreateRef<DX11_VertexArray>();
             }
         #elif defined(AIO_API_OPENGL)
-            return CreateRef<VertexArray>();
+            return CreateRef<OpenGL_VertexArray>();
         #elif defined(AIO_API_DX11)
-            return CreateRef<DX11_VertexResources>();
+            return CreateRef<DX11_VertexArray>();
         #endif
-            AIO_ASSERT(false, "API has not been selected.\n");
-            return nullptr;
+        AIO_ASSERT(false, "API has not been selected.\n");
+        return nullptr;
     }
 
     Ref<ConstantBuffer> ConstantBuffer::Create(uint32_t block_size, uint32_t slot)
@@ -89,8 +89,8 @@ namespace Alexio
         #elif defined(AIO_API_DX11)
             return CreateRef<DX11_ConstantBuffer>(block_size, slot);
         #endif
-            AIO_ASSERT(false, "API has not been selected.\n");
-            return nullptr;
+        AIO_ASSERT(false, "API has not been selected.\n");
+        return nullptr;
     }
 }
 

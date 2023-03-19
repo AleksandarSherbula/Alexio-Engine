@@ -26,31 +26,37 @@ namespace Alexio
 		return DXGI_FORMAT_UNKNOWN;
 	}
 
-	DX11_Shader::DX11_Shader(const std::string& name)
+	DX11_Shader::DX11_Shader(const std::string& name, const Ref<VertexArray>& vertexArray)
 	{
 		mName = name;
 		mVertexSource = mPixelSource = "assets/shaders/DX11/" + name + ".hlsl";
+
+		Compile(vertexArray);
 	}
 
-	DX11_Shader::DX11_Shader(const std::string& name, const std::string& filepath)
+	DX11_Shader::DX11_Shader(const std::string& name, const std::string& filepath, const Ref<VertexArray>& vertexArray)
 	{
 		mName = name;
 		mVertexSource = filepath;
 		mPixelSource = filepath;
+
+		Compile(vertexArray);
 	}
 
-	DX11_Shader::DX11_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc)
+	DX11_Shader::DX11_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexArray>& vertexArray)
 	{
 		mName = name;
 		mVertexSource = vertexSrc;
 		mPixelSource = pixelSrc;
+
+		Compile(vertexArray);
 	}
 
 	DX11_Shader::~DX11_Shader()
 	{
 	}
 
-	void DX11_Shader::Compile()
+	void DX11_Shader::Compile(const Ref<VertexArray>& vertexArray)
 	{
 		////////// VERTEX SHADER /////////////////
 		ID3DBlob* vertexErrorMessage;
@@ -59,7 +65,7 @@ namespace Alexio
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to load shader: " + mVertexSource + "\n" + ResultInfo(hr));
 
 		std::vector<D3D11_INPUT_ELEMENT_DESC> layoutDesc;
-		for (auto& vertexBuffer : mVertexResources->GetVertexBuffers())
+		for (auto& vertexBuffer : vertexArray->GetVertexBuffers())
 		{
 			auto& layout = vertexBuffer->GetLayout();
 			for (auto& element : layout)
@@ -95,8 +101,6 @@ namespace Alexio
 
 		AIO_DX11_RENDERER->GetDeviceContext()->VSSetShader(mVertexShader.Get(), NULL, 0);
 		AIO_DX11_RENDERER->GetDeviceContext()->PSSetShader(mPixelShader.Get(), NULL, 0);
-
-		mVertexResources->Bind();
 	}
 
 	void DX11_Shader::Unbind() const

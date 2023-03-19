@@ -27,7 +27,7 @@ namespace Alexio
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex buffer: " + ResultInfo(hr) + "\n");
 	}
 
-	DX11_VertexBuffer::DX11_VertexBuffer(float* vertices, uint32_t size)
+	DX11_VertexBuffer::DX11_VertexBuffer(const void* data, uint32_t size)
 	{
 		D3D11_BUFFER_DESC bufferDesc;
 		ZeroMemory(&bufferDesc, sizeof(bufferDesc));
@@ -40,7 +40,7 @@ namespace Alexio
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData;
 		ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
-		vertexBufferData.pSysMem = vertices;
+		vertexBufferData.pSysMem = data;
 
 		HRESULT hr = AIO_DX11_RENDERER->GetDevice()->CreateBuffer(&bufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex buffer: " + ResultInfo(hr) + "\n");
@@ -112,33 +112,32 @@ namespace Alexio
 	///////////VERTEX DATA///////////////////////////////
 	/////////////////////////////////////////////////////
 
-	DX11_VertexResources::DX11_VertexResources()
+	DX11_VertexArray::DX11_VertexArray()
+	{
+		
+	}
+
+	DX11_VertexArray::~DX11_VertexArray()
 	{
 	}
 
-	DX11_VertexResources::~DX11_VertexResources()
-	{
-	}
-
-	void DX11_VertexResources::Bind() const
+	void DX11_VertexArray::Bind() const
 	{
 		for (auto& vertexBuffer : mVertexBuffers)
-		{
 			vertexBuffer->Bind();
-		}
 		mIndexBuffer->Bind();
 	}
 
-	void DX11_VertexResources::Unbind() const
+	void DX11_VertexArray::Unbind() const
 	{
 	}
 
-	void DX11_VertexResources::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
+	void DX11_VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
 		mVertexBuffers.push_back(vertexBuffer);	
 	}
 
-	void DX11_VertexResources::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
+	void DX11_VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{		
 		mIndexBuffer = indexBuffer;
 	}
@@ -162,12 +161,12 @@ namespace Alexio
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create constant buffer: " + ResultInfo(hr) + "\n");
 	}
 
-	void DX11_ConstantBuffer::SetData(const void* data, uint32_t data_size)
+	void DX11_ConstantBuffer::SetData(const void* data, uint32_t size)
 	{
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		HRESULT hr = AIO_DX11_RENDERER->GetDeviceContext()->Map(mBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to map constant buffer: " + ResultInfo(hr) + "\n");
-		CopyMemory(mappedResource.pData, data, data_size);
+		memcpy(mappedResource.pData, data, size);
 		AIO_DX11_RENDERER->GetDeviceContext()->Unmap(mBuffer.Get(), 0);
 	}
 

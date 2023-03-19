@@ -70,13 +70,14 @@ namespace Alexio
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGL_Backend::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources)
+	void OpenGL_Backend::Draw(uint32_t vertexCount)
 	{
-		vertexResources->Bind();
-		shader->Bind();
-		glDrawElements(GL_TRIANGLES, vertexResources->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-		shader->Unbind();
-		vertexResources->Unbind();
+		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+	}
+
+	void OpenGL_Backend::DrawIndexed(uint32_t indexCount)
+	{		
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 	}
 
 	void OpenGL_Backend::Clear(float r, float g, float b, float a)

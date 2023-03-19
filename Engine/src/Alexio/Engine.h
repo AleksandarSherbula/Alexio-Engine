@@ -25,7 +25,7 @@ namespace Alexio
 		void OnEvent(Event& e);
 
 		virtual bool OnStart() = 0;
-		virtual bool OnUpdate(float dt) = 0;
+		virtual bool OnUpdate() = 0;
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);

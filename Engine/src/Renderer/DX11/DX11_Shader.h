@@ -8,12 +8,11 @@ namespace Alexio
 	class DX11_Shader : public Shader
 	{
 	public:
-		DX11_Shader(const std::string& name);
-		DX11_Shader(const std::string& name, const std::string& filepath);
-		DX11_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc);
+		DX11_Shader(const std::string& name, const Ref<VertexArray>& vertexArray);
+		DX11_Shader(const std::string& name, const std::string& filepath, const Ref<VertexArray>& vertexArray);
+		DX11_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexArray>& vertexArray);
 		~DX11_Shader();
 
-		void Compile() override;
 		
 		void Bind() const override;
 		void Unbind() const override;
@@ -27,6 +26,8 @@ namespace Alexio
 
 		void SetMat3x3(const std::string& name, const glm::mat3x3& matrix) override {}
 		void SetMat4x4(const std::string& name, const glm::mat4x4& matrix) override {}
+	private:
+		void Compile(const Ref<VertexArray>& vertexArray);
 	private:
 		std::string mVertexSource;
 		std::string mPixelSource;

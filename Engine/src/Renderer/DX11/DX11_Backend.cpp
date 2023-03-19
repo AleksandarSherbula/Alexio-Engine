@@ -48,9 +48,9 @@ namespace Alexio
 		const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0, };
 
 		UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-#ifdef AIO_DEBUG
-		flags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif // AIO_DEBUG
+        #ifdef AIO_DEBUG
+        		flags |= D3D11_CREATE_DEVICE_DEBUG;
+        #endif // AIO_DEBUG
 
 		HRESULT hr;
 		hr = D3D11CreateDeviceAndSwapChain(nullptr,
@@ -75,6 +75,8 @@ namespace Alexio
 		viewport.TopLeftY = 0;
 		viewport.Width = (FLOAT)Engine::GetInstance()->GetWindow()->GetWidth();
 		viewport.Height = (FLOAT)Engine::GetInstance()->GetWindow()->GetHeight();
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
 
 		mDeviceContext->RSSetViewports(1, &viewport);
 
@@ -103,6 +105,35 @@ namespace Alexio
 		hr = mDevice->CreateBlendState(&blendDesc, mBlendState.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create blend state: " + ResultInfo(hr) + "\n");
 
+		D3D11_TEXTURE2D_DESC depthStencilDesc;
+		depthStencilDesc.Width = Engine::GetInstance()->GetWindow()->GetWidth();
+		depthStencilDesc.Height = Engine::GetInstance()->GetWindow()->GetHeight();
+		depthStencilDesc.MipLevels = 1;
+		depthStencilDesc.ArraySize = 1;
+		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDesc.SampleDesc.Count = 1;
+		depthStencilDesc.SampleDesc.Quality = 0;
+		depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		depthStencilDesc.CPUAccessFlags = 0;
+		depthStencilDesc.MiscFlags = 0;
+
+		hr = mDevice->CreateTexture2D(&depthStencilDesc, NULL, mDepthStencilBuffer.GetAddressOf());
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create depth stencil buffer: " + ResultInfo(hr) + "\n");
+
+		hr = mDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), NULL, mDepthStencilView.GetAddressOf());
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create depth stencil view: " + ResultInfo(hr) + "\n");	
+
+		//Create depth stencil state
+		D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
+		ZeroMemory(&depthStencilStateDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+		depthStencilStateDesc.DepthEnable = true;
+		depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+		mDevice->CreateDepthStencilState(&depthStencilStateDesc, mDepthStencilState.GetAddressOf());
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create depth stencil state: " + ResultInfo(hr) + "\n");
+
 		AIO_LOG_INFO("DirectX 11 Initialized");
 	}
 
@@ -125,19 +156,29 @@ namespace Alexio
 		mDeviceContext->RSSetViewports(1, &viewport);
 	}
 
-	void DX11_Backend::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources)
+	void DX11_Backend::Draw(uint32_t vertexCount)
 	{
-		vertexResources->Bind();
-		shader->Bind();
+		mDeviceContext->Draw(vertexCount, 0);
+	}
 
-		mDeviceContext->DrawIndexed(shader->GetVertexResources()->GetIndexBuffer()->GetCount(), 0, 0);		
+	void DX11_Backend::DrawIndexed(uint32_t indexCount)
+	{
+		mDeviceContext->DrawIndexed(indexCount, 0, 0);
+	}
+
+	void DX11_Backend::DrawIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray)
+	{
+		vertexArray->Bind();
+		shader->Bind();
+		mDeviceContext->DrawIndexed(6, 0, 0);
 	}
 
 	void DX11_Backend::Clear(float r, float g, float b, float a)
 	{
 		FLOAT bgColor[] = { r, g, b, a };
-		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), NULL);
 		mDeviceContext->ClearRenderTargetView(mRenderTargetView.Get(), bgColor);
+		mDeviceContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), nullptr);
 		mDeviceContext->RSSetState(mRasterizerState.Get());
 		mDeviceContext->OMSetBlendState(mBlendState.Get(), NULL, 0xffffff);
 	}

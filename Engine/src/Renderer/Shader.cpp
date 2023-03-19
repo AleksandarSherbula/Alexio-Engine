@@ -7,52 +7,52 @@
 
 namespace Alexio
 {
-    Ref<Shader> Shader::Create(const std::string& name)
+    Ref<Shader> Shader::Create(const std::string& name, const Ref<VertexArray>& vertexArray)
     {
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             switch (Renderer::GetGraphicsAPI())
             {
-            case OpenGL:    return CreateRef<OpenGL_Shader>(name);
-            case DirectX11: return CreateRef<DX11_Shader>(name);
+            case OpenGL:    return CreateRef<OpenGL_Shader>(name, vertexArray);
+            case DirectX11: return CreateRef<DX11_Shader>(name, vertexArray);
             }
         #elif defined(AIO_API_OPENGL)
-            return CreateRef<OpenGL_Shader>(name);
+            return CreateRef<OpenGL_Shader>(name, va);
         #elif defined(AIO_API_DX11)
-            return CreateRef<DX11_Shader>(name);
+            return CreateRef<DX11_Shader>(name, va);
         #endif
             AIO_ASSERT(false, "API has not been selected.\n");
             return nullptr;
     }
 
-    Ref<Shader> Shader::Create(const std::string& name, const std::string& filepath)
+    Ref<Shader> Shader::Create(const std::string& name, const std::string& filepath, const Ref<VertexArray>& vertexArray)
 	{
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             switch (Renderer::GetGraphicsAPI())
             {
-            case OpenGL:    return CreateRef<OpenGL_Shader>(name, filepath);
-            case DirectX11: return CreateRef<DX11_Shader>(name, filepath);
+            case OpenGL:    return CreateRef<OpenGL_Shader>(name, filepath, vertexArray);
+            case DirectX11: return CreateRef<DX11_Shader>(name, filepath, vertexArray);
             }
         #elif defined(AIO_API_OPENGL)
-            return CreateRef<OpenGL_Shader>(name, filepath);
+            return CreateRef<OpenGL_Shader>(name, filepath, vertexArray);
         #elif defined(AIO_API_DX11)
-            return CreateRef<DX11_Shader>(name, filepath);
+            return CreateRef<DX11_Shader>(name, filepath, vertexArray);
         #endif
             AIO_ASSERT(false, "API has not been selected.\n");
             return nullptr;
 	}
 
-    Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc)
+    Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexArray>& vertexArray)
     {
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             switch (Renderer::GetGraphicsAPI())
             {
-            case OpenGL:    return CreateRef<OpenGL_Shader>(name, vertexSrc, pixelSrc);
-            case DirectX11: return CreateRef<DX11_Shader>(name, vertexSrc, pixelSrc);
+            case OpenGL:    return CreateRef<OpenGL_Shader>(name, vertexSrc, pixelSrc, vertexArray);
+            case DirectX11: return CreateRef<DX11_Shader>(name, vertexSrc, pixelSrc, vertexArray);
             }
         #elif defined(AIO_API_OPENGL)
-            return CreateRef<OpenGL_Shader>(name, vertexSrc, pixelSrc);
+            return CreateRef<OpenGL_Shader>(name, vertexSrc, pixelSrc, vertexArray);
         #elif defined(AIO_API_DX11)
-            return CreateRef<DX11_Shader>(name, vertexSrc, pixelSrc);
+            return CreateRef<DX11_Shader>(name, vertexSrc, pixelSrc, vertexArray);
         #endif
             AIO_ASSERT(false, "API has not been selected.\n");
             return nullptr;

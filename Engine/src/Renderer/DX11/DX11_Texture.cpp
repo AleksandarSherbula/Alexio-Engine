@@ -10,7 +10,7 @@
 
 namespace Alexio
 {
-	DX11_Texture::DX11_Texture(uint32_t width, uint32_t height)
+	DX11_Texture::DX11_Texture(uint32_t width, uint32_t height, uint32_t whiteTexture)
 	{		
 		D3D11_TEXTURE2D_DESC textureDesc;
 		ZeroMemory(&textureDesc, sizeof(textureDesc));
@@ -22,14 +22,8 @@ namespace Alexio
 		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
-		textureDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-
-		ID3D11Texture2D* textureObject;
-		ZeroMemory(&textureObject, sizeof(textureObject));
-
-		HRESULT hr = AIO_DX11_RENDERER->GetDevice()->CreateTexture2D(&textureDesc, nullptr, &textureObject);
-		AIO_ASSERT(SUCCEEDED(hr), "Failed to create white texture: " + ResultInfo(hr) + "\n");
 
 		D3D11_SAMPLER_DESC sampDesc;
 		ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -48,11 +42,22 @@ namespace Alexio
 		sampDesc.MinLOD = 0;
 		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-		hr = AIO_DX11_RENDERER->GetDevice()->CreateSamplerState(&sampDesc, mSamplerState.GetAddressOf());
+		HRESULT hr = AIO_DX11_RENDERER->GetDevice()->CreateSamplerState(&sampDesc, mSamplerState.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create sampler state: " + ResultInfo(hr) + "\n");
-
-		hr = AIO_DX11_RENDERER->GetDevice()->CreateShaderResourceView(textureObject, nullptr, &mTextureResource);
-		AIO_ASSERT(SUCCEEDED(hr), "Failed to create texture shader resource view: " + ResultInfo(hr) + "\n");
+		
+		ID3D11Texture2D* textureObject;
+		ZeroMemory(&textureObject, sizeof(textureObject));
+		
+		D3D11_SUBRESOURCE_DATA textureSubData;
+		ZeroMemory(&textureSubData, sizeof(textureSubData));
+		textureSubData.pSysMem = &whiteTexture;
+		textureSubData.SysMemPitch = width * 4;
+		
+		hr = AIO_DX11_RENDERER->GetDevice()->CreateTexture2D(&textureDesc, &textureSubData, mTextureBuffer.GetAddressOf());
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create white texture: " + ResultInfo(hr) + "\n");
+		
+		hr = AIO_DX11_RENDERER->GetDevice()->CreateShaderResourceView(mTextureBuffer.Get(), nullptr, mTextureResource.GetAddressOf());
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create texture shader resource view: " + ResultInfo(hr) + "\n");		
 	}
 
 	DX11_Texture::DX11_Texture(const std::string& filepath)
@@ -82,17 +87,6 @@ namespace Alexio
 			textureDesc.CPUAccessFlags = 0;
 			textureDesc.MiscFlags = 0;
 
-			D3D11_SUBRESOURCE_DATA textureSubData;
-			ZeroMemory(&textureSubData, sizeof(textureSubData));
-			textureSubData.pSysMem = data;
-			textureSubData.SysMemPitch = mWidth * channels;
-
-			ID3D11Texture2D* textureObject;
-			ZeroMemory(&textureObject, sizeof(textureObject));
-
-			HRESULT hr = AIO_DX11_RENDERER->GetDevice()->CreateTexture2D(&textureDesc, &textureSubData, &textureObject);
-			AIO_ASSERT(SUCCEEDED(hr), "Failed to create a texture: " + ResultInfo(hr) + "\n");
-
 			D3D11_SAMPLER_DESC sampDesc;
 			ZeroMemory(&sampDesc, sizeof(sampDesc));
 
@@ -110,22 +104,48 @@ namespace Alexio
 			sampDesc.MinLOD = 0;
 			sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-			hr = AIO_DX11_RENDERER->GetDevice()->CreateSamplerState(&sampDesc, mSamplerState.GetAddressOf());
+			HRESULT hr = AIO_DX11_RENDERER->GetDevice()->CreateSamplerState(&sampDesc, mSamplerState.GetAddressOf());
 			AIO_ASSERT(SUCCEEDED(hr), "Failed to create sampler state: " + ResultInfo(hr) + "\n");
+
+			D3D11_SUBRESOURCE_DATA textureSubData;
+			ZeroMemory(&textureSubData, sizeof(textureSubData));
+			textureSubData.pSysMem = data;
+			textureSubData.SysMemPitch = mWidth * channels;
+
+			ID3D11Texture2D* textureObject;
+			ZeroMemory(&textureObject, sizeof(textureObject));
+
+			hr = AIO_DX11_RENDERER->GetDevice()->CreateTexture2D(&textureDesc, &textureSubData, &textureObject);
+			AIO_ASSERT(SUCCEEDED(hr), "Failed to create a texture: " + ResultInfo(hr) + "\n");
 
 			hr = AIO_DX11_RENDERER->GetDevice()->CreateShaderResourceView(textureObject, nullptr, mTextureResource.GetAddressOf());
 			AIO_ASSERT(SUCCEEDED(hr), "Failed to create texture shader resource view: " + ResultInfo(hr) + "\n");
 		}
 	}
 
-	void DX11_Texture::SetData(const void* data, uint32_t width, uint32_t height)
+	void DX11_Texture::SetData(const void* data, uint32_t size)
 	{
+		//uint32_t wtData = 0xffffffff;
+		//
+		//D3D11_MAPPED_SUBRESOURCE mappedResource;
+		//HRESULT hr = AIO_DX11_RENDERER->GetDeviceContext()->Map(mTextureBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		//AIO_ASSERT(SUCCEEDED(hr), "Failed to map texture buffer: " + ResultInfo(hr) + "\n");
+		//CopyMemory(mappedResource.pData, &wtData, sizeof(wtDa));
+		//AIO_DX11_RENDERER->GetDeviceContext()->Unmap(mTextureBuffer.Get(), 0);
 	}
+	//
+	//void DX11_Texture::SetData(const void* data, uint32_t width, uint32_t height)
+	//{
+	//}
 
 	void DX11_Texture::Bind(uint32_t slot)
 	{
 		AIO_DX11_RENDERER->GetDeviceContext()->PSSetSamplers(slot, 1, mSamplerState.GetAddressOf());
 		AIO_DX11_RENDERER->GetDeviceContext()->PSSetShaderResources(slot, 1, mTextureResource.GetAddressOf());
+	}
+
+	void DX11_Texture::Unbind()
+	{
 	}
 }
 #endif
