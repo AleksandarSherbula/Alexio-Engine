@@ -6,6 +6,7 @@ namespace Alexio
 	Ref<RendererBackend> Renderer::sRendererBackend = nullptr;
 	Ref<ConstantBuffer> Renderer::sCameraBuffer = nullptr;
 	Ref<QuadRenderer> Renderer::sQuadRenderer = nullptr;
+	Ref<CircleRenderer> Renderer::sCircleRenderer = nullptr;
 
 	void Renderer::Init()
 	{
@@ -16,19 +17,18 @@ namespace Alexio
 		sCameraBuffer = ConstantBuffer::Create(sizeof(glm::mat4x4), 0);
 
 		sQuadRenderer = CreateRef<QuadRenderer>();
+		sCircleRenderer = CreateRef<CircleRenderer>();
 
 		sRendererBackend->SetVSync(true);
 	}
 
-	void Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const Ref<Texture>& texture)
+	void Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray)
 	{
 		vertexArray->Bind();
 		shader->Bind();
-		texture->Bind(0);
 
 		sRendererBackend->DrawIndexed(vertexArray->GetIndexBuffer()->GetCount());
 
-		texture->Unbind();
 		shader->Unbind();
 		vertexArray->Unbind();
 	}
@@ -51,7 +51,9 @@ namespace Alexio
 
 		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
 
-		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray, sQuadRenderer->whiteTexture);
+		sQuadRenderer->whiteTexture->Bind(0);
+		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		sQuadRenderer->whiteTexture->Unbind();
 	}
 
 	void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
@@ -67,7 +69,9 @@ namespace Alexio
 
 		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
 		
-		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray, sQuadRenderer->whiteTexture);
+		sQuadRenderer->whiteTexture->Bind(0);
+		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		sQuadRenderer->whiteTexture->Unbind();
 	}
 
 	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
@@ -83,7 +87,9 @@ namespace Alexio
 
 		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
 		
-		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray, texture);
+		texture->Bind(0);
+		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		texture->Unbind();
 	}
 
 	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
@@ -99,7 +105,45 @@ namespace Alexio
 
 		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
 		
-		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray, texture);
+		texture->Bind(0);
+		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		texture->Unbind();
+	}
+
+	void Renderer::DrawCircle(const glm::vec2& position, const glm::vec4& color, float radius, float thickness, float fade)
+	{
+		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
+			 glm::scale(glm::mat4x4(1.0f), glm::vec3(radius, radius, 1.0f));
+
+		for (int i = 0; i < sCircleRenderer->vertices.size(); i++)
+		{
+			sCircleRenderer->vertices[i].position  = transform * glm::vec4(sCircleRenderer->localPositions[i], 1.0f);
+			sCircleRenderer->vertices[i].color     = color;
+			sCircleRenderer->vertices[i].thickness = thickness;
+			sCircleRenderer->vertices[i].fade      = fade;
+		}
+
+		sCircleRenderer->vertexBuffer->SetData(sCircleRenderer->vertices.data(), sizeof(CircleVertex) * sCircleRenderer->vertices.size());
+
+		Draw(sCircleRenderer->shader, sCircleRenderer->vertexArray);
+	}
+
+	void Renderer::DrawCircle(const glm::vec3& position, const glm::vec4& color, float radius, float thickness, float fade)
+	{
+		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
+			glm::scale(glm::mat4x4(1.0f), glm::vec3(radius, radius, 1.0f));
+
+		for (int i = 0; i < sCircleRenderer->vertices.size(); i++)
+		{
+			sCircleRenderer->vertices[i].position = transform * glm::vec4(sCircleRenderer->localPositions[i], 1.0f);
+			sCircleRenderer->vertices[i].color = color;
+			sCircleRenderer->vertices[i].thickness = thickness;
+			sCircleRenderer->vertices[i].fade = fade;
+		}
+
+		sCircleRenderer->vertexBuffer->SetData(sCircleRenderer->vertices.data(), sizeof(CircleVertex) * sCircleRenderer->vertices.size());
+
+		Draw(sCircleRenderer->shader, sCircleRenderer->vertexArray);
 	}
 
 	void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

@@ -82,15 +82,6 @@ namespace Alexio
 		AIO_ASSERT(size == mWidth * mHeight * bpp, "Data must be entire texture!");
 		glTextureSubImage2D(mID, 0, 0, 0, mWidth, mHeight, mDataFormat, GL_UNSIGNED_BYTE, data);
 	}
-	//
-	//void OpenGL_Texture::SetData(const void* data, uint32_t width, uint32_t height)
-	//{
-	//	uint32_t bpp = mDataFormat == GL_RGBA ? 4 : 3;
-	//	uint32_t size = width * height * bpp;
-	//	AIO_ASSERT(size == mWidth * mHeight * bpp, "Data must be entire texture!");
-	//	glTextureSubImage2D(mID, 0, 0, 0, mWidth, mHeight, mDataFormat, GL_UNSIGNED_BYTE, data);
-	//	
-	//}
 
 	void OpenGL_Texture::Bind(uint32_t slot)
 	{
