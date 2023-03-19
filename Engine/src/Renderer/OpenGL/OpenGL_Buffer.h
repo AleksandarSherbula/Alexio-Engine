@@ -2,13 +2,14 @@
 
 #include "Renderer/Buffer.h"
 
+#if defined(AIO_API_OPENGL)
 namespace Alexio
 {
 	class OpenGL_VertexBuffer : public VertexBuffer
 	{
 	public:
 		OpenGL_VertexBuffer(uint32_t size);
-		OpenGL_VertexBuffer(float* vertices, uint32_t size);
+		OpenGL_VertexBuffer(const void* data, uint32_t size);
 
 		~OpenGL_VertexBuffer();
 
@@ -34,11 +35,11 @@ namespace Alexio
 		uint32_t mID;
 	};
 
-	class VertexArray : public VertexResources
+	class OpenGL_VertexArray : public VertexArray
 	{
 	public:
-		VertexArray();
-		~VertexArray();
+		OpenGL_VertexArray();
+		~OpenGL_VertexArray();
 
 		void Bind() const override;
 		void Unbind() const override;
@@ -62,3 +63,4 @@ namespace Alexio
 		uint32_t mID;
 	};
 }
+#endif

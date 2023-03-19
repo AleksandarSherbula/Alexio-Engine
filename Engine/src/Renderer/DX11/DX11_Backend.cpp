@@ -1,27 +1,29 @@
 #include "aio_pch.h"
-#include "DX11_Renderer.h"
-#include "Window/Win32_Window.h"
 
-#include "Alexio/Engine.h"
+#if defined(AIO_API_DX11)
+#include "DX11_Backend.h"
 #include "DX11_Buffer.h"
+#include "DX11_Shader.h"
+
+#include "Window/Win32_Window.h"
+#include "Alexio/Engine.h"
 
 #include <backends/imgui_impl_win32.h>
 #include <backends/imgui_impl_dx11.h>
 
 namespace Alexio
 {
-	DX11_Renderer* DX11_Renderer::sInstance = nullptr;
+	DX11_Backend* DX11_Backend::sInstance = nullptr;
 
-	DX11_Renderer::DX11_Renderer()
+	DX11_Backend::DX11_Backend()
 	{
-		mWindow = nullptr;
 		AIO_ASSERT(!sInstance, "OpenGL API object was already been made");
 		sInstance = this;
 
 		GetAdapters();
 	}
 
-	void DX11_Renderer::Initialize()
+	void DX11_Backend::Initialize()
 	{
 		if (mAdapters.empty())
 			AIO_LOG_ERROR("NO IDXGI Adapter found");
@@ -36,7 +38,7 @@ namespace Alexio
 		scd.BufferDesc.RefreshRate.Denominator = 1;
 		scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		scd.OutputWindow = (HWND)mWindow->GetHandle();
+		scd.OutputWindow = (HWND)Engine::GetInstance()->GetWindow()->GetHandle();
 		scd.SampleDesc.Count = 1;
 		scd.SampleDesc.Quality = 0;
 		scd.Windowed = TRUE;
@@ -46,9 +48,9 @@ namespace Alexio
 		const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0, };
 
 		UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-#ifdef AIO_DEBUG
-		flags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif // AIO_DEBUG
+        #ifdef AIO_DEBUG
+        		flags |= D3D11_CREATE_DEVICE_DEBUG;
+        #endif // AIO_DEBUG
 
 		HRESULT hr;
 		hr = D3D11CreateDeviceAndSwapChain(nullptr,
@@ -73,6 +75,8 @@ namespace Alexio
 		viewport.TopLeftY = 0;
 		viewport.Width = (FLOAT)Engine::GetInstance()->GetWindow()->GetWidth();
 		viewport.Height = (FLOAT)Engine::GetInstance()->GetWindow()->GetHeight();
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
 
 		mDeviceContext->RSSetViewports(1, &viewport);
 
@@ -84,10 +88,56 @@ namespace Alexio
 		hr = mDevice->CreateRasterizerState(&rasterizerDesc, mRasterizerState.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create rasterizer state: " + ResultInfo(hr) + "\n");
 
+		D3D11_BLEND_DESC blendDesc;
+		ZeroMemory(&blendDesc, sizeof(blendDesc));
+
+		blendDesc.RenderTarget[0].BlendEnable = true;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+
+		hr = mDevice->CreateBlendState(&blendDesc, mBlendState.GetAddressOf());
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create blend state: " + ResultInfo(hr) + "\n");
+
+		D3D11_TEXTURE2D_DESC depthStencilDesc;
+		depthStencilDesc.Width = Engine::GetInstance()->GetWindow()->GetWidth();
+		depthStencilDesc.Height = Engine::GetInstance()->GetWindow()->GetHeight();
+		depthStencilDesc.MipLevels = 1;
+		depthStencilDesc.ArraySize = 1;
+		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDesc.SampleDesc.Count = 1;
+		depthStencilDesc.SampleDesc.Quality = 0;
+		depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		depthStencilDesc.CPUAccessFlags = 0;
+		depthStencilDesc.MiscFlags = 0;
+
+		hr = mDevice->CreateTexture2D(&depthStencilDesc, NULL, mDepthStencilBuffer.GetAddressOf());
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create depth stencil buffer: " + ResultInfo(hr) + "\n");
+
+		hr = mDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), NULL, mDepthStencilView.GetAddressOf());
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create depth stencil view: " + ResultInfo(hr) + "\n");	
+
+		//Create depth stencil state
+		D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
+		ZeroMemory(&depthStencilStateDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+		depthStencilStateDesc.DepthEnable = true;
+		depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+		mDevice->CreateDepthStencilState(&depthStencilStateDesc, mDepthStencilState.GetAddressOf());
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create depth stencil state: " + ResultInfo(hr) + "\n");
+
 		AIO_LOG_INFO("DirectX 11 Initialized");
 	}
 
-	void DX11_Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+	void DX11_Backend::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
 		if (mDevice != nullptr)
 		{
@@ -106,38 +156,52 @@ namespace Alexio
 		mDeviceContext->RSSetViewports(1, &viewport);
 	}
 
-	void DX11_Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexData)
+	void DX11_Backend::Draw(uint32_t vertexCount)
 	{
-		mDeviceContext->DrawIndexed(shader->GetVertexResources()->GetIndexBuffer()->GetCount(), 0, 0);		
+		mDeviceContext->Draw(vertexCount, 0);
 	}
 
-	void DX11_Renderer::ClearColor(float r, float g, float b, float a)
+	void DX11_Backend::DrawIndexed(uint32_t indexCount)
+	{
+		mDeviceContext->DrawIndexed(indexCount, 0, 0);
+	}
+
+	void DX11_Backend::DrawIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray)
+	{
+		vertexArray->Bind();
+		shader->Bind();
+		mDeviceContext->DrawIndexed(6, 0, 0);
+	}
+
+	void DX11_Backend::Clear(float r, float g, float b, float a)
 	{
 		FLOAT bgColor[] = { r, g, b, a };
-		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), NULL);
 		mDeviceContext->ClearRenderTargetView(mRenderTargetView.Get(), bgColor);
+		mDeviceContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), nullptr);
 		mDeviceContext->RSSetState(mRasterizerState.Get());
+		mDeviceContext->OMSetBlendState(mBlendState.Get(), NULL, 0xffffff);
 	}
 
-	void DX11_Renderer::SwapBuffer()
+	void DX11_Backend::SwapBuffer()
 	{		
 		mSwapChain->Present((UINT)mVSync, 0);
 	}
 
-	void DX11_Renderer::ImGuiBackendInit()
+	void DX11_Backend::ImGuiBackendInit()
 	{
 		HWND hwnd = (HWND)Engine::GetInstance()->GetWindow()->GetHandle();
 		ImGui_ImplWin32_Init(hwnd);
 		ImGui_ImplDX11_Init(mDevice.Get(), mDeviceContext.Get());
 	}
 
-	void DX11_Renderer::ImGuiBackendBegin()
+	void DX11_Backend::ImGuiBackendBegin()
 	{
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 	}
 
-	void DX11_Renderer::ImGuiBackendUpdate()
+	void DX11_Backend::ImGuiBackendUpdate()
 	{		
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
@@ -148,26 +212,26 @@ namespace Alexio
 		}
 	}
 
-	void DX11_Renderer::ImGuiBackendShutDown()
+	void DX11_Backend::ImGuiBackendShutDown()
 	{
 		ImGui_ImplDX11_Shutdown();
 		ImGui_ImplWin32_Shutdown();
 	}
 
-	void DX11_Renderer::CreateRenderTarget()
+	void DX11_Backend::CreateRenderTarget()
 	{
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
 		mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(backBuffer.GetAddressOf()));
 		mDevice->CreateRenderTargetView(backBuffer.Get(), NULL, mRenderTargetView.GetAddressOf());
 	}
 
-	void DX11_Renderer::CleanRenderTarget()
+	void DX11_Backend::CleanRenderTarget()
 	{
 		if (mRenderTargetView)
 			mRenderTargetView->Release();
 	}
 
-	void DX11_Renderer::GetAdapters()
+	void DX11_Backend::GetAdapters()
 	{
 		if (!mAdapters.empty())
 			mAdapters.clear();
@@ -188,3 +252,4 @@ namespace Alexio
 		}
 	}
 }
+#endif

@@ -5,12 +5,12 @@
 
 #define BIT(x) (1 << x)
 
-enum class GraphicsAPI
-{
-	None,
-	OpenGL,
-	DirectX11
-};
+#define AIO_API_OPENGL
+#define AIO_API_DX11
+
+#if !defined (AIO_PLATFORM_WINDOWS)
+#error Alexio Engine currently only runs on Windows
+#endif
 
 inline std::wstring StringToWide(const std::string& str)
 {
@@ -23,6 +23,13 @@ inline std::string WideToString(const std::wstring& wstr)
 	std::string str(wstr.begin(), wstr.end());
 	return str;
 }
+
+enum GraphicsAPI
+{
+	Null,
+	OpenGL,
+	DirectX11
+};
 
 namespace Alexio
 {
@@ -43,13 +50,12 @@ namespace Alexio
 	}
 }
 
-#ifdef AIO_PLATFORM_WINDOWS
-#define AIO_DX11_DEVICE         dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDevice()
-#define AIO_DX11_DEVICE_CONTEXT dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetDeviceContext()
-#define AIO_DX11_SWAP_CHAIN     dynamic_cast<DX11_Renderer*>(Renderer::GetAPI())->GetSwapChain()
-#endif // AIO_PLATFORM_WINDOWS
-
-
-#ifndef AIO_PLATFORM_WINDOWS
-#error Alexio Engine only supports Windows
+#if defined (AIO_API_OPENGL)
+    #define AIO_OPENGL_RENDERER dynamic_cast<OpenGL_Backend*>(Renderer::GetBackend())
+#endif
+#if defined (AIO_API_DX11)
+    #define AIO_DX11_RENDERER  dynamic_cast<DX11_Backend*>(Renderer::GetBackend())
+#endif
+#if defined (AIO_API_DX11) && !defined(AIO_PLATFORM_WINDOWS)
+    #error  DirectX11 is only supported on Windows
 #endif

@@ -2,6 +2,7 @@
 
 #include "Window/Window.h"
 
+#if defined(AIO_API_DX11)
 namespace Alexio
 {
 	class Win32_Window : public Window
@@ -25,3 +26,4 @@ namespace Alexio
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	std::string ResultInfo(HRESULT hr);
 }
+#endif

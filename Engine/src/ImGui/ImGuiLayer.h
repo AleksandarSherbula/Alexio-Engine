@@ -2,6 +2,8 @@
 
 #include "Alexio/Layer.h"
 
+#include <imgui.h>
+
 namespace Alexio
 {
 	class ImGUI : public Layer

@@ -2,8 +2,6 @@
 
 #include <memory>
 
-#include "Alexio/Log.h"
-
 namespace Alexio
 {
 	enum class ShaderDataType
@@ -121,7 +119,7 @@ namespace Alexio
 		const BufferLayout& GetLayout() const { return mLayout; }
 
 		static Ref<VertexBuffer> Create(uint32_t size);
-		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
+		static Ref<VertexBuffer> Create(const void* data, uint32_t size);
 	protected:
 		BufferLayout mLayout;
 	};
@@ -140,7 +138,7 @@ namespace Alexio
 		uint32_t mCount;
 	};
 
-	class VertexResources
+	class VertexArray
 	{
 	public:
 		virtual void Bind() const = 0;
@@ -152,7 +150,7 @@ namespace Alexio
 		inline std::vector<Ref<VertexBuffer>> GetVertexBuffers() { return mVertexBuffers; }
 		inline Ref<IndexBuffer> GetIndexBuffer() { return mIndexBuffer; }
 
-		static Ref<VertexResources> Create();
+		static Ref<VertexArray> Create();
 
 	protected:
 		std::vector<Ref<VertexBuffer>> mVertexBuffers;

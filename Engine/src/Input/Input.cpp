@@ -1,8 +1,7 @@
 #include "aio_pch.h"
 #include "Input/Input.h"
 
-
-#include "Alexio/Engine.h"
+#include "Renderer/Renderer.h"
 
 namespace Alexio
 {
@@ -66,13 +65,15 @@ namespace Alexio
 		mapKeys[0x55] = Key::U; mapKeys[0x56] = Key::V; mapKeys[0x57] = Key::W; mapKeys[0x58] = Key::X; mapKeys[0x59] = Key::Y;
 		mapKeys[0x5A] = Key::Z;
 
-		if (Window::GetAPI() == WindowAPI::GLFW)
-			SetGLFWKeyCodes(mapKeys);
-#ifdef AIO_PLATFORM_WINDOWS
-		else if (Window::GetAPI() == WindowAPI::Win32)
-			SetWin32KeyCodes(mapKeys);
-#endif // AIO_PLATFORM_WINDOWS
-
-		
+#if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
+        if (Renderer::GetGraphicsAPI() == OpenGL)
+            SetGLFWKeyCodes(mapKeys);
+        else if (Renderer::GetGraphicsAPI() == DirectX11)
+            SetWin32KeyCodes(mapKeys);
+#elif defined(AIO_API_OPENGL)
+        SetGLFWKeyCodes(mapKeys);
+#elif defined(AIO_API_DX11)
+        SetWin32KeyCodes(mapKeys);
+#endif
 	}
 }

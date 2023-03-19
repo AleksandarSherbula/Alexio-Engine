@@ -1,10 +1,32 @@
 #include "aio_pch.h"
+#if defined(AIO_API_OPENGL)
 #include "OpenGL_Shader.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Alexio
 {
+	static GLenum ShaderDataTypeSizeToOpenGLBaseType(ShaderDataType type)
+	{
+		switch (type)
+		{
+		case ShaderDataType::Float:    return GL_FLOAT;
+		case ShaderDataType::Float2:   return GL_FLOAT;
+		case ShaderDataType::Float3:   return GL_FLOAT;
+		case ShaderDataType::Float4:   return GL_FLOAT;
+		case ShaderDataType::Mat3:     return GL_FLOAT;
+		case ShaderDataType::Mat4:     return GL_FLOAT;
+		case ShaderDataType::Int:      return GL_INT;
+		case ShaderDataType::Int2:     return GL_INT;
+		case ShaderDataType::Int3:     return GL_INT;
+		case ShaderDataType::Int4:     return GL_INT;
+		case ShaderDataType::Bool:     return GL_BOOL;
+		}
+
+		AIO_ASSERT(false, "Unknown ShaderDataType!");
+		return 0;
+	}
+
 	static GLenum ShaderTypeFromString(const std::string& type)
 	{
 		if (type == "vertex")
@@ -17,24 +39,30 @@ namespace Alexio
 	}
 
 
-	OpenGL_Shader::OpenGL_Shader(const std::string& name)
+	OpenGL_Shader::OpenGL_Shader(const std::string& name, const Ref<VertexArray>& vertexArray)
 	{
 		mName = name;
 		std::string source = ReadFile("assets/shaders/OpenGL/" + name + ".glsl");
 		mShaderSource = PreProcess(source);
+
+		Compile(vertexArray);
 	}
 
-	OpenGL_Shader::OpenGL_Shader(const std::string& name, const std::string& filepath)
+	OpenGL_Shader::OpenGL_Shader(const std::string& name, const std::string& filepath, const Ref<VertexArray>& vertexArray)
 	{
 		mName = name;
 		std::string source = ReadFile(filepath);
 		mShaderSource = PreProcess(source);
+
+		Compile(vertexArray);
 	}
 
-	OpenGL_Shader::OpenGL_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc)
+	OpenGL_Shader::OpenGL_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexArray>& vertexArray)
 	{
 		mShaderSource[GL_VERTEX_SHADER] = vertexSrc;
 		mShaderSource[GL_FRAGMENT_SHADER] = pixelSrc;
+
+		Compile(vertexArray);
 	}
 
 	OpenGL_Shader::~OpenGL_Shader()
@@ -42,8 +70,31 @@ namespace Alexio
 		glDeleteProgram(mID);
 	}
 
-	void OpenGL_Shader::Compile()
+	void OpenGL_Shader::Compile(const Ref<VertexArray>& vertexArray)
 	{
+		// Move into shader class
+		vertexArray->Bind();
+
+		for (auto& vertexBuffer : vertexArray->GetVertexBuffers())
+		{
+			AIO_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "VertexBuffer has no layout");
+			vertexBuffer->Bind();
+
+			uint32_t index = 0;
+			auto& layout = vertexBuffer->GetLayout();
+			for (auto& element : layout)
+			{
+				glEnableVertexAttribArray(index);
+				glVertexAttribPointer(index,
+					element.GetComponentCount(),
+					ShaderDataTypeSizeToOpenGLBaseType(element.type),
+					element.normalized ? GL_TRUE : GL_FALSE,
+					layout.GetStride(),
+					(const void*)element.offset);
+				index++;
+			}
+		}
+
 		GLuint program = glCreateProgram();
 
 		std::array<GLenum, 2> glShaderIDs;
@@ -138,17 +189,17 @@ namespace Alexio
 		glUniform1f(glGetUniformLocation(mID, name.c_str()), value);
 	}
 
-	void OpenGL_Shader::SetFloat2(const std::string& name, const Vector2f& value)
+	void OpenGL_Shader::SetFloat2(const std::string& name, const glm::vec2& value)
 	{
 		glUniform2f(glGetUniformLocation(mID, name.c_str()), value.x, value.y);
 	}
 
-	void OpenGL_Shader::SetFloat3(const std::string& name, const Vector3f& value)
+	void OpenGL_Shader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
 		glUniform3f(glGetUniformLocation(mID, name.c_str()), value.x, value.y, value.z);
 	}
 
-	void OpenGL_Shader::SetFloat4(const std::string& name, const Vector4f& value)
+	void OpenGL_Shader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{		
 		glUniform4f(glGetUniformLocation(mID, name.c_str()), value.x, value.y, value.z, value.w);
 	}
@@ -206,4 +257,4 @@ namespace Alexio
 		return shaderSources;
 	}
 }
-
+#endif

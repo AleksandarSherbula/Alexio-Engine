@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Events/Event.h"
-#include "Events/MouseEvent.h"
+#include "Events/Events.h"
 
 #include <vector>
 

@@ -2,6 +2,7 @@
 
 #include "Window/Window.h"
 
+#if defined(AIO_API_OPENGL)
 namespace Alexio
 {
 	class GLFW_Window : public Window
@@ -24,7 +25,7 @@ namespace Alexio
 		int32_t mPosX;
 		int32_t mPosY;
 
-		struct WindowData
+		struct WindowDataFromCallback
 		{
 			std::string title;
 			uint32_t width, height;
@@ -32,6 +33,7 @@ namespace Alexio
 			EventCallbackFn eventCallback;
 		};
 
-		WindowData mData;
+		WindowDataFromCallback mData;
 	};
 }
+#endif

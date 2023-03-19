@@ -7,29 +7,37 @@
 
 namespace Alexio
 {
-    Ref<Texture> Texture::Create(uint32_t width, uint32_t height)
+    Ref<Texture> Texture::Create(uint32_t width, uint32_t height, uint32_t whiteTexture)
     {
-        switch (Renderer::GetGraphicsAPI())
-        {
-        case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
-        case GraphicsAPI::OpenGL: return CreateRef<OpenGL_Texture>(width, height);
-        case GraphicsAPI::DirectX11: return CreateRef<DX11_Texture>(width, height);
-        }
-
-        AIO_ASSERT(false, "Unknown Rendering API");
+        #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
+            switch (Renderer::GetGraphicsAPI())
+            {
+            case OpenGL:    return CreateRef<OpenGL_Texture>(width, height, whiteTexture);
+            case DirectX11: return CreateRef<DX11_Texture>(width, height, whiteTexture);
+            }
+        #elif defined(AIO_API_OPENGL)
+            return CreateRef<OpenGL_Texture>(width, height, whiteTexture);
+        #elif defined(AIO_API_DX11)
+            return CreateRef<DX11_Texture>(width, height, whiteTexture);
+        #endif
+        AIO_ASSERT(false, "API has not been selected.\n");
         return nullptr;
     }
 
     Ref<Texture> Texture::Create(const std::string& filepath)
     {
-        switch (Renderer::GetGraphicsAPI())
-        {
-        case GraphicsAPI::None: AIO_ASSERT(false, "The Graphics API has not been seleceted"); break;
-        case GraphicsAPI::OpenGL: return CreateRef<OpenGL_Texture>(filepath);
-        case GraphicsAPI::DirectX11: return CreateRef<DX11_Texture>(filepath);
-        }
-
-        AIO_ASSERT(false, "Unknown Rendering API");
+        #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
+            switch (Renderer::GetGraphicsAPI())
+            {
+            case OpenGL:    return CreateRef<OpenGL_Texture>(filepath);
+            case DirectX11: return CreateRef<DX11_Texture>(filepath);
+            }
+        #elif defined(AIO_API_OPENGL)
+            return CreateRef<OpenGL_Texture>(filepath);
+        #elif defined(AIO_API_DX11)
+            return CreateRef<DX11_Texture>(filepath);
+        #endif
+        AIO_ASSERT(false, "API has not been selected.\n");
         return nullptr;
     }
 }

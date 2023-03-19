@@ -12,30 +12,35 @@ namespace Alexio
 
 		AIO_ASSERT(!sInstance, "An instance of Engine has already been made");
 		sInstance = this;
-		
+
+		Renderer::SetGraphicsAPI(DirectX11);
+		imgui = new ImGUI();
 		mRunning = true;
-	}	
+	}
 
 	void Engine::Run()
 	{
-		Renderer::SetGraphicsAPI(GraphicsAPI::OpenGL);
+		static std::string apiName = "";
+		#if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
+				apiName = (Renderer::GetGraphicsAPI() == OpenGL) ? "OpenGL" : "DirectX11";
+		#elif defined(AIO_API_OPENGL)
+				apiName = "OpenGL";
+		#elif defined(AIO_API_DX11)
+				apiName = "DirectX11";
+		#endif
 
-		std::string apiName = (Renderer::GetGraphicsAPI() == GraphicsAPI::OpenGL) ? "OpenGL" : "DirectX11";
-
-		sMainCamera = CreateRef<Camera>(1280 / 720);
-
-		mWindow = Window::Create("" + apiName + "", 1280, 720);
+		mWindow = Window::Create("Alexio Engine (" + apiName + ")", 1280, 720);
 		mWindow->SetEventCallback(std::bind(&Engine::OnEvent, this, std::placeholders::_1));
 		Input::SetKeyCodes();
 
-		Renderer::Begin(mWindow.get());
+		sMainCamera = CreateRef<Camera>(1280 / 720);
+		Renderer::Init();
 
-		imgui = new ImGUI();
+		AIO_ASSERT(OnStart(), "Failed to initialize application");
+
 		PushOverlay(imgui);
 
 		Time::Start();
-		AIO_ASSERT(OnStart(),"Initialization failed");
-
 		while (mRunning)
 		{
 			Time::UpdateDeltaTime();
@@ -43,25 +48,24 @@ namespace Alexio
 			mWindow->PollEvents();
 			Input::Scan();
 
-			if (!OnUpdate(Time::DetlaTime()) ||
+			if (!OnUpdate() ||
 				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked
-				(Window::GetAPI() == WindowAPI::Win32 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
+				(Renderer::GetGraphicsAPI() == DirectX11 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
 				mRunning = false;
-
-			for (Layer* layer : mLayerStack)
-				layer->OnUpdate(Time::DetlaTime());
 
 			sMainCamera->OnUpdate(Time::DetlaTime());
 
 			imgui->Begin();
 			for (Layer* layer : mLayerStack)
 				layer->OnImGuiRender();
+
+			for (Layer* layer : mLayerStack)
+				layer->OnUpdate(Time::DetlaTime());
+
 			imgui->End();
 
-			Renderer::SwapBuffer();
+			Renderer::GetBackend()->SwapBuffer();
 		}
-
-		Renderer::End();
 	}
 
 	void Engine::OnEvent(Event& e)
@@ -70,7 +74,8 @@ namespace Alexio
 		dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Engine::OnWindowClose, this, std::placeholders::_1));
 		dispatcher.Dispatch<WindowResizeEvent>(std::bind(&Engine::OnWindowResize, this, std::placeholders::_1));
 
-		sMainCamera->OnEvent(e);
+		if (sMainCamera != nullptr)
+			sMainCamera->OnEvent(e);
 
 		for (auto it = mLayerStack.end(); it != mLayerStack.begin();)
 		{

@@ -2,11 +2,12 @@
 
 #include "Layer.h"
 #include "Log.h"
-#include "Math.h"
 #include "Time.h"
+#include "Utilities.h"
+
+#include "Math/Math.h"
 #include "Input/Input.h"
-#include "Events/AppEvent.h"
-#include "Events/MouseEvent.h"
+#include "Events/Events.h"
 #include "Window/Window.h"
 #include "Renderer/Renderer.h"
 #include "ImGui/ImGuiLayer.h"
@@ -24,13 +25,14 @@ namespace Alexio
 		void OnEvent(Event& e);
 
 		virtual bool OnStart() = 0;
-		virtual bool OnUpdate(float dt) = 0;
+		virtual bool OnUpdate() = 0;
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
 		inline Window* GetWindow() const { return mWindow.get(); }
 		inline static Camera* GetCamera() { return sMainCamera.get(); }
+		
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
@@ -41,7 +43,7 @@ namespace Alexio
 		LayerStack mLayerStack;
 		ImGUI* imgui;
 	private:
-		static Ref<Camera> sMainCamera;
 		static Engine* sInstance;
+		static Ref<Camera> sMainCamera;
 	};
 }

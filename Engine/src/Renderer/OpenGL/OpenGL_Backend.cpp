@@ -1,17 +1,19 @@
 #include "aio_pch.h"
-#include "Alexio/Engine.h"
 
-#include "OpenGL_Renderer.h"
+#if defined(AIO_API_OPENGL)
+#include "OpenGL_Backend.h"
 #include "OpenGL_Buffer.h"
+#include "OpenGL_Shader.h"
+#include "Window/GLFW_Window.h"
 
-
+#include "Alexio/Engine.h"
 
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
 namespace Alexio
 {
-	OpenGL_Renderer* OpenGL_Renderer::sInstance = nullptr;
+	OpenGL_Backend* OpenGL_Backend::sInstance = nullptr;
 
 	void OpenGLMessageCallback(
 		unsigned source,
@@ -34,18 +36,18 @@ namespace Alexio
 	}
 
 
-	OpenGL_Renderer::OpenGL_Renderer()
+	OpenGL_Backend::OpenGL_Backend()
 	{
-		mWindow = nullptr;
 		AIO_ASSERT(!sInstance, "OpenGL API object was already been made");
 		sInstance = this;
 	}
 
-	OpenGL_Renderer::~OpenGL_Renderer()
+	OpenGL_Backend::~OpenGL_Backend()
 	{
+		glfwTerminate();
 	}
 
-	void OpenGL_Renderer::Initialize()
+	void OpenGL_Backend::Initialize()
 	{
 		int gladLoad = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		AIO_ASSERT(gladLoad, "Failed to initialize GLAD");
@@ -59,53 +61,50 @@ namespace Alexio
 #endif		
 		AIO_LOG_INFO("OpenGL ({0}) Initialized", (const char*)glGetString(GL_VERSION));
 
-
-		unsigned int uboExampleBlock;
-		glGenBuffers(1, &uboExampleBlock);
-		glBindBuffer(GL_UNIFORM_BUFFER, uboExampleBlock);
-		glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4x4), NULL, GL_STATIC_DRAW); // allocate 152 bytes of memory
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboExampleBlock);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	void OpenGL_Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+	void OpenGL_Backend::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGL_Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexResources>& vertexResources)
+	void OpenGL_Backend::Draw(uint32_t vertexCount)
 	{
-		glDrawElements(GL_TRIANGLES, vertexResources->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-		shader->Unbind();
-		vertexResources->Unbind();
+		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 	}
 
-	void OpenGL_Renderer::ClearColor(float r, float g, float b, float a)
+	void OpenGL_Backend::DrawIndexed(uint32_t indexCount)
+	{		
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+	}
+
+	void OpenGL_Backend::Clear(float r, float g, float b, float a)
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClearColor(r, g, b, a);
 	}
 
-	void OpenGL_Renderer::SwapBuffer()
+	void OpenGL_Backend::SwapBuffer()
 	{
 		glfwSwapInterval((int)mVSync);
-		glfwSwapBuffers((GLFWwindow*)mWindow->GetHandle());
+		glfwSwapBuffers((GLFWwindow*)Engine::GetInstance()->GetWindow()->GetHandle());
 	}
 
-	void OpenGL_Renderer::ImGuiBackendInit()
+	void OpenGL_Backend::ImGuiBackendInit()
 	{
 		ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)Engine::GetInstance()->GetWindow()->GetHandle(), true);
 		ImGui_ImplOpenGL3_Init("#version 460 core");
 	}
 
-	void OpenGL_Renderer::ImGuiBackendBegin()
+	void OpenGL_Backend::ImGuiBackendBegin()
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 	}
 
-	void OpenGL_Renderer::ImGuiBackendUpdate()
+	void OpenGL_Backend::ImGuiBackendUpdate()
 	{
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -119,11 +118,11 @@ namespace Alexio
 		}
 	}
 
-	void OpenGL_Renderer::ImGuiBackendShutDown()
+	void OpenGL_Backend::ImGuiBackendShutDown()
 	{
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 	}
 }
-
+#endif
 

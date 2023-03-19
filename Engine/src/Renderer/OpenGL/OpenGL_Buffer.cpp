@@ -1,4 +1,6 @@
 #include "aio_pch.h"
+
+#if defined(AIO_API_OPENGL)
 #include "OpenGL_Buffer.h"
 
 namespace Alexio
@@ -10,11 +12,11 @@ namespace Alexio
 		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 	}
 
-	OpenGL_VertexBuffer::OpenGL_VertexBuffer(float* vertices, uint32_t size)
+	OpenGL_VertexBuffer::OpenGL_VertexBuffer(const void* data, uint32_t size)
 	{
 		glCreateBuffers(1, &mID);
 		glBindBuffer(GL_ARRAY_BUFFER, mID);
-		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
 	}
 
 	OpenGL_VertexBuffer::~OpenGL_VertexBuffer()
@@ -70,73 +72,41 @@ namespace Alexio
 	///////////VERTEX ARRAY//////////////////////////////
 	/////////////////////////////////////////////////////
 
-	static GLenum ShaderDataTypeSizeToOpenGLBaseType(ShaderDataType type)
-	{
-		switch (type)
-		{
-		case ShaderDataType::Float:    return GL_FLOAT;
-		case ShaderDataType::Float2:   return GL_FLOAT;
-		case ShaderDataType::Float3:   return GL_FLOAT;
-		case ShaderDataType::Float4:   return GL_FLOAT;
-		case ShaderDataType::Mat3:     return GL_FLOAT;
-		case ShaderDataType::Mat4:     return GL_FLOAT;
-		case ShaderDataType::Int:      return GL_INT;
-		case ShaderDataType::Int2:     return GL_INT;
-		case ShaderDataType::Int3:     return GL_INT;
-		case ShaderDataType::Int4:     return GL_INT;
-		case ShaderDataType::Bool:     return GL_BOOL;
-		}
-
-		AIO_ASSERT(false, "Unknown ShaderDataType!");
-		return 0;
-	}
-
-	VertexArray::VertexArray()
+	OpenGL_VertexArray::OpenGL_VertexArray()
 	{
 		glCreateVertexArrays(1, &mID);
-		glBindVertexArray(mID);
+ 		glBindVertexArray(mID);
 	}
 
-	VertexArray::~VertexArray()
+	OpenGL_VertexArray::~OpenGL_VertexArray()
 	{
 		glDeleteVertexArrays(1, &mID);
 	}
 
-	void VertexArray::Bind() const
+	void OpenGL_VertexArray::Bind() const
 	{
 		glBindVertexArray(mID);
+
+		for (auto& vertexBuffer : mVertexBuffers)
+			vertexBuffer->Bind();
+		mIndexBuffer->Bind();
 	}
 
-	void VertexArray::Unbind() const
+	void OpenGL_VertexArray::Unbind() const
 	{
+		for (auto& vertexBuffer : mVertexBuffers)
+			vertexBuffer->Unbind();
+		mIndexBuffer->Unbind();
+
 		glBindVertexArray(0);
 	}
 
-	void VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
+	void OpenGL_VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
-		AIO_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "VertexBuffer has no layout");
-
-		glBindVertexArray(mID);
-		vertexBuffer->Bind();
-
-		uint32_t index = 0;
-		auto& layout = vertexBuffer->GetLayout();
-		for (auto& element : layout)
-		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index,
-				element.GetComponentCount(),
-				ShaderDataTypeSizeToOpenGLBaseType(element.type),
-				element.normalized ? GL_TRUE : GL_FALSE,
-				layout.GetStride(),
-				(const void*)element.offset);
-			index++;
-		}
-
 		mVertexBuffers.push_back(vertexBuffer);
 	}
 
-	void VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
+	void OpenGL_VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
 		glBindVertexArray(mID);
 
@@ -166,3 +136,4 @@ namespace Alexio
 		glBindBufferBase(GL_UNIFORM_BUFFER, binding, mID);
 	}
 }
+#endif

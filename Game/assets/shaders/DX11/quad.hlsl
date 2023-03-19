@@ -5,7 +5,7 @@ cbuffer Camera : register(b0)
 
 struct VS_INPUT
 {
-    float2 inPos : aPosition;
+    float3 inPos : aPosition;
     float4 inColor : aColor;
     float2 inTexCoord : aTexCoord;
 };
@@ -20,7 +20,7 @@ struct VS_OUTPUT
 VS_OUTPUT VSMain(VS_INPUT input)
 {
     VS_OUTPUT output;
-    output.outPos = mul(projection, float4(input.inPos, 0.0, 1.0));
+    output.outPos = mul(projection, float4(input.inPos, 1.0));
     output.outColor = input.inColor;
     output.outTexCoord = input.inTexCoord;
     return output;

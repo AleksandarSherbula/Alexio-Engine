@@ -1,34 +1,32 @@
 #pragma once
 
-#include "Event.h"
-
 namespace Alexio
 {
 	class KeyEvent : public Event
 	{
 	public:
-		inline int GetKeyCode() const { return m_KeyCode; }
+		inline int GetKeyCode() const { return mKeyCode; }
 
-		virtual int GetCategoryFlags() const override { return EventCategoryKeyboard | EventCategoryInput; }
+		int GetCategoryFlags() const override { return EventCategoryKeyboard | EventCategoryInput; }
 	protected:
 		KeyEvent(const int keycode)
-			: m_KeyCode(keycode) {}
+			: mKeyCode(keycode) {}
 
-		int m_KeyCode;
+		int mKeyCode;
 	};
 
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
 		KeyPressedEvent(const int keycode, bool isRepeat = false)
-			: KeyEvent(keycode), m_IsRepeat(isRepeat) {}
+			: KeyEvent(keycode), mIsRepeat(isRepeat) {}
 
-		bool IsRepeat() const { return m_IsRepeat; }
+		bool IsRepeat() const { return mIsRepeat; }
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << m_KeyCode << " (repeat = " << m_IsRepeat << ")";
+			ss << "KeyPressedEvent: " << mKeyCode << " (repeat = " << mIsRepeat << ")";
 			return ss.str();
 		}
 
@@ -37,7 +35,7 @@ namespace Alexio
 		virtual const char* GetName() const override { return "KeyPressed"; }
 		
 	private:
-		bool m_IsRepeat;
+		bool mIsRepeat;
 	};
 
 	class KeyReleasedEvent : public KeyEvent
@@ -49,7 +47,7 @@ namespace Alexio
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << m_KeyCode;
+			ss << "KeyReleasedEvent: " << mKeyCode;
 			return ss.str();
 		}
 
@@ -67,7 +65,7 @@ namespace Alexio
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyTypedEvent: " << m_KeyCode;
+			ss << "KeyTypedEvent: " << mKeyCode;
 			return ss.str();
 		}
 

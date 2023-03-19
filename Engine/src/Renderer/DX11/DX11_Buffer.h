@@ -2,13 +2,14 @@
 
 #include "Renderer/Buffer.h"
 
+#if defined(AIO_API_DX11)
 namespace Alexio
 {
 	class DX11_VertexBuffer : public VertexBuffer
 	{
 	public:
 		DX11_VertexBuffer(uint32_t size);
-		DX11_VertexBuffer(float* vertices, uint32_t size);
+		DX11_VertexBuffer(const void* data, uint32_t size);
 
 		~DX11_VertexBuffer();
 
@@ -33,11 +34,11 @@ namespace Alexio
 		Microsoft::WRL::ComPtr<ID3D11Buffer> mBuffer;
 	};
 
-	class DX11_VertexResources : public VertexResources
+	class DX11_VertexArray : public VertexArray
 	{
 	public:
-		DX11_VertexResources();
-		~DX11_VertexResources();
+		DX11_VertexArray();
+		~DX11_VertexArray();
 
 		void Bind() const override;
 		void Unbind() const override;
@@ -54,10 +55,11 @@ namespace Alexio
 	public:
 		DX11_ConstantBuffer(uint32_t block_size, uint32_t slot);
 
-		void SetData(const void* data, uint32_t data_size) override;
+		void SetData(const void* data, uint32_t size) override;
 
 		void Bind(uint32_t binding) override;
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> mBuffer;
 	};
 }
+#endif
