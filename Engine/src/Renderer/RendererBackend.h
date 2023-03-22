@@ -20,7 +20,6 @@ namespace Alexio
 		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
 		virtual void Draw(uint32_t vertexCount) = 0;
 		virtual void DrawIndexed(uint32_t indexCount) = 0;
-		virtual void DrawIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray) = 0;
 		virtual void Clear(float r, float g, float b, float a) = 0;
 		virtual void SwapBuffer() = 0;
 

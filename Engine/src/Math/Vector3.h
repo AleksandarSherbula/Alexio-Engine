@@ -37,7 +37,7 @@ namespace Alexio
 		inline Vector3& operator+=(const Vector3& other) { this->x += other.x; this->y += other.y; this->z += other.z; return *this; }
 		inline Vector3& operator-=(const Vector3& other) { this->x -= other.x; this->y -= other.y; this->z -= other.z; return *this; }
 
-		inline T length() { return std::sqrt(x * x + y * y, z * z); }
+		inline T length() { return std::sqrt(x * x + y * y + z * z); }
 		inline T lengthSquared() { return x * x + y * y, z* z; }
 		inline T dot(const Vector3& other) { return this->x * other.x + this->y * other.y + this->z * other.z; }
 

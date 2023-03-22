@@ -89,14 +89,17 @@ namespace Alexio
 
 		for (auto& vertexBuffer : mVertexBuffers)
 			vertexBuffer->Bind();
-		mIndexBuffer->Bind();
+
+		if (mIndexBuffer != nullptr)
+			mIndexBuffer->Bind();
 	}
 
 	void OpenGL_VertexArray::Unbind() const
 	{
 		for (auto& vertexBuffer : mVertexBuffers)
 			vertexBuffer->Unbind();
-		mIndexBuffer->Unbind();
+		if (mIndexBuffer != nullptr)
+			mIndexBuffer->Unbind();
 
 		glBindVertexArray(0);
 	}

@@ -9,6 +9,16 @@
 
 namespace Alexio
 {
+	class PointVertex
+	{
+	public:
+		glm::vec3 position;
+		glm::vec4 color;
+	public:
+		PointVertex();
+		PointVertex(const glm::vec3& position, const glm::vec4& color);
+	};
+
 	class QuadVertex
 	{
 	public:
@@ -25,6 +35,7 @@ namespace Alexio
 	{
 	public:
 		glm::vec3 position;
+		glm::vec3 localPosition;
 		glm::vec4 color;
 		float thickness;
 		float fade;
@@ -33,12 +44,24 @@ namespace Alexio
 		CircleVertex(const glm::vec3& position, const glm::vec4& color, float thickness, float fade);
 	};
 
+	class LineRenderer
+	{
+	public:
+		std::array<PointVertex, 2> vertices;
+
+		Ref<VertexArray>  vertexArray;
+		Ref<VertexBuffer> vertexBuffer;
+		Ref<Shader>       shader;
+	public:
+		LineRenderer();
+	};
+
 	class QuadRenderer
 	{
 	public:
 		std::array<QuadVertex, 4> vertices;
 		std::array<uint32_t, 6> indices;
-		std::array<glm::vec3, 4> baseVertexPositions;
+		std::array<glm::vec3, 4> localQuadPositions;
 
 		Ref<VertexArray>  vertexArray;
 		Ref<VertexBuffer> vertexBuffer;
@@ -54,7 +77,6 @@ namespace Alexio
 	public:
 		std::array<CircleVertex, 4> vertices;
 		std::array<uint32_t, 6> indices;
-		std::array<glm::vec3, 4> localPositions;
 
 		Ref<VertexArray>  vertexArray;
 		Ref<VertexBuffer> vertexBuffer;

@@ -158,19 +158,23 @@ namespace Alexio
 
 	void DX11_Backend::Draw(uint32_t vertexCount)
 	{
+		D3D_PRIMITIVE_TOPOLOGY mode = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+		switch (vertexCount)
+		{
+		case 0: AIO_LOG_ERROR("No vertices found");        break;
+		case 1: mode = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST; break;
+		case 2: mode = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;  break;
+		}
+
+		mDeviceContext->IASetPrimitiveTopology(mode);
 		mDeviceContext->Draw(vertexCount, 0);
 	}
 
 	void DX11_Backend::DrawIndexed(uint32_t indexCount)
 	{
+		mDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		mDeviceContext->DrawIndexed(indexCount, 0, 0);
-	}
-
-	void DX11_Backend::DrawIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray)
-	{
-		vertexArray->Bind();
-		shader->Bind();
-		mDeviceContext->DrawIndexed(6, 0, 0);
 	}
 
 	void DX11_Backend::Clear(float r, float g, float b, float a)
