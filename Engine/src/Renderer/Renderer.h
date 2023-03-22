@@ -26,7 +26,11 @@ namespace Alexio
 
 		static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
-		static void Draw(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray);
+		static void Draw(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
+		static void DrawIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray);
+
+		static void DrawLine(const glm::vec2& p0, const glm::vec2& p1, const glm::vec4& color = glm::vec4(1.0f));
+		static void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color = glm::vec4(1.0f));
 
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), float angle = 0.0f);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), float angle = 0.0f);
@@ -40,6 +44,7 @@ namespace Alexio
 		static Ref<RendererBackend> sRendererBackend;
 		static Ref<ConstantBuffer> sCameraBuffer;
 
+		static Ref<LineRenderer> sLineRenderer;
 		static Ref<QuadRenderer> sQuadRenderer;
 		static Ref<CircleRenderer> sCircleRenderer;
 	};

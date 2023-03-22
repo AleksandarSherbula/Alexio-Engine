@@ -125,7 +125,8 @@ namespace Alexio
 	{
 		for (auto& vertexBuffer : mVertexBuffers)
 			vertexBuffer->Bind();
-		mIndexBuffer->Bind();
+		if (mIndexBuffer != nullptr)
+			mIndexBuffer->Bind();
 	}
 
 	void DX11_VertexArray::Unbind() const

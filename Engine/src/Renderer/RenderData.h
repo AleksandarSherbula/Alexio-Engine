@@ -9,6 +9,16 @@
 
 namespace Alexio
 {
+	class PointVertex
+	{
+	public:
+		glm::vec3 position;
+		glm::vec4 color;
+	public:
+		PointVertex();
+		PointVertex(const glm::vec3& position, const glm::vec4& color);
+	};
+
 	class QuadVertex
 	{
 	public:
@@ -32,6 +42,18 @@ namespace Alexio
 	public:
 		CircleVertex();
 		CircleVertex(const glm::vec3& position, const glm::vec4& color, float thickness, float fade);
+	};
+
+	class LineRenderer
+	{
+	public:
+		std::array<PointVertex, 2> vertices;
+
+		Ref<VertexArray>  vertexArray;
+		Ref<VertexBuffer> vertexBuffer;
+		Ref<Shader>       shader;
+	public:
+		LineRenderer();
 	};
 
 	class QuadRenderer

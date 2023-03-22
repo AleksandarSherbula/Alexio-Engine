@@ -18,9 +18,6 @@ public:
 	{
 		clearColor = { 0.0f, 0.8f, 1.0f, 1.0f };
 
-		Alexio::Vector2 coord = { 0.5f, 0.0f };
-		AIO_LOG_INFO(coord.length());
-
 		texture = Alexio::Texture::Create("assets/img/awesomeface.png");
 	}
 
@@ -37,9 +34,10 @@ public:
 	{
 		Alexio::Renderer::Clear(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
-		Alexio::Renderer::DrawQuad({-0.2f, 0.0f}, { 1.0f, 1.0f }, {0.5f, 0.0f, 1.0f, 1.0f});
-		Alexio::Renderer::DrawSprite(texture, { 0.0f, 0.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 1.0f, 1.0f});
-		Alexio::Renderer::DrawCircle({ -0.0f, -0.0f }, {1.0f, 0.5f, 0.0f, 1.0f}, 0.5f, thickness, fade);
+		Alexio::Renderer::DrawQuad({ 0.0f, 0.0f}, { 1.0f, 1.0f }, {0.5f, 0.0f, 1.0f, 1.0f});
+		Alexio::Renderer::DrawSprite(texture, {-1.0f, 0.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 1.0f, 1.0f});
+		Alexio::Renderer::DrawCircle({-0.5f,-0.5f }, {1.0f, 0.5f, 0.0f, 1.0f}, 0.5f, thickness, fade);
+		Alexio::Renderer::DrawLine({ -0.0f, -1.0f }, { 1.0f, 0.0f }, {1.0f, 1.0f, 0.0f, 1.0f});
 	}
 
 	void OnEvent(Alexio::Event& event) override

@@ -72,7 +72,16 @@ namespace Alexio
 
 	void OpenGL_Backend::Draw(uint32_t vertexCount)
 	{
-		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+		GLenum mode = GL_TRIANGLES;
+
+		switch (vertexCount)
+		{
+		case 0: AIO_LOG_ERROR("No vertices found"); break;
+		case 1: mode = GL_POINT; break;
+		case 2: mode = GL_LINES; break;
+		}
+
+		glDrawArrays(mode, 0, vertexCount);
 	}
 
 	void OpenGL_Backend::DrawIndexed(uint32_t indexCount)

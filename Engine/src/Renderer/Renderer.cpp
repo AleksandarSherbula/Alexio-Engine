@@ -4,9 +4,10 @@
 namespace Alexio
 {
 	Ref<RendererBackend> Renderer::sRendererBackend = nullptr;
-	Ref<ConstantBuffer> Renderer::sCameraBuffer = nullptr;
-	Ref<QuadRenderer> Renderer::sQuadRenderer = nullptr;
-	Ref<CircleRenderer> Renderer::sCircleRenderer = nullptr;
+	Ref<ConstantBuffer>  Renderer::sCameraBuffer    = nullptr;
+	Ref<LineRenderer>    Renderer::sLineRenderer    = nullptr;
+	Ref<QuadRenderer>    Renderer::sQuadRenderer    = nullptr;
+	Ref<CircleRenderer>  Renderer::sCircleRenderer  = nullptr;
 
 	void Renderer::Init()
 	{
@@ -16,13 +17,22 @@ namespace Alexio
 
 		sCameraBuffer = ConstantBuffer::Create(sizeof(glm::mat4x4), 0);
 
+		sLineRenderer = CreateRef<LineRenderer>();
 		sQuadRenderer = CreateRef<QuadRenderer>();
 		sCircleRenderer = CreateRef<CircleRenderer>();
 
 		sRendererBackend->SetVSync(true);
 	}
 
-	void Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray)
+	void Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
+	{
+		vertexArray->Bind();
+		shader->Bind();
+
+		sRendererBackend->Draw(vertexCount);
+	}
+
+	void Renderer::DrawIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray)
 	{
 		vertexArray->Bind();
 		shader->Bind();
@@ -31,6 +41,32 @@ namespace Alexio
 
 		shader->Unbind();
 		vertexArray->Unbind();
+	}
+
+	void Renderer::DrawLine(const glm::vec2& p0, const glm::vec2& p1, const glm::vec4& color)
+	{
+		sLineRenderer->vertices[0].position = glm::vec3(p0, 0.0f);
+		sLineRenderer->vertices[0].color = color;
+
+		sLineRenderer->vertices[1].position = glm::vec3(p1, 0.0f);
+		sLineRenderer->vertices[1].color = color;
+
+		sLineRenderer->vertexBuffer->SetData(sLineRenderer->vertices.data(), sizeof(PointVertex) * 2);
+
+		Draw(sLineRenderer->shader, sLineRenderer->vertexArray, 2);
+	}
+
+	void Renderer::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
+	{
+		sLineRenderer->vertices[0].position = p0;
+		sLineRenderer->vertices[0].color = color;
+
+		sLineRenderer->vertices[1].position = p1;
+		sLineRenderer->vertices[1].color = color;
+
+		sLineRenderer->vertexBuffer->SetData(sLineRenderer->vertices.data(), sizeof(PointVertex) * 2);
+
+		Draw(sLineRenderer->shader, sLineRenderer->vertexArray, 2);
 	}
 
 	void Renderer::Clear(float r, float g, float b, float a)
@@ -52,7 +88,7 @@ namespace Alexio
 		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
 
 		sQuadRenderer->whiteTexture->Bind(0);
-		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
 		sQuadRenderer->whiteTexture->Unbind();
 	}
 
@@ -70,7 +106,7 @@ namespace Alexio
 		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
 		
 		sQuadRenderer->whiteTexture->Bind(0);
-		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
 		sQuadRenderer->whiteTexture->Unbind();
 	}
 
@@ -88,7 +124,7 @@ namespace Alexio
 		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
 		
 		texture->Bind(0);
-		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
 		texture->Unbind();
 	}
 
@@ -106,7 +142,7 @@ namespace Alexio
 		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
 		
 		texture->Bind(0);
-		Draw(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
 		texture->Unbind();
 	}
 
@@ -125,7 +161,7 @@ namespace Alexio
 
 		sCircleRenderer->vertexBuffer->SetData(sCircleRenderer->vertices.data(), sizeof(CircleVertex) * sCircleRenderer->vertices.size());
 
-		Draw(sCircleRenderer->shader, sCircleRenderer->vertexArray);
+		DrawIndexed(sCircleRenderer->shader, sCircleRenderer->vertexArray);
 	}
 
 	void Renderer::DrawCircle(const glm::vec3& position, const glm::vec4& color, float radius, float thickness, float fade)
@@ -143,7 +179,7 @@ namespace Alexio
 
 		sCircleRenderer->vertexBuffer->SetData(sCircleRenderer->vertices.data(), sizeof(CircleVertex) * sCircleRenderer->vertices.size());
 
-		Draw(sCircleRenderer->shader, sCircleRenderer->vertexArray);
+		DrawIndexed(sCircleRenderer->shader, sCircleRenderer->vertexArray);
 	}
 
 	void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

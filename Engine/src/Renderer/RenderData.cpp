@@ -105,5 +105,37 @@ namespace Alexio
 
         shader = Shader::Create("circle", vertexArray);
     }
+
+    PointVertex::PointVertex()
+    {
+        this->position = glm::vec3(0.0f);
+        this->color = glm::vec4(0.0f);
+    }
+
+    PointVertex::PointVertex(const glm::vec3& position, const glm::vec4& color)
+    {
+        this->position = position;
+        this->color = color;
+    }
+
+    LineRenderer::LineRenderer()
+    {
+        vertices[0] = PointVertex(glm::vec3( 0.0f, 0.0f, 0.0f),  glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        vertices[1] = PointVertex(glm::vec3( 0.5f, 0.0f, 0.0f),  glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+        vertexArray = VertexArray::Create();
+        vertexBuffer = VertexBuffer::Create(vertices.data(), sizeof(PointVertex) * 2);
+
+        BufferLayout layout =
+        {
+            {ShaderDataType::Float3, "aPosition" },
+            {ShaderDataType::Float4, "aColor"    }
+        };
+        vertexBuffer->SetLayout(layout);
+
+        vertexArray->AddVertexBuffer(vertexBuffer);
+
+        shader = Shader::Create("line", vertexArray);
+    }
 }
 
