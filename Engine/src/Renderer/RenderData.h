@@ -25,6 +25,7 @@ namespace Alexio
 	{
 	public:
 		glm::vec3 position;
+		glm::vec3 localPosition;
 		glm::vec4 color;
 		float thickness;
 		float fade;
@@ -38,7 +39,7 @@ namespace Alexio
 	public:
 		std::array<QuadVertex, 4> vertices;
 		std::array<uint32_t, 6> indices;
-		std::array<glm::vec3, 4> baseVertexPositions;
+		std::array<glm::vec3, 4> localQuadPositions;
 
 		Ref<VertexArray>  vertexArray;
 		Ref<VertexBuffer> vertexBuffer;
@@ -54,7 +55,6 @@ namespace Alexio
 	public:
 		std::array<CircleVertex, 4> vertices;
 		std::array<uint32_t, 6> indices;
-		std::array<glm::vec3, 4> localPositions;
 
 		Ref<VertexArray>  vertexArray;
 		Ref<VertexBuffer> vertexBuffer;

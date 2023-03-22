@@ -10,11 +10,16 @@ public:
 	std::shared_ptr<Alexio::Texture> texture;
 
 	glm::vec4 clearColor;
+	float thickness = 1.0f;
+	float fade = 0.005f;
 
 	ExampleLayer()
 		: Layer("Example")
 	{
 		clearColor = { 0.0f, 0.8f, 1.0f, 1.0f };
+
+		Alexio::Vector2 coord = { 0.5f, 0.0f };
+		AIO_LOG_INFO(coord.length());
 
 		texture = Alexio::Texture::Create("assets/img/awesomeface.png");
 	}
@@ -23,6 +28,8 @@ public:
 	{
 		ImGui::Begin("Settings");
 		ImGui::ColorEdit4("Clear Color", &clearColor.r);
+		ImGui::SliderFloat("Circle Thickness", &thickness, 0.0f, 1.0f);
+		ImGui::SliderFloat("Circle Fade", &fade, 0.0f, 1.0f);
 		ImGui::End();
 	}
 
@@ -32,7 +39,7 @@ public:
 
 		Alexio::Renderer::DrawQuad({-0.2f, 0.0f}, { 1.0f, 1.0f }, {0.5f, 0.0f, 1.0f, 1.0f});
 		Alexio::Renderer::DrawSprite(texture, { 0.0f, 0.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 1.0f, 1.0f});
-		Alexio::Renderer::DrawCircle({ -0.5f, -0.5f }, {1.0f, 0.5f, 0.0f, 1.0f});
+		Alexio::Renderer::DrawCircle({ -0.0f, -0.0f }, {1.0f, 0.5f, 0.0f, 1.0f}, 0.5f, thickness, fade);
 	}
 
 	void OnEvent(Alexio::Event& event) override
@@ -48,7 +55,7 @@ public:
 	{
 		// Set Graphics API here
 		// Example: Alexio::Renderer::SetGraphicsAPI(OpenGL);
-		Alexio::Renderer::SetGraphicsAPI(OpenGL);
+		Alexio::Renderer::SetGraphicsAPI(DirectX11);
 	}
 
 	bool OnStart() override

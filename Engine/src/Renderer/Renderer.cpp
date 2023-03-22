@@ -45,7 +45,7 @@ namespace Alexio
 
 		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
 		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->baseVertexPositions[i], 1.0f);
+			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
 			sQuadRenderer->vertices[i].color = color;
 		}
 
@@ -63,7 +63,7 @@ namespace Alexio
 
 		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
 		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->baseVertexPositions[i], 1.0f);
+			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
 			sQuadRenderer->vertices[i].color = color;
 		}
 
@@ -81,7 +81,7 @@ namespace Alexio
 
 		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
 		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->baseVertexPositions[i], 1.0f);
+			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
 			sQuadRenderer->vertices[i].color = color;
 		}
 
@@ -99,7 +99,7 @@ namespace Alexio
 
 		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
 		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->baseVertexPositions[i], 1.0f);
+			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
 			sQuadRenderer->vertices[i].color = color;
 		}
 
@@ -117,7 +117,7 @@ namespace Alexio
 
 		for (int i = 0; i < sCircleRenderer->vertices.size(); i++)
 		{
-			sCircleRenderer->vertices[i].position  = transform * glm::vec4(sCircleRenderer->localPositions[i], 1.0f);
+			sCircleRenderer->vertices[i].position  = transform * glm::vec4(sCircleRenderer->vertices[i].localPosition, 1.0f);
 			sCircleRenderer->vertices[i].color     = color;
 			sCircleRenderer->vertices[i].thickness = thickness;
 			sCircleRenderer->vertices[i].fade      = fade;
@@ -135,10 +135,10 @@ namespace Alexio
 
 		for (int i = 0; i < sCircleRenderer->vertices.size(); i++)
 		{
-			sCircleRenderer->vertices[i].position = transform * glm::vec4(sCircleRenderer->localPositions[i], 1.0f);
-			sCircleRenderer->vertices[i].color = color;
+			sCircleRenderer->vertices[i].position  = transform * glm::vec4(sCircleRenderer->vertices[i].localPosition, 1.0f);
+			sCircleRenderer->vertices[i].color     = color;
 			sCircleRenderer->vertices[i].thickness = thickness;
-			sCircleRenderer->vertices[i].fade = fade;
+			sCircleRenderer->vertices[i].fade      = fade;
 		}
 
 		sCircleRenderer->vertexBuffer->SetData(sCircleRenderer->vertices.data(), sizeof(CircleVertex) * sCircleRenderer->vertices.size());

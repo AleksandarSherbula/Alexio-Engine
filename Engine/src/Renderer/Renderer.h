@@ -34,8 +34,8 @@ namespace Alexio
 		static void DrawSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), float angle = 0.0f);
 		static void DrawSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), float angle = 0.0f);
 
-		static void DrawCircle(const glm::vec2& position, const glm::vec4& color = glm::vec4(1.0f), float radius = 1.0f, float thickness = 1.0f, float fade = 0.05f);
-		static void DrawCircle(const glm::vec3& position, const glm::vec4& color = glm::vec4(1.0f), float radius = 1.0f, float thickness = 1.0f, float fade = 0.05f);
+		static void DrawCircle(const glm::vec2& position, const glm::vec4& color = glm::vec4(1.0f), float radius = 0.5f, float thickness = 1.0f, float fade = 0.005f);
+		static void DrawCircle(const glm::vec3& position, const glm::vec4& color = glm::vec4(1.0f), float radius = 0.5f, float thickness = 1.0f, float fade = 0.005f);
 	private:
 		static Ref<RendererBackend> sRendererBackend;
 		static Ref<ConstantBuffer> sCameraBuffer;

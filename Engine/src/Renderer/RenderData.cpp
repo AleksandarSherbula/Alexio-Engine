@@ -1,7 +1,6 @@
 #include "aio_pch.h"
 #include "RenderData.h"
 
-
 namespace Alexio
 {
 	QuadVertex::QuadVertex()
@@ -18,10 +17,10 @@ namespace Alexio
 		this->texCoord = texCoord;
 	}
 
-
     CircleVertex::CircleVertex()
     {
         this->position = glm::vec3(0.0f);
+        this->localPosition = glm::vec3(0.0f);
         this->color = glm::vec4(0.0f);
         this->thickness = 0.0f;
         this->fade = 0.0f;
@@ -30,6 +29,7 @@ namespace Alexio
     CircleVertex::CircleVertex(const glm::vec3& position, const glm::vec4& color, float thickness, float fade)
     {
         this->position = position;
+        this->localPosition = position;
         this->color = color;
         this->thickness = thickness;
         this->fade = fade;
@@ -42,10 +42,10 @@ namespace Alexio
         vertices[2] = QuadVertex(glm::vec3(1.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f));
         vertices[3] = QuadVertex(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f));
         
-        baseVertexPositions[0] = vertices[0].position;
-        baseVertexPositions[1] = vertices[1].position;
-        baseVertexPositions[2] = vertices[2].position;
-        baseVertexPositions[3] = vertices[3].position;
+        localQuadPositions[0] = vertices[0].position;
+        localQuadPositions[1] = vertices[1].position;
+        localQuadPositions[2] = vertices[2].position;
+        localQuadPositions[3] = vertices[3].position;
         
         indices =
         {
@@ -80,11 +80,6 @@ namespace Alexio
         vertices[2] = CircleVertex(glm::vec3( 1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
         vertices[3] = CircleVertex(glm::vec3(-1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
 
-        localPositions[0] = vertices[0].position;
-        localPositions[1] = vertices[1].position;
-        localPositions[2] = vertices[2].position;
-        localPositions[3] = vertices[3].position;
-
         indices =
         {
             0, 1, 2,
@@ -97,10 +92,11 @@ namespace Alexio
 
         BufferLayout layout =
         {
-            {ShaderDataType::Float3, "aPosition"  },
-            {ShaderDataType::Float4, "aColor"     },
-            {ShaderDataType::Float,  "aThickness" },
-            {ShaderDataType::Float,  "aFade"      }
+            {ShaderDataType::Float3, "aPosition"      },
+            {ShaderDataType::Float3, "aLocalPosition" },
+            {ShaderDataType::Float4, "aColor"         },
+            {ShaderDataType::Float,  "aThickness"     },
+            {ShaderDataType::Float,  "aFade"          }
         };
         vertexBuffer->SetLayout(layout);
 
