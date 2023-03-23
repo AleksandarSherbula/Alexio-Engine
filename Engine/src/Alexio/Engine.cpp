@@ -33,7 +33,7 @@ namespace Alexio
 		mWindow->SetEventCallback(std::bind(&Engine::OnEvent, this, std::placeholders::_1));
 		Input::SetKeyCodes();
 
-		sMainCamera = CreateRef<Camera>(1280 / 720);
+		sMainCamera = CreateRef<Camera>(1280.0f / 720.0f);
 		Renderer::Init();
 
 		AIO_ASSERT(OnStart(), "Failed to initialize application");

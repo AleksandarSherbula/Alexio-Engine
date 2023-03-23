@@ -53,7 +53,7 @@ public:
 	{
 		// Set Graphics API here
 		// Example: Alexio::Renderer::SetGraphicsAPI(OpenGL);
-		Alexio::Renderer::SetGraphicsAPI(DirectX11);
+		Alexio::Renderer::SetGraphicsAPI(OpenGL);
 	}
 
 	bool OnStart() override
