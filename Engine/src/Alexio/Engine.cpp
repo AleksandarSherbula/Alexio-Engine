@@ -29,7 +29,7 @@ namespace Alexio
 				apiName = "DirectX11";
 		#endif
 
-		mWindow = Window::Create("Alexio Engine (" + apiName + ")", 1280, 720);
+		mWindow = Window::Create("Alexio (" + apiName + ")", 1280, 720);
 		mWindow->SetEventCallback(std::bind(&Engine::OnEvent, this, std::placeholders::_1));
 		Input::SetKeyCodes();
 

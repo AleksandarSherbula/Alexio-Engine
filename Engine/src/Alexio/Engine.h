@@ -32,6 +32,9 @@ namespace Alexio
 
 		inline Window* GetWindow() const { return mWindow.get(); }
 		inline static Camera* GetCamera() { return sMainCamera.get(); }
+
+		inline void SetFullScreen(bool fullscreen) { mWindow->SetFullScreen(fullscreen); }
+		inline bool IsFullScreen() const { return mWindow->IsFullScreen(); }
 		
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);

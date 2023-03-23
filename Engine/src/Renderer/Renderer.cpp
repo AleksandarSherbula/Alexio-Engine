@@ -51,9 +51,9 @@ namespace Alexio
 		sLineRenderer->vertices[1].position = glm::vec3(p1, 0.0f);
 		sLineRenderer->vertices[1].color = color;
 
-		sLineRenderer->vertexBuffer->SetData(sLineRenderer->vertices.data(), sizeof(PointVertex) * 2);
+		sLineRenderer->vertexBuffer->SetData(sLineRenderer->vertices.data(), sizeof(PointVertex) * sLineRenderer->vertices.size());
 
-		Draw(sLineRenderer->shader, sLineRenderer->vertexArray, 2);
+		Draw(sLineRenderer->shader, sLineRenderer->vertexArray, sLineRenderer->vertices.size());
 	}
 
 	void Renderer::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
@@ -64,9 +64,19 @@ namespace Alexio
 		sLineRenderer->vertices[1].position = p1;
 		sLineRenderer->vertices[1].color = color;
 
-		sLineRenderer->vertexBuffer->SetData(sLineRenderer->vertices.data(), sizeof(PointVertex) * 2);
+		sLineRenderer->vertexBuffer->SetData(sLineRenderer->vertices.data(), sizeof(PointVertex) * sLineRenderer->vertices.size());
 
-		Draw(sLineRenderer->shader, sLineRenderer->vertexArray, 2);
+		Draw(sLineRenderer->shader, sLineRenderer->vertexArray, sLineRenderer->vertices.size());
+	}
+
+	void Renderer::DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	{
+
+	}
+
+	void Renderer::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	{
+		
 	}
 
 	void Renderer::Clear(float r, float g, float b, float a)

@@ -20,6 +20,8 @@ namespace Alexio
 		mTitle = title;
 		mWindowClass = L"Win32 Class";
 		m_hInstance = GetModuleHandle(nullptr);
+
+		mIsFullScreen = false;
 	}
 
 	Win32_Window::~Win32_Window()
@@ -77,13 +79,16 @@ namespace Alexio
 
 	void Win32_Window::SetFullScreen(bool fullscreen)
 	{
+		if (IsFullScreen() == fullscreen)
+			return;
+
 		static RECT windowRect = {};
 
 		DWORD style = fullscreen ? WS_POPUP : WS_OVERLAPPEDWINDOW;
 		SetWindowLong(mHandle, GWL_STYLE, style);
 
 		if (fullscreen)
-		{
+		{			
 			MONITORINFO mi = { sizeof(mi) };
 			if (GetMonitorInfo(MonitorFromWindow(mHandle,
 					MONITOR_DEFAULTTOPRIMARY), &mi))
@@ -96,12 +101,14 @@ namespace Alexio
 					SWP_SHOWWINDOW);
 			}
 		}
-		else 
+		else
 		{
 			SetWindowPos(mHandle, NULL,
 				windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 				SWP_SHOWWINDOW);
 		}
+
+		mIsFullScreen = fullscreen;
 	}
 
 	void Win32_Window::PollEvents()

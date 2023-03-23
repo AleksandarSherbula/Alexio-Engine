@@ -19,6 +19,7 @@ namespace Alexio
         mTitle = mData.title = title;
         mWidth = mData.width = width;
         mHeight = mData.height = height;
+        mIsFullScreen = false;
 
         Initialize();
     }
@@ -74,6 +75,7 @@ namespace Alexio
         {
             glfwSetWindowMonitor(mHandle, nullptr, mPosX, mPosY, mWidth, mHeight, (int32_t)Renderer::GetBackend()->IsVSync());
         }
+        mIsFullScreen = fullscreen;
     }
 
     void GLFW_Window::EventProcess()
