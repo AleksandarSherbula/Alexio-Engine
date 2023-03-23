@@ -15,7 +15,6 @@ namespace Alexio
 
 		inline void* GetHandle() const override { return mHandle; }
 		inline void SetEventCallback(const EventCallbackFn& callback) override { mData.eventCallback = callback; }
-		inline bool IsFullScreen() const override { return glfwGetWindowMonitor(mHandle) != nullptr; }
 		void SetFullScreen(bool fullscreen) override;
 	private:
 		void EventProcess();

@@ -151,7 +151,6 @@ namespace Alexio
 		inline Ref<IndexBuffer> GetIndexBuffer() { return mIndexBuffer; }
 
 		static Ref<VertexArray> Create();
-
 	protected:
 		std::vector<Ref<VertexBuffer>> mVertexBuffers;
 		Ref<IndexBuffer> mIndexBuffer;
