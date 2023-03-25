@@ -18,8 +18,8 @@ namespace Alexio
 		glCreateTextures(GL_TEXTURE_2D, 1, &mID);
 		glTextureStorage2D(mID, 1, mInternalFormat, mWidth, mHeight);
 
-		glTextureParameteri(mID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(mID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(mID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(mID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		glTextureParameteri(mID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(mID, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -30,7 +30,6 @@ namespace Alexio
 	OpenGL_Texture::OpenGL_Texture(const std::string& filepath)
 	{
 		int width, height, channels;
-		stbi_set_flip_vertically_on_load(1);
 		stbi_uc* data = nullptr;
 		data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
 

@@ -111,10 +111,12 @@ namespace Alexio
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 	}
 
 	void OpenGL_Backend::ImGuiBackendUpdate()
 	{
+		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		ImGuiIO& io = ImGui::GetIO();

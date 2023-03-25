@@ -3,11 +3,11 @@
 class ExampleLayer : public Alexio::Layer
 {
 public:
-	std::shared_ptr<Alexio::VertexArray> va;
+	std::shared_ptr<Alexio::VertexArray>  va;
 	std::shared_ptr<Alexio::VertexBuffer> vb;
-	std::shared_ptr<Alexio::IndexBuffer> ib;
-	std::shared_ptr<Alexio::Shader> shader;
-	std::shared_ptr<Alexio::Texture> texture;
+	std::shared_ptr<Alexio::IndexBuffer>  ib;
+	std::shared_ptr<Alexio::Shader>       shader;
+	std::shared_ptr<Alexio::Texture>      texture;
 
 	glm::vec4 clearColor;
 	float thickness = 1.0f;
@@ -34,10 +34,10 @@ public:
 	{
 		Alexio::Renderer::Clear(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
-		Alexio::Renderer::DrawQuad({ 0.0f, 0.0f}, { 1.0f, 1.0f }, {0.5f, 0.0f, 1.0f, 1.0f});
-		Alexio::Renderer::DrawSprite(texture, {-1.0f, 0.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 1.0f, 1.0f});
-		Alexio::Renderer::DrawCircle({-0.5f,-0.5f }, {1.0f, 0.5f, 0.0f, 1.0f}, 0.5f, thickness, fade);
-		Alexio::Renderer::DrawLine({ -0.0f, -1.0f }, { 1.0f, 0.0f }, {1.0f, 1.0f, 0.0f, 1.0f});
+		Alexio::Renderer::DrawRotatedQuad({ 0.0f, -1.0f}, { 1.0f, 1.0f }, {0.5f, 0.0f, 1.0f, 1.0f}, Alexio::Time::Get());
+		Alexio::Renderer::DrawRotatedSprite(texture, {-1.0f, -1.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 1.0f, 1.0f});
+		Alexio::Renderer::DrawCircle({-0.5f, 0.5f }, {1.0f, 0.5f, 0.0f, 1.0f}, 0.5f, thickness, fade);
+		Alexio::Renderer::DrawRect({ 0.0f, 0.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 0.0f, 1.0f});
 	}
 
 	void OnEvent(Alexio::Event& event) override

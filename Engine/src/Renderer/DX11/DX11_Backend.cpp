@@ -203,10 +203,12 @@ namespace Alexio
 	{
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
 	}
 
 	void DX11_Backend::ImGuiBackendUpdate()
-	{		
+	{
+		ImGui::Render();
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

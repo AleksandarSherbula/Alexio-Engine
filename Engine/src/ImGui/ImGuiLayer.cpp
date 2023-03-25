@@ -27,12 +27,10 @@ namespace Alexio
     void ImGUI::Begin()
     {
         Renderer::GetBackend()->ImGuiBackendBegin();
-        ImGui::NewFrame();
     }
 
     void ImGUI::End()
     {
-        ImGui::Render();
         Renderer::GetBackend()->ImGuiBackendUpdate();
     }
 
