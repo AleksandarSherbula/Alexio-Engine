@@ -24,6 +24,17 @@ namespace Alexio
 		sRendererBackend->SetVSync(true);
 	}
 
+	void Renderer::Clear(float r, float g, float b, float a)
+	{
+		sRendererBackend->Clear(r, g, b, a);
+	}
+
+	void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+	{
+		if (sRendererBackend != nullptr)
+			sRendererBackend->SetViewport(x, y, width, height);
+	}
+
 	void Renderer::Draw(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
 	{
 		vertexArray->Bind();
@@ -69,22 +80,69 @@ namespace Alexio
 		Draw(sLineRenderer->shader, sLineRenderer->vertexArray, sLineRenderer->vertices.size());
 	}
 
-	void Renderer::DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	void Renderer::DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 	{
+		glm::vec2 p0 = position;
+		glm::vec2 p1 = { position.x + size.x, position.y};
+		glm::vec2 p2 = { position.x + size.x, position.y + size.y};
+		glm::vec2 p3 = { position.x, position.y + size.y};
 
+		DrawLine(p0, p1, color);
+		DrawLine(p1, p2, color);
+		DrawLine(p2, p3, color);
+		DrawLine(p3, p0, color);
 	}
 
-	void Renderer::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	void Renderer::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
-		
+		glm::vec2 p0 = { position.x - size.x * 0.5f, position.y - size.y * 0.5f };
+		glm::vec2 p1 = { position.x + size.x * 0.5f, position.y - size.y * 0.5f };
+		glm::vec2 p2 = { position.x + size.x * 0.5f, position.y + size.y * 0.5f };
+		glm::vec2 p3 = { position.x - size.x * 0.5f, position.y + size.y * 0.5f };
+
+		DrawLine(p0, p1, color);
+		DrawLine(p1, p2, color);
+		DrawLine(p2, p3, color);
+		DrawLine(p3, p0, color);
 	}
 
-	void Renderer::Clear(float r, float g, float b, float a)
+	void Renderer::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 	{
-		sRendererBackend->Clear(r, g, b, a);
+		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
+			glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+
+		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+		{
+			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+			sQuadRenderer->vertices[i].color = color;
+		}
+
+		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+
+		sQuadRenderer->whiteTexture->Bind(0);
+		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		sQuadRenderer->whiteTexture->Unbind();
 	}
 
-	void Renderer::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+	{
+		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
+			glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+
+		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+		{
+			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+			sQuadRenderer->vertices[i].color = color;
+		}
+
+		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+
+		sQuadRenderer->whiteTexture->Bind(0);
+		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		sQuadRenderer->whiteTexture->Unbind();
+	}
+
+	void Renderer::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
 	{
 		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
 			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
@@ -102,7 +160,7 @@ namespace Alexio
 		sQuadRenderer->whiteTexture->Unbind();
 	}
 
-	void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	void Renderer::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
 	{
 		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
 			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
@@ -120,7 +178,43 @@ namespace Alexio
 		sQuadRenderer->whiteTexture->Unbind();
 	}
 
-	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+	{
+		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
+			glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+
+		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+		{
+			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+			sQuadRenderer->vertices[i].color = color;
+		}
+
+		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+
+		texture->Bind(0);
+		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		texture->Unbind();
+	}
+
+	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+	{
+		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
+			glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+
+		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+		{
+			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+			sQuadRenderer->vertices[i].color = color;
+		}
+
+		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+
+		texture->Bind(0);
+		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
+		texture->Unbind();
+	}
+
+	void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
 	{
 		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
 			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
@@ -138,7 +232,7 @@ namespace Alexio
 		texture->Unbind();
 	}
 
-	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
 	{
 		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
 			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
@@ -190,11 +284,5 @@ namespace Alexio
 		sCircleRenderer->vertexBuffer->SetData(sCircleRenderer->vertices.data(), sizeof(CircleVertex) * sCircleRenderer->vertices.size());
 
 		DrawIndexed(sCircleRenderer->shader, sCircleRenderer->vertexArray);
-	}
-
-	void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
-	{	
-		if (sRendererBackend != nullptr)
-			sRendererBackend->SetViewport(x, y, width, height);
 	}
 }

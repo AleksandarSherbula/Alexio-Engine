@@ -3,6 +3,7 @@
 
 namespace Alexio
 {
+	float Time::sAppTime = 0.0f;
 	std::chrono::duration<float> Time::sDeltaTime;
 	std::chrono::time_point<std::chrono::system_clock> Time::sTimer;
 	std::chrono::time_point<std::chrono::system_clock> Time::sLastFrame;
@@ -13,13 +14,14 @@ namespace Alexio
 		sLastFrame = std::chrono::system_clock::now();
 	}
 
-	void Time::UpdateDeltaTime()
+	void Time::Update()
 	{
 		sTimer = std::chrono::system_clock::now();
 		sDeltaTime = sTimer - sLastFrame;
 		sLastFrame = sTimer;
-	}
 
+		sAppTime += sDeltaTime.count();
+	}
 }
 
 

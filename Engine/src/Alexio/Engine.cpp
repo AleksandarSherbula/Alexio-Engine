@@ -33,7 +33,7 @@ namespace Alexio
 		mWindow->SetEventCallback(std::bind(&Engine::OnEvent, this, std::placeholders::_1));
 		Input::SetKeyCodes();
 
-		sMainCamera = CreateRef<Camera>(1280 / 720);
+		sMainCamera = CreateRef<Camera>((float)mWindow->GetWidth() / (float)mWindow->GetHeight());
 		Renderer::Init();
 
 		AIO_ASSERT(OnStart(), "Failed to initialize application");
@@ -43,25 +43,25 @@ namespace Alexio
 		Time::Start();
 		while (mRunning)
 		{
-			Time::UpdateDeltaTime();
+			Time::Update();
 
 			mWindow->PollEvents();
 			Input::Scan();
-
+			
 			if (!OnUpdate() ||
 				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked
 				(Renderer::GetGraphicsAPI() == DirectX11 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
 				mRunning = false;
-
+			
 			sMainCamera->OnUpdate(Time::DetlaTime());
-
+			
 			imgui->Begin();
 			for (Layer* layer : mLayerStack)
 				layer->OnImGuiRender();
-
+			
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate(Time::DetlaTime());
-
+			
 			imgui->End();
 
 			Renderer::GetBackend()->SwapBuffer();
