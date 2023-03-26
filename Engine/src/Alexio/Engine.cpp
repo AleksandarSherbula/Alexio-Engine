@@ -40,10 +40,10 @@ namespace Alexio
 
 		PushOverlay(imgui);
 
-		Time::Start();
+		Timer::StartApp();
 		while (mRunning)
 		{
-			Time::Update();
+			Timer::Update();
 
 			mWindow->PollEvents();
 			Input::Scan();
@@ -53,14 +53,14 @@ namespace Alexio
 				(Renderer::GetGraphicsAPI() == DirectX11 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
 				mRunning = false;
 			
-			sMainCamera->OnUpdate(Time::DetlaTime());
+			sMainCamera->OnUpdate(Timer::DetlaTime());
 			
 			imgui->Begin();
 			for (Layer* layer : mLayerStack)
 				layer->OnImGuiRender();
 			
 			for (Layer* layer : mLayerStack)
-				layer->OnUpdate(Time::DetlaTime());
+				layer->OnUpdate(Timer::DetlaTime());
 			
 			imgui->End();
 

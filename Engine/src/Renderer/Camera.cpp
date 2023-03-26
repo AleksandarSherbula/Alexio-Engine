@@ -1,6 +1,6 @@
 #include "aio_pch.h"
 #include "Camera.h"
-#include "Alexio/Time.h"
+#include "Alexio/Timer.h"
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
 
@@ -28,7 +28,7 @@ namespace Alexio
 
 	bool Camera::OnWindowResize(WindowResizeEvent& e)
 	{
-		mAspectRatio = e.GetWidth() / e.GetHeight();
+		mAspectRatio = static_cast<float>(e.GetWidth()) / e.GetHeight();
 		mProjection = glm::ortho(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, mZoomLevel, -mZoomLevel);
 		return false;
 	}
@@ -46,13 +46,13 @@ namespace Alexio
 		float moveSpeed = mZoomLevel;
 		
 		if (Alexio::Input::KeyHeld(A))
-			mPosition.x -= moveSpeed * Time::DetlaTime();
+			mPosition.x -= moveSpeed * Timer::DetlaTime();
 		if (Alexio::Input::KeyHeld(D))
-			mPosition.x += moveSpeed * Time::DetlaTime();
+			mPosition.x += moveSpeed * Timer::DetlaTime();
 		if (Alexio::Input::KeyHeld(W))
-			mPosition.y -= moveSpeed * Time::DetlaTime();
+			mPosition.y -= moveSpeed * Timer::DetlaTime();
 		if (Alexio::Input::KeyHeld(S))
-			mPosition.y += moveSpeed * Time::DetlaTime();
+			mPosition.y += moveSpeed * Timer::DetlaTime();
 
 		mView = glm::translate(glm::mat4x4(1.0f), glm::vec3(mPosition, 0.0f)) *
 			glm::rotate(glm::mat4x4(1.0f), glm::radians(mRotation), glm::vec3(0, 0, 1));
