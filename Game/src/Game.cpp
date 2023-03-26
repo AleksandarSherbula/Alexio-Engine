@@ -18,7 +18,7 @@ public:
 	{
 		clearColor = { 0.0f, 0.8f, 1.0f, 1.0f };
 
-		texture = Alexio::Texture::Create("assets/img/awesomeface.png");
+		texture = Alexio::Texture::Create("assets/img/AlexioLogo(Black).png");
 	}
 
 	void OnImGuiRender() override
@@ -34,7 +34,7 @@ public:
 	{
 		Alexio::Renderer::Clear(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
-		Alexio::Renderer::DrawRotatedQuad({ 0.0f, -1.0f}, { 1.0f, 1.0f }, {0.5f, 0.0f, 1.0f, 1.0f}, Alexio::Time::Get());
+		Alexio::Renderer::DrawRotatedQuad({ 0.0f, -1.0f}, { 1.0f, 1.0f }, {0.5f, 0.0f, 1.0f, 1.0f}, Alexio::Timer::Get());
 		Alexio::Renderer::DrawRotatedSprite(texture, {-1.0f, -1.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 1.0f, 1.0f});
 		Alexio::Renderer::DrawCircle({-0.5f, 0.5f }, {1.0f, 0.5f, 0.0f, 1.0f}, 0.5f, thickness, fade);
 		Alexio::Renderer::DrawRect({ 0.0f, 0.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 0.0f, 1.0f});
@@ -53,7 +53,7 @@ public:
 	{
 		// Set Graphics API here
 		// Example: Alexio::Renderer::SetGraphicsAPI(OpenGL);
-		Alexio::Renderer::SetGraphicsAPI(OpenGL);
+		Alexio::Renderer::SetGraphicsAPI(DirectX11);
 	}
 
 	bool OnStart() override

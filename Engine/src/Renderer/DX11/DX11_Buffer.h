@@ -54,6 +54,7 @@ namespace Alexio
 	{
 	public:
 		DX11_ConstantBuffer(uint32_t block_size, uint32_t slot);
+		~DX11_ConstantBuffer();
 
 		void SetData(const void* data, uint32_t size) override;
 

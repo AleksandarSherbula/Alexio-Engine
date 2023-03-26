@@ -2,6 +2,8 @@
 #include "ImGui/ImGuiLayer.h"
 #include "Renderer/Renderer.h"
 
+#include "Alexio/Timer.h"
+
 namespace Alexio
 {
     void ImGUI::OnAttach()
@@ -42,8 +44,19 @@ namespace Alexio
 
     void ImGUI::OnImGuiRender()
     {
-        bool showWindow = true;
-        if (showWindow)
-            ImGui::ShowDemoWindow(&showWindow);
+        char* apiName = "";
+        #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
+                apiName = (Renderer::GetGraphicsAPI() == OpenGL) ? "OpenGL" : "DirectX11";
+        #elif defined(AIO_API_OPENGL)
+                apiName = "OpenGL";
+        #elif defined(AIO_API_DX11)
+                apiName = "DirectX11";
+        #endif
+
+        ImGui::Begin("App Info");
+        ImGui::Text("Graphics API: %s", apiName);
+        ImGui::Text("Application Time: %.2f", Timer::Get());
+        ImGui::Text("Application framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::End();
     }
 }

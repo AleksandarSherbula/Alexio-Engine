@@ -162,6 +162,10 @@ namespace Alexio
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create constant buffer: " + ResultInfo(hr) + "\n");
 	}
 
+	DX11_ConstantBuffer::~DX11_ConstantBuffer()
+	{
+	}
+
 	void DX11_ConstantBuffer::SetData(const void* data, uint32_t size)
 	{
 		D3D11_MAPPED_SUBRESOURCE mappedResource;

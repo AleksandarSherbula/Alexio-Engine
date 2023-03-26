@@ -15,12 +15,17 @@ namespace Alexio
 {
 	DX11_Backend* DX11_Backend::sInstance = nullptr;
 
+
 	DX11_Backend::DX11_Backend()
 	{
 		AIO_ASSERT(!sInstance, "OpenGL API object was already been made");
 		sInstance = this;
 
 		GetAdapters();
+	}
+
+	DX11_Backend::~DX11_Backend()
+	{
 	}
 
 	void DX11_Backend::Initialize()
@@ -30,7 +35,7 @@ namespace Alexio
 
 		DXGI_SWAP_CHAIN_DESC scd;
 		ZeroMemory(&scd, sizeof(scd));
-		scd.BufferCount = 1;
+		scd.BufferCount = 2;
 		scd.BufferDesc.Width = 0;
 		scd.BufferDesc.Height = 0;
 		scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -42,10 +47,11 @@ namespace Alexio
 		scd.SampleDesc.Count = 1;
 		scd.SampleDesc.Quality = 0;
 		scd.Windowed = TRUE;
-		scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		scd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
 		D3D_FEATURE_LEVEL featureLevel;
-		const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0, };
+		const D3D_FEATURE_LEVEL featureLevelArray[4] = { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_10_1, D3D_FEATURE_LEVEL_10_0 };
 
 		UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
         #ifdef AIO_DEBUG
@@ -57,8 +63,8 @@ namespace Alexio
 			D3D_DRIVER_TYPE_HARDWARE,
 			nullptr, 
 			flags, 
-			featureLevelArray, 
-			2,    
+			featureLevelArray,
+			2,
 			D3D11_SDK_VERSION,
 			&scd, 
 			mSwapChain.GetAddressOf(),
