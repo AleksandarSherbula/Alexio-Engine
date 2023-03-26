@@ -122,6 +122,10 @@ namespace Alexio
 		}
 	}
 
+	DX11_Texture::~DX11_Texture()
+	{
+	}
+
 	void DX11_Texture::SetData(const void* data, uint32_t size)
 	{
 		//uint32_t wtData = 0xffffffff;

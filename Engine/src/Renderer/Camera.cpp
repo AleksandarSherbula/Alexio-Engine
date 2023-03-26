@@ -22,8 +22,8 @@ namespace Alexio
 	void Camera::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowResizeEvent>(std::bind(&Camera::OnWindowResize, this, std::placeholders::_1));
-		dispatcher.Dispatch<MouseScrolledEvent>(std::bind(&Camera::OnMouseScroll, this, std::placeholders::_1));
+		dispatcher.Dispatch<WindowResizeEvent>(AIO_BIND_EVENT_FN(Camera::OnWindowResize));
+		dispatcher.Dispatch<MouseScrolledEvent>(AIO_BIND_EVENT_FN(Camera::OnMouseScroll));
 	}
 
 	bool Camera::OnWindowResize(WindowResizeEvent& e)

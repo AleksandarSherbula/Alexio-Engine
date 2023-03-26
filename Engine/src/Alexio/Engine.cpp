@@ -20,20 +20,11 @@ namespace Alexio
 
 	void Engine::Run()
 	{
-		static std::string apiName = "";
-		#if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
-				apiName = (Renderer::GetGraphicsAPI() == OpenGL) ? "OpenGL" : "DirectX11";
-		#elif defined(AIO_API_OPENGL)
-				apiName = "OpenGL";
-		#elif defined(AIO_API_DX11)
-				apiName = "DirectX11";
-		#endif
-
-		mWindow = Window::Create("Alexio (" + apiName + ")", 1280, 720);
-		mWindow->SetEventCallback(std::bind(&Engine::OnEvent, this, std::placeholders::_1));
+		mWindow = Window::Create("Alexio Engine", 1280, 720);
+		mWindow->SetEventCallback(AIO_BIND_EVENT_FN(Engine::OnEvent));
 		Input::SetKeyCodes();
 
-		sMainCamera = CreateRef<Camera>((float)mWindow->GetWidth() / (float)mWindow->GetHeight());
+		sMainCamera = CreateRef<Camera>(static_cast<float>(mWindow->GetWidth()) / static_cast<float>(mWindow->GetHeight()));
 		Renderer::Init();
 
 		AIO_ASSERT(OnStart(), "Failed to initialize application");
@@ -71,8 +62,8 @@ namespace Alexio
 	void Engine::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Engine::OnWindowClose, this, std::placeholders::_1));
-		dispatcher.Dispatch<WindowResizeEvent>(std::bind(&Engine::OnWindowResize, this, std::placeholders::_1));
+		dispatcher.Dispatch<WindowCloseEvent>(AIO_BIND_EVENT_FN(Engine::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(AIO_BIND_EVENT_FN(Engine::OnWindowResize));
 
 		if (sMainCamera != nullptr)
 			sMainCamera->OnEvent(e);

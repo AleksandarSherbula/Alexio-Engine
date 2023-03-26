@@ -10,6 +10,7 @@ namespace Alexio
 	public:
 		DX11_Texture(uint32_t width, uint32_t height, uint32_t whiteTexture);
 		DX11_Texture(const std::string& filepath);
+		~DX11_Texture();
 
 		void Bind(uint32_t slot) override;
 		void Unbind() override;

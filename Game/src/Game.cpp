@@ -18,7 +18,7 @@ public:
 	{
 		clearColor = { 0.0f, 0.8f, 1.0f, 1.0f };
 
-		texture = Alexio::Texture::Create("assets/img/awesomeface.png");
+		texture = Alexio::Texture::Create("assets/img/AlexioLogo(Black).png");
 	}
 
 	void OnImGuiRender() override
@@ -53,7 +53,7 @@ public:
 	{
 		// Set Graphics API here
 		// Example: Alexio::Renderer::SetGraphicsAPI(OpenGL);
-		Alexio::Renderer::SetGraphicsAPI(OpenGL);
+		Alexio::Renderer::SetGraphicsAPI(DirectX11);
 	}
 
 	bool OnStart() override

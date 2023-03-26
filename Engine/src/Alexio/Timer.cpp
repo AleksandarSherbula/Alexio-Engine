@@ -5,38 +5,37 @@ namespace Alexio
 {
 	float Timer::sAppTime = 0.0f;
 	std::chrono::duration<float> Timer::sDeltaTime;
-	std::chrono::time_point<std::chrono::high_resolution_clock> Timer::sAppStartTime;
+	std::chrono::time_point<std::chrono::high_resolution_clock> Timer::sCurrentTime;
 	std::chrono::time_point<std::chrono::high_resolution_clock> Timer::sLastFrame;
 
 	Timer::Timer()
 	{
-		mStart = std::chrono::high_resolution_clock::now();
+		mStartPoint = std::chrono::high_resolution_clock::now();
 	}
 
 	Timer::~Timer()
 	{
-		auto stop = std::chrono::high_resolution_clock::now();
+		mEndPoint = std::chrono::high_resolution_clock::now();
 
-		auto start = std::chrono::time_point_cast<std::chrono::microseconds>(mStart).time_since_epoch().count();
-		auto end = std::chrono::time_point_cast<std::chrono::microseconds>(stop).time_since_epoch().count();
+		float start = std::chrono::time_point_cast<std::chrono::microseconds>(mStartPoint).time_since_epoch().count();
+		float end = std::chrono::time_point_cast<std::chrono::microseconds>(mEndPoint).time_since_epoch().count();
 
-		auto duration = end - start;
+		float duration = end - start;
 		double ms = duration * 0.001;
 		AIO_LOG_TRACE("{0}us ({1}ms)", duration, ms);
 	}
 
 	void Timer::StartApp()
 	{
-		sAppStartTime = std::chrono::high_resolution_clock::now();
+		sCurrentTime = std::chrono::high_resolution_clock::now();
 		sLastFrame = std::chrono::high_resolution_clock::now();
 	}
 
 	void Timer::Update()
 	{
-		sAppStartTime = std::chrono::high_resolution_clock::now();
-		sDeltaTime = sAppStartTime - sLastFrame;
-		sLastFrame = sAppStartTime;
-
+		sCurrentTime = std::chrono::high_resolution_clock::now();
+		sDeltaTime = sCurrentTime - sLastFrame;
+		sLastFrame = sCurrentTime;
 		sAppTime += sDeltaTime.count();
 	}
 }

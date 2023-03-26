@@ -15,10 +15,10 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
     float4 outPos           : SV_POSITION;
-    float3 outLocalPosition : aLocalPosition;
+    float3 outLocalPosition : TEXCOORD0;
     float4 outColor         : COLOR;
-    float  outThickness     : aThickness;
-    float  outFade          : aFade;
+    float  outThickness     : TEXCOORD1;
+    float  outFade          : TEXCOORD2;
 };
 
 VS_OUTPUT VSMain(VS_INPUT input)
@@ -36,10 +36,10 @@ VS_OUTPUT VSMain(VS_INPUT input)
 struct PS_INPUT
 {
     float4 inPos           : SV_POSITION;
-    float3 inLocalPosition : aLocalPositon;
+    float3 inLocalPosition : TEXCOORD0;
     float4 inColor         : COLOR;
-    float  inThickness     : aThickness;
-    float  inFade          : aFade;
+    float  inThickness     : TEXCOORD1;
+    float  inFade          : TEXCOORD2;
 };
 
 float4 PSMain(PS_INPUT input) : SV_TARGET
