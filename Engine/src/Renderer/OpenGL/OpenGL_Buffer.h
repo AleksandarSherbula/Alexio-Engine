@@ -8,15 +8,15 @@ namespace Alexio
 	class OpenGL_VertexBuffer : public VertexBuffer
 	{
 	public:
-		OpenGL_VertexBuffer(uint32_t size);
-		OpenGL_VertexBuffer(const void* data, uint32_t size);
+		OpenGL_VertexBuffer(size_t size);
+		OpenGL_VertexBuffer(const void* data, size_t size);
 
 		~OpenGL_VertexBuffer();
 
 		void Bind() const override;
 		void Unbind() const override;
 
-		void SetData(const void* data, uint32_t size) override;
+		void SetData(const void* data, size_t size) override;
 	private:
 		uint32_t mID;
 		
@@ -25,7 +25,7 @@ namespace Alexio
 	class OpenGL_IndexBuffer : public IndexBuffer
 	{
 	public:
-		OpenGL_IndexBuffer(uint32_t* indices, uint32_t count);
+		OpenGL_IndexBuffer(uint32_t* indices, size_t count);
 		~OpenGL_IndexBuffer();
 
 		void Bind() override;

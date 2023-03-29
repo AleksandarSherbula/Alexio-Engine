@@ -31,13 +31,17 @@ public:
 	}
 
 	void OnUpdate(float deltaTime) override
-	{
+	{		
 		Alexio::Renderer::Clear(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
-		Alexio::Renderer::DrawRotatedQuad({ 0.0f, -1.0f}, { 1.0f, 1.0f }, {0.5f, 0.0f, 1.0f, 1.0f}, Alexio::Timer::Get());
-		Alexio::Renderer::DrawRotatedSprite(texture, {-1.0f, -1.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 1.0f, 1.0f});
-		Alexio::Renderer::DrawCircle({-0.5f, 0.5f }, {1.0f, 0.5f, 0.0f, 1.0f}, 0.5f, thickness, fade);
-		Alexio::Renderer::DrawRect({ 0.0f, 0.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 0.0f, 1.0f});
+		for (int i = 0; i < Alexio::QuadRenderer::MaxQuadsPerBatch + 100; i++)
+			Alexio::Renderer::DrawQuad({i * 0.01f,  (-1.0f + i * 0.01f)}, {0.5f, 0.5f}, {0.0f, 0.0f, 1.0f, 1.0f});		
+		
+		//Alexio::Renderer::DrawRotatedQuad({ 0.0f, -1.0f}, { 1.0f, 1.0f }, {0.5f, 0.0f, 1.0f, 1.0f}, Alexio::Timer::Get());
+		//Alexio::Renderer::DrawRotatedSprite(texture, {-1.0f, -1.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 1.0f, 1.0f});
+		//Alexio::Renderer::DrawCircle({-0.5f, 0.5f }, {1.0f, 0.5f, 0.0f, 1.0f}, 0.5f, thickness, fade);
+		//Alexio::Renderer::DrawRect({ 0.0f, 0.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 0.0f, 1.0f});
+		
 	}
 
 	void OnEvent(Alexio::Event& event) override

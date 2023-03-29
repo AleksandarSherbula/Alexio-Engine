@@ -19,16 +19,11 @@ namespace Alexio
 		PointVertex(const glm::vec3& position, const glm::vec4& color);
 	};
 
-	class QuadVertex
-	{
-	public:
+	struct QuadVertex
+	{	
 		glm::vec3 position;
 		glm::vec4 color;
 		glm::vec2 texCoord;
-	public:
-		QuadVertex();
-		QuadVertex(const glm::vec3& position, const glm::vec4& color, const glm::vec2& texCoord);
-	
 	};
 
 	class CircleVertex
@@ -59,17 +54,26 @@ namespace Alexio
 	class QuadRenderer
 	{
 	public:
-		std::array<QuadVertex, 4> vertices;
-		std::array<uint32_t, 6> indices;
-		std::array<glm::vec3, 4> localQuadPositions;
+		static void Init();
+		static void StartBatch();
+		static void SubmitBatch();
+		static void SetNextBatch();
 
-		Ref<VertexArray>  vertexArray;
-		Ref<VertexBuffer> vertexBuffer;
-		Ref<IndexBuffer>  indexBuffer;
-		Ref<Shader>       shader;
-		Ref<Texture>      whiteTexture;
-	public:
-		QuadRenderer();
+		static Ref<VertexArray>  VertexArray;
+		static Ref<VertexBuffer> VertexBuffer;
+		static Ref<IndexBuffer>  IndexBuffer;
+		static Ref<Shader>       Shader;
+		static Ref<Texture>      WhiteTexture;
+
+		static std::array<glm::vec4, 4> VertexPositions;
+
+		static size_t QuadCount;
+		static size_t IndexCount;
+
+		static QuadVertex* CurrentVertexPtr;
+		static QuadVertex* BaseVertexBuffer;
+
+		static const size_t MaxQuadsPerBatch = 1000;
 	};
 
 	class CircleRenderer

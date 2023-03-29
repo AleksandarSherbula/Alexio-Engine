@@ -53,10 +53,14 @@ namespace Alexio
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate(Timer::DetlaTime());
 			
+			Renderer::SubmitBatches();
+
 			imgui->End();
 
 			Renderer::GetBackend()->SwapBuffer();
 		}
+
+		Renderer::End();
 	}
 
 	void Engine::OnEvent(Event& e)

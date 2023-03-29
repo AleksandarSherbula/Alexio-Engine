@@ -6,8 +6,8 @@ namespace Alexio
 	Ref<RendererBackend> Renderer::sRendererBackend = nullptr;
 	Ref<ConstantBuffer>  Renderer::sCameraBuffer    = nullptr;
 	Ref<LineRenderer>    Renderer::sLineRenderer    = nullptr;
-	Ref<QuadRenderer>    Renderer::sQuadRenderer    = nullptr;
-	Ref<CircleRenderer>  Renderer::sCircleRenderer  = nullptr;
+	//Ref<CircleRenderer>  Renderer::sCircleRenderer  = nullptr;
+	int32_t Renderer::DrawQuadCalls = 0;
 
 	void Renderer::Init()
 	{
@@ -17,11 +17,18 @@ namespace Alexio
 
 		sCameraBuffer = ConstantBuffer::Create(sizeof(glm::mat4x4), 0);
 
+		QuadRenderer::Init();
 		sLineRenderer = CreateRef<LineRenderer>();
-		sQuadRenderer = CreateRef<QuadRenderer>();
-		sCircleRenderer = CreateRef<CircleRenderer>();
+		//sCircleRenderer = CreateRef<CircleRenderer>();
+
+		StartBatches();
 
 		sRendererBackend->SetVSync(true);
+	}
+
+	void Renderer::StartBatches()
+	{
+		QuadRenderer::StartBatch();
 	}
 
 	void Renderer::Clear(float r, float g, float b, float a)
@@ -43,15 +50,14 @@ namespace Alexio
 		sRendererBackend->Draw(vertexCount);
 	}
 
-	void Renderer::DrawIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray)
+	void Renderer::DrawIndexed(uint32_t indexCount)
 	{
-		vertexArray->Bind();
-		shader->Bind();
+		sRendererBackend->DrawIndexed(indexCount);
+	}
 
-		sRendererBackend->DrawIndexed(vertexArray->GetIndexBuffer()->GetCount());
-
-		shader->Unbind();
-		vertexArray->Unbind();
+	void Renderer::End()
+	{
+		delete[] QuadRenderer::BaseVertexBuffer;
 	}
 
 	void Renderer::DrawLine(const glm::vec2& p0, const glm::vec2& p1, const glm::vec4& color)
@@ -108,181 +114,217 @@ namespace Alexio
 
 	void Renderer::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 	{
+		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch)
+			QuadRenderer::SetNextBatch();
+
 		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
 			glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
 
-		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+		const glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+
+		for (int32_t i = 0; i < 4; i++)
 		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
-			sQuadRenderer->vertices[i].color = color;
+			QuadRenderer::CurrentVertexPtr->position = transform * QuadRenderer::VertexPositions[i];
+			QuadRenderer::CurrentVertexPtr->color = color;
+			QuadRenderer::CurrentVertexPtr->texCoord = textureCoords[i];
+			QuadRenderer::CurrentVertexPtr++;
 		}
 
-		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
-
-		sQuadRenderer->whiteTexture->Bind(0);
-		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
-		sQuadRenderer->whiteTexture->Unbind();
+		QuadRenderer::IndexCount += 6;
+		QuadRenderer::QuadCount++;
 	}
 
 	void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
-			glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-
-		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
-		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
-			sQuadRenderer->vertices[i].color = color;
-		}
-
-		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
-
-		sQuadRenderer->whiteTexture->Bind(0);
-		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
-		sQuadRenderer->whiteTexture->Unbind();
 	}
 
-	void Renderer::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	//void Renderer::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+	//{
+	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
+	//		glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+	//
+	//	for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+	//	{
+	//		sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+	//		sQuadRenderer->vertices[i].color = color;
+	//	}
+	//
+	//	sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+	//
+	//	sQuadRenderer->whiteTexture->Bind(0);
+	//	DrawIndexed(QuadRenderer::Shader, QuadRenderer::VertexArray);
+	//	sQuadRenderer->whiteTexture->Unbind();
+	//
+	//	QuadRenderer::IndexCount() += 6;
+	//	QuadRenderer::QuadCount()++;
+	//}
+	//
+	//void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+	//{
+	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
+	//		glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+	//
+	//	for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+	//	{
+	//		sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+	//		sQuadRenderer->vertices[i].color = color;
+	//	}
+	//
+	//	sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+	//
+	//	sQuadRenderer->whiteTexture->Bind(0);
+	//	DrawIndexed(QuadRenderer::Shader, QuadRenderer::VertexArray);
+	//	sQuadRenderer->whiteTexture->Unbind();
+	//
+	//	QuadRenderer::QuadCount()++;
+	//}
+	//
+	//void Renderer::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	//{
+	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
+	//		glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+	//
+	//	for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+	//	{
+	//		sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+	//		sQuadRenderer->vertices[i].color = color;
+	//	}
+	//
+	//	sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+	//
+	//	sQuadRenderer->whiteTexture->Bind(0);
+	//	DrawIndexed(QuadRenderer::Shader, QuadRenderer::VertexArray);
+	//	sQuadRenderer->whiteTexture->Unbind();
+	//}
+	//
+	//void Renderer::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	//{
+	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
+	//		glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+	//
+	//	for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+	//	{
+	//		sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+	//		sQuadRenderer->vertices[i].color = color;
+	//	}
+	//
+	//	sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+	//	
+	//	sQuadRenderer->whiteTexture->Bind(0);
+	//	DrawIndexed(QuadRenderer::Shader, QuadRenderer::VertexArray);
+	//	sQuadRenderer->whiteTexture->Unbind();
+	//}
+	//
+	//void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+	//{
+	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
+	//		glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+	//
+	//	for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+	//	{
+	//		sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+	//		sQuadRenderer->vertices[i].color = color;
+	//	}
+	//
+	//	sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+	//
+	//	texture->Bind(0);
+	//	DrawIndexed(QuadRenderer::Shader, QuadRenderer::VertexArray);
+	//	texture->Unbind();
+	//}
+	//
+	//void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+	//{
+	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
+	//		glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+	//
+	//	for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+	//	{
+	//		sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+	//		sQuadRenderer->vertices[i].color = color;
+	//	}
+	//
+	//	sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+	//
+	//	texture->Bind(0);
+	//	DrawIndexed(QuadRenderer::Shader, QuadRenderer::VertexArray);
+	//	texture->Unbind();
+	//}
+	//
+	//void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	//{
+	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
+	//		glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+	//
+	//	for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+	//	{
+	//		sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+	//		sQuadRenderer->vertices[i].color = color;
+	//	}
+	//
+	//	sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+	//	
+	//	texture->Bind(0);
+	//	DrawIndexed(QuadRenderer::Shader, QuadRenderer::VertexArray);
+	//	texture->Unbind();
+	//}
+	//
+	//void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	//{
+	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
+	//		glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+	//
+	//	for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
+	//	{
+	//		sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
+	//		sQuadRenderer->vertices[i].color = color;
+	//	}
+	//
+	//	//sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
+	//	
+	//	texture->Bind(0);
+	//	DrawIndexed(QuadRenderer::Shader, QuadRenderer::VertexArray);
+	//	texture->Unbind();
+	//}
+
+	//void Renderer::DrawCircle(const glm::vec2& position, const glm::vec4& color, float radius, float thickness, float fade)
+	//{
+	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
+	//		 glm::scale(glm::mat4x4(1.0f), glm::vec3(radius, radius, 1.0f));
+	//
+	//	for (int i = 0; i < sCircleRenderer->vertices.size(); i++)
+	//	{
+	//		sCircleRenderer->vertices[i].position  = transform * glm::vec4(sCircleRenderer->vertices[i].localPosition, 1.0f);
+	//		sCircleRenderer->vertices[i].color     = color;
+	//		sCircleRenderer->vertices[i].thickness = thickness;
+	//		sCircleRenderer->vertices[i].fade      = fade;
+	//	}
+	//
+	//	sCircleRenderer->vertexBuffer->SetData(sCircleRenderer->vertices.data(), sizeof(CircleVertex) * sCircleRenderer->vertices.size());
+	//
+	//	DrawIndexed(sCircleRenderer->shader, sCircleRenderer->vertexArray);
+	//}
+	//
+	//void Renderer::DrawCircle(const glm::vec3& position, const glm::vec4& color, float radius, float thickness, float fade)
+	//{
+	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
+	//		glm::scale(glm::mat4x4(1.0f), glm::vec3(radius, radius, 1.0f));
+	//
+	//	for (int i = 0; i < sCircleRenderer->vertices.size(); i++)
+	//	{
+	//		sCircleRenderer->vertices[i].position  = transform * glm::vec4(sCircleRenderer->vertices[i].localPosition, 1.0f);
+	//		sCircleRenderer->vertices[i].color     = color;
+	//		sCircleRenderer->vertices[i].thickness = thickness;
+	//		sCircleRenderer->vertices[i].fade      = fade;
+	//	}
+	//
+	//	sCircleRenderer->vertexBuffer->SetData(sCircleRenderer->vertices.data(), sizeof(CircleVertex) * sCircleRenderer->vertices.size());
+	//
+	//	DrawIndexed(sCircleRenderer->shader, sCircleRenderer->vertexArray);
+	//}
+
+	void Renderer::SubmitBatches()
 	{
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
-			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-
-		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
-		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
-			sQuadRenderer->vertices[i].color = color;
-		}
-
-		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
-
-		sQuadRenderer->whiteTexture->Bind(0);
-		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
-		sQuadRenderer->whiteTexture->Unbind();
-	}
-
-	void Renderer::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
-	{
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
-			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-
-		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
-		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
-			sQuadRenderer->vertices[i].color = color;
-		}
-
-		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
-		
-		sQuadRenderer->whiteTexture->Bind(0);
-		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
-		sQuadRenderer->whiteTexture->Unbind();
-	}
-
-	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
-	{
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
-			glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-
-		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
-		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
-			sQuadRenderer->vertices[i].color = color;
-		}
-
-		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
-
-		texture->Bind(0);
-		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
-		texture->Unbind();
-	}
-
-	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
-	{
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
-			glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-
-		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
-		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
-			sQuadRenderer->vertices[i].color = color;
-		}
-
-		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
-
-		texture->Bind(0);
-		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
-		texture->Unbind();
-	}
-
-	void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
-	{
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
-			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-
-		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
-		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
-			sQuadRenderer->vertices[i].color = color;
-		}
-
-		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
-		
-		texture->Bind(0);
-		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
-		texture->Unbind();
-	}
-
-	void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
-	{
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
-			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-
-		for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
-		{
-			sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
-			sQuadRenderer->vertices[i].color = color;
-		}
-
-		sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
-		
-		texture->Bind(0);
-		DrawIndexed(sQuadRenderer->shader, sQuadRenderer->vertexArray);
-		texture->Unbind();
-	}
-
-	void Renderer::DrawCircle(const glm::vec2& position, const glm::vec4& color, float radius, float thickness, float fade)
-	{
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
-			 glm::scale(glm::mat4x4(1.0f), glm::vec3(radius, radius, 1.0f));
-
-		for (int i = 0; i < sCircleRenderer->vertices.size(); i++)
-		{
-			sCircleRenderer->vertices[i].position  = transform * glm::vec4(sCircleRenderer->vertices[i].localPosition, 1.0f);
-			sCircleRenderer->vertices[i].color     = color;
-			sCircleRenderer->vertices[i].thickness = thickness;
-			sCircleRenderer->vertices[i].fade      = fade;
-		}
-
-		sCircleRenderer->vertexBuffer->SetData(sCircleRenderer->vertices.data(), sizeof(CircleVertex) * sCircleRenderer->vertices.size());
-
-		DrawIndexed(sCircleRenderer->shader, sCircleRenderer->vertexArray);
-	}
-
-	void Renderer::DrawCircle(const glm::vec3& position, const glm::vec4& color, float radius, float thickness, float fade)
-	{
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
-			glm::scale(glm::mat4x4(1.0f), glm::vec3(radius, radius, 1.0f));
-
-		for (int i = 0; i < sCircleRenderer->vertices.size(); i++)
-		{
-			sCircleRenderer->vertices[i].position  = transform * glm::vec4(sCircleRenderer->vertices[i].localPosition, 1.0f);
-			sCircleRenderer->vertices[i].color     = color;
-			sCircleRenderer->vertices[i].thickness = thickness;
-			sCircleRenderer->vertices[i].fade      = fade;
-		}
-
-		sCircleRenderer->vertexBuffer->SetData(sCircleRenderer->vertices.data(), sizeof(CircleVertex) * sCircleRenderer->vertices.size());
-
-		DrawIndexed(sCircleRenderer->shader, sCircleRenderer->vertexArray);
+		QuadRenderer::SubmitBatch();
 	}
 }
