@@ -23,32 +23,27 @@ namespace Alexio
     }
 
 
-    Ref<VertexArray>  QuadRenderer::VertexArray  = nullptr;
-    Ref<VertexBuffer> QuadRenderer::VertexBuffer = nullptr;
-    Ref<IndexBuffer>  QuadRenderer::IndexBuffer  = nullptr;
-    Ref<Shader>       QuadRenderer::Shader       = nullptr;
+    Ref<VertexArray>  QuadRenderer::vertexArray  = nullptr;
+    Ref<VertexBuffer> QuadRenderer::vertexBuffer = nullptr;
+    Ref<IndexBuffer>  QuadRenderer::indexBuffer  = nullptr;
+    Ref<Shader>       QuadRenderer::shader       = nullptr;
     Ref<Texture>      QuadRenderer::WhiteTexture = nullptr;
 
-    std::array<glm::vec4, 4> QuadRenderer::VertexPositions;
+    uint32_t QuadRenderer::QuadCount  = 0;
+    uint32_t QuadRenderer::IndexCount = 0;
+    uint32_t QuadRenderer::TextureSlotIndex = 0;
 
-    size_t QuadRenderer::QuadCount  = 0;
-    size_t QuadRenderer::IndexCount = 0;
+    std::array<uint32_t, QuadRenderer::MaxTextureSlots> QuadRenderer::TextureIDs = { 0 };
 
     QuadVertex* QuadRenderer::CurrentVertexPtr = nullptr;
-    QuadVertex* QuadRenderer::BaseVertexBuffer = nullptr;
-
+    QuadVertex* QuadRenderer::baseVertexBuffer = nullptr;
 
     void QuadRenderer::Init()
     {
-        VertexPositions[0] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-        VertexPositions[1] = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-        VertexPositions[2] = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
-        VertexPositions[3] = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+        const uint32_t maxVertexCount = 4 * MaxQuadsPerBatch;
+        const uint32_t maxIndexCount = 6 * MaxQuadsPerBatch;
 
-        const size_t maxVertexCount = 4 * MaxQuadsPerBatch;
-        const size_t maxIndexCount = 6 * MaxQuadsPerBatch;
-
-        BaseVertexBuffer = new QuadVertex[maxVertexCount];
+        baseVertexBuffer = new QuadVertex[maxVertexCount];
 
         uint32_t* indices = new uint32_t[maxIndexCount];
 
@@ -65,53 +60,52 @@ namespace Alexio
             indexOffset += 4;
         }
 
-        VertexArray  = VertexArray::Create();
-        VertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(QuadVertex));
-        IndexBuffer  = IndexBuffer::Create(indices, maxIndexCount);
+        vertexArray  = VertexArray::Create();
+        vertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(QuadVertex));
+        indexBuffer  = IndexBuffer::Create(indices, maxIndexCount);
         delete[] indices;
 
         BufferLayout layout =
         {
             {ShaderDataType::Float3, "aPosition" },
             {ShaderDataType::Float4, "aColor"    },
-            {ShaderDataType::Float2, "aTexCoord" }
+            {ShaderDataType::Float2, "aTexCoord" },
+            {ShaderDataType::Float,  "aTexIndex" },
         };
-        VertexBuffer->SetLayout(layout);
+        vertexBuffer->SetLayout(layout);
 
-        VertexArray->AddVertexBuffer(VertexBuffer);
-        VertexArray->SetIndexBuffer(IndexBuffer);
+        vertexArray->AddVertexBuffer(vertexBuffer);
+        vertexArray->SetIndexBuffer(indexBuffer);
 
-        Shader = Shader::Create("quad", VertexArray);
+        shader = Shader::Create("quad", vertexArray);
 
         WhiteTexture = Texture::Create(1, 1, 0xffffffff);
+        TextureIDs[TextureSlotIndex++] = WhiteTexture->GetID();
 	}
 
     void QuadRenderer::StartBatch()
     {
         QuadCount = 0;
         IndexCount = 0;
+        TextureSlotIndex = 1;
 
-        CurrentVertexPtr = BaseVertexBuffer;
+        CurrentVertexPtr = baseVertexBuffer;
     }
 
     void QuadRenderer::SubmitBatch()
     {
         if (QuadCount)
         {
-            uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)BaseVertexBuffer);
-            VertexBuffer->SetData(BaseVertexBuffer, dataSize);
+            uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)baseVertexBuffer);
+            vertexBuffer->SetData(baseVertexBuffer, dataSize);
 
-            WhiteTexture->Bind(0);
-            VertexArray->Bind();
-            Shader->Bind();
+            vertexArray->Bind();
+            shader->Bind();
 
             Renderer::DrawIndexed(IndexCount);
 
-            Shader->Unbind();
-            VertexArray->Unbind();
-            WhiteTexture->Unbind();
-
-            Renderer::DrawQuadCalls++;
+            shader->Unbind();
+            vertexArray->Unbind();
         }
     }
 
@@ -119,6 +113,11 @@ namespace Alexio
     {
         SubmitBatch();
         StartBatch();
+    }
+
+    void QuadRenderer::End()
+    {
+        delete[] baseVertexBuffer;
     }
 
     CircleRenderer::CircleRenderer()

@@ -56,7 +56,7 @@ namespace Alexio
 
 		static void End();
 	public:
-		static int32_t DrawQuadCalls;
+		static int32_t DrawQuadCallCount;
 	private:
 		static Ref<RendererBackend> sRendererBackend;
 		static Ref<ConstantBuffer> sCameraBuffer;

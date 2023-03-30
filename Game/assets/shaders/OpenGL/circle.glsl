@@ -45,7 +45,7 @@ struct VertexOutput
 
 layout(location = 0) in VertexOutput inVertex;
 
-out vec4 pixelColor;
+out vec4 pixel;
 
 void main()
 {
@@ -57,6 +57,6 @@ void main()
 	if (circle == 0.0)
 		discard;
 	
-	pixelColor = inVertex.color;
-	pixelColor.a *= circle;
+	pixel = inVertex.color;
+	pixel.a *= circle;
 }

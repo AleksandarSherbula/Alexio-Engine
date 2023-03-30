@@ -18,7 +18,6 @@ namespace Alexio
 
 		void SetData(const void* data, uint32_t size) override;
 	private:
-		uint32_t mID;
 		GLenum mInternalFormat, mDataFormat;
 	};
 }

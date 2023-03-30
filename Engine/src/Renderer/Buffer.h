@@ -113,13 +113,13 @@ namespace Alexio
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
-		virtual void SetData(const void* data, size_t size) = 0;
+		virtual void SetData(const void* data, uint32_t size) = 0;
 
 		void SetLayout(const BufferLayout& layout) { mLayout = layout; }
 		const BufferLayout& GetLayout() const { return mLayout; }
 
-		static Ref<VertexBuffer> Create(size_t size);
-		static Ref<VertexBuffer> Create(const void* data, size_t size);
+		static Ref<VertexBuffer> Create(uint32_t size);
+		static Ref<VertexBuffer> Create(const void* data, uint32_t size);
 	protected:
 		BufferLayout mLayout;
 	};
@@ -132,10 +132,7 @@ namespace Alexio
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 
-		inline uint32_t GetCount() const { return mCount; }
-		static Ref<IndexBuffer> Create(uint32_t* indices, size_t count);
-	protected:
-		size_t mCount;
+		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 	};
 
 	class VertexArray

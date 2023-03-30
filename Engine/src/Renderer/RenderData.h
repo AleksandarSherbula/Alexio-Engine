@@ -24,8 +24,9 @@ namespace Alexio
 		glm::vec3 position;
 		glm::vec4 color;
 		glm::vec2 texCoord;
+		float textureIndex;
 	};
-
+		
 	class CircleVertex
 	{
 	public:
@@ -58,22 +59,25 @@ namespace Alexio
 		static void StartBatch();
 		static void SubmitBatch();
 		static void SetNextBatch();
-
-		static Ref<VertexArray>  VertexArray;
-		static Ref<VertexBuffer> VertexBuffer;
-		static Ref<IndexBuffer>  IndexBuffer;
-		static Ref<Shader>       Shader;
-		static Ref<Texture>      WhiteTexture;
-
-		static std::array<glm::vec4, 4> VertexPositions;
-
-		static size_t QuadCount;
-		static size_t IndexCount;
+		static void End();
+	public:
+		static uint32_t QuadCount;
+		static uint32_t IndexCount;
+		static uint32_t TextureSlotIndex;
 
 		static QuadVertex* CurrentVertexPtr;
-		static QuadVertex* BaseVertexBuffer;
-
 		static const size_t MaxQuadsPerBatch = 1000;
+		static const uint32_t MaxTextureSlots = 32;
+		static std::array<uint32_t, MaxTextureSlots> TextureIDs;
+
+		static Ref<Texture>      WhiteTexture;
+	private:
+		static Ref<VertexArray>  vertexArray;
+		static Ref<VertexBuffer> vertexBuffer;
+		static Ref<IndexBuffer>  indexBuffer;
+		static Ref<Shader>       shader;
+
+		static QuadVertex* baseVertexBuffer;
 	};
 
 	class CircleRenderer

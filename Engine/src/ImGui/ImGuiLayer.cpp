@@ -57,7 +57,6 @@ namespace Alexio
         ImGui::Text("Graphics API: %s", apiName);
         ImGui::Text("Application Time: %.2f", Timer::Get());
         ImGui::Text("Application framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::Text("Quads: %d", QuadRenderer::QuadCount);
         ImGui::End();
     }
 }

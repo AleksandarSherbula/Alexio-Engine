@@ -3,45 +3,35 @@
 class ExampleLayer : public Alexio::Layer
 {
 public:
-	std::shared_ptr<Alexio::VertexArray>  va;
-	std::shared_ptr<Alexio::VertexBuffer> vb;
-	std::shared_ptr<Alexio::IndexBuffer>  ib;
-	std::shared_ptr<Alexio::Shader>       shader;
-	std::shared_ptr<Alexio::Texture>      texture;
-
-	glm::vec4 clearColor;
-	float thickness = 1.0f;
-	float fade = 0.005f;
+	std::shared_ptr<Alexio::Texture> texture;
+	std::shared_ptr<Alexio::Texture> texture2;
 
 	ExampleLayer()
 		: Layer("Example")
 	{
-		clearColor = { 0.0f, 0.8f, 1.0f, 1.0f };
-
-		texture = Alexio::Texture::Create("assets/img/AlexioLogo(Black).png");
-	}
-
-	void OnImGuiRender() override
-	{
-		ImGui::Begin("Settings");
-		ImGui::ColorEdit4("Clear Color", &clearColor.r);
-		ImGui::SliderFloat("Circle Thickness", &thickness, 0.0f, 1.0f);
-		ImGui::SliderFloat("Circle Fade", &fade, 0.0f, 1.0f);
-		ImGui::End();
+		texture  = Alexio::Texture::Create("assets/img/AlexioLogo(Black).png");
+		texture2  = Alexio::Texture::Create("assets/img/awesomeface.png");
 	}
 
 	void OnUpdate(float deltaTime) override
-	{		
-		Alexio::Renderer::Clear(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+	{
+		Alexio::Renderer::Clear(0.0f, 0.8f, 1.0f, 1.0f);
 
-		for (int i = 0; i < Alexio::QuadRenderer::MaxQuadsPerBatch + 100; i++)
-			Alexio::Renderer::DrawQuad({i * 0.01f,  (-1.0f + i * 0.01f)}, {0.5f, 0.5f}, {0.0f, 0.0f, 1.0f, 1.0f});		
+		for (int i = 0; i < 2; i++)
+			Alexio::Renderer::DrawQuad({-1.0f + 2 * i, -1.0f}, {0.5f, 0.5f}, {0.0f, 0.0f, 1.0f, 1.0f});
 		
 		//Alexio::Renderer::DrawRotatedQuad({ 0.0f, -1.0f}, { 1.0f, 1.0f }, {0.5f, 0.0f, 1.0f, 1.0f}, Alexio::Timer::Get());
 		//Alexio::Renderer::DrawRotatedSprite(texture, {-1.0f, -1.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 1.0f, 1.0f});
 		//Alexio::Renderer::DrawCircle({-0.5f, 0.5f }, {1.0f, 0.5f, 0.0f, 1.0f}, 0.5f, thickness, fade);
 		//Alexio::Renderer::DrawRect({ 0.0f, 0.0f}, { 1.0f, 1.0f }, {1.0f, 1.0f, 0.0f, 1.0f});
-		
+
+		Alexio::Renderer::DrawSprite(texture, { -0.5f, 0.0f }, { 1.0f, 1.0f });
+		Alexio::Renderer::DrawSprite(texture2, {  0.5f, 0.0f }, { 1.0f, 1.0f });
+		Alexio::Renderer::DrawSprite(texture, {  0.5f, 0.5f }, { 1.0f, 1.0f });
+	}
+
+	void OnImGuiRender() override
+	{
 	}
 
 	void OnEvent(Alexio::Event& event) override
@@ -57,7 +47,7 @@ public:
 	{
 		// Set Graphics API here
 		// Example: Alexio::Renderer::SetGraphicsAPI(OpenGL);
-		Alexio::Renderer::SetGraphicsAPI(DirectX11);
+		Alexio::Renderer::SetGraphicsAPI(OpenGL);
 	}
 
 	bool OnStart() override

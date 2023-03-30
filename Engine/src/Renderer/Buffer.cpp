@@ -8,7 +8,7 @@
 
 namespace Alexio
 {
-    Ref<VertexBuffer> VertexBuffer::Create(size_t size)
+    Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
     {
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             switch (Renderer::GetGraphicsAPI())
@@ -25,7 +25,7 @@ namespace Alexio
         return nullptr;
     }
 
-    Ref<VertexBuffer> VertexBuffer::Create(const void* data, size_t size)
+    Ref<VertexBuffer> VertexBuffer::Create(const void* data, uint32_t size)
     {
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             switch (Renderer::GetGraphicsAPI())
@@ -42,7 +42,7 @@ namespace Alexio
         return nullptr;
     }
 
-    Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, size_t count)
+    Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
     {
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             switch (Renderer::GetGraphicsAPI())

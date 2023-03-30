@@ -20,11 +20,11 @@ void main()
 #type pixel
 #version 450 core
 			
-out vec4 pixelColor;
+out vec4 pixel;
 
 in vec4 vertexColor;
 
 void main()
 {
-	pixelColor = vertexColor;
+	pixel = vertexColor;
 }
