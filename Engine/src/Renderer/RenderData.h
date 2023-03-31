@@ -24,7 +24,7 @@ namespace Alexio
 		glm::vec3 position;
 		glm::vec4 color;
 		glm::vec2 texCoord;
-		float textureIndex;
+		uint32_t textureIndex;
 	};
 		
 	class CircleVertex
@@ -56,9 +56,8 @@ namespace Alexio
 	{
 	public:
 		static void Init();
-		static void StartBatch();
+		static void StartNewBatch();
 		static void SubmitBatch();
-		static void SetNextBatch();
 		static void End();
 	public:
 		static uint32_t QuadCount;

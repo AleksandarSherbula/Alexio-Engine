@@ -8,15 +8,15 @@ struct VS_INPUT
     float3 inPos      : aPosition;
     float4 inColor    : aColor;
     float2 inTexCoord : aTexCoord;
-    float  inTexIndex : aTexIndex;
+    int    inTexIndex : aTexIndex;
 };
 
 struct VS_OUTPUT
 {
-    float4 outPos : SV_POSITION;
-    float4 outColor : COLOR;
+    float4 outPos      : SV_POSITION;
+    float4 outColor    : COLOR;
     float2 outTexCoord : TEXCOORD0;
-    float  outTexIndex : TEXCOORD1;
+    int    outTexIndex : TEXCOORD1;
 };
 
 VS_OUTPUT VSMain(VS_INPUT input)
@@ -31,10 +31,10 @@ VS_OUTPUT VSMain(VS_INPUT input)
 
 struct PS_INPUT
 {
-    float4 inPos : SV_POSITION;
-    float4 inColor : COLOR;
+    float4 inPos      : SV_POSITION;
+    float4 inColor    : COLOR;
     float2 inTexCoord : TEXCOORD;
-    float  inTexIndex : TEXCOORD1;
+    int    inTexIndex : TEXCOORD1;
 };
 
 Texture2D objTexture[32] : TEXTURE : register(t0);
@@ -42,7 +42,7 @@ SamplerState objSampler: SAMPLER : register(s0);
 
 float4 PSMain(PS_INPUT input) : SV_TARGET
 {
-    int index = int(input.inTexIndex);
+    int index = input.inTexIndex;
     float4 pixel = float4(1.0, 1.0, 1.0, 1.0);
     
     switch (index)

@@ -45,18 +45,17 @@ namespace Alexio
 				mRunning = false;
 			
 			sMainCamera->OnUpdate(Timer::DetlaTime());
-
+			imgui->Begin();
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate(Timer::DetlaTime());
-			
-			Renderer::SubmitBatches();
 
-			imgui->Begin();
+			
 			for (Layer* layer : mLayerStack)
 				layer->OnImGuiRender();
 
+			Renderer::SubmitBatches();
+
 			imgui->End();
-			
 			Renderer::GetBackend()->SwapBuffer();
 		}
 

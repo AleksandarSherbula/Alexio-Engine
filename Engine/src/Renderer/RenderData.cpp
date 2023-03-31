@@ -70,7 +70,7 @@ namespace Alexio
             {ShaderDataType::Float3, "aPosition" },
             {ShaderDataType::Float4, "aColor"    },
             {ShaderDataType::Float2, "aTexCoord" },
-            {ShaderDataType::Float,  "aTexIndex" },
+            {ShaderDataType::Int,    "aTexIndex" }
         };
         vertexBuffer->SetLayout(layout);
 
@@ -83,7 +83,7 @@ namespace Alexio
         TextureIDs[TextureSlotIndex++] = WhiteTexture->GetID();
 	}
 
-    void QuadRenderer::StartBatch()
+    void QuadRenderer::StartNewBatch()
     {
         QuadCount = 0;
         IndexCount = 0;
@@ -107,12 +107,10 @@ namespace Alexio
             shader->Unbind();
             vertexArray->Unbind();
         }
-    }
 
-    void QuadRenderer::SetNextBatch()
-    {
-        SubmitBatch();
-        StartBatch();
+
+
+        StartNewBatch();
     }
 
     void QuadRenderer::End()

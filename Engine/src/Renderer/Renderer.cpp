@@ -29,7 +29,7 @@ namespace Alexio
 
 	void Renderer::StartBatches()
 	{
-		QuadRenderer::StartBatch();
+		QuadRenderer::StartNewBatch();
 	}
 
 	void Renderer::Clear(float r, float g, float b, float a)
@@ -116,30 +116,30 @@ namespace Alexio
 	void Renderer::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch)
-			QuadRenderer::SetNextBatch();
+			QuadRenderer::SubmitBatch();
 		
 		QuadRenderer::CurrentVertexPtr->position = { position.x, position.y, 0.0f };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
-		QuadRenderer::CurrentVertexPtr->textureIndex = 0.0f;
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 
 		QuadRenderer::CurrentVertexPtr->position = { position.x + size.x, position.y, 0.0f };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
-		QuadRenderer::CurrentVertexPtr->textureIndex = 0.0f;
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 
 		QuadRenderer::CurrentVertexPtr->position = { position.x + size.x, position.y + size.y, 0.0f };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
-		QuadRenderer::CurrentVertexPtr->textureIndex = 0.0f;
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 
 		QuadRenderer::CurrentVertexPtr->position = { position.x, position.y + size.y, 0.0f };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
-		QuadRenderer::CurrentVertexPtr->textureIndex = 0.0f;
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 		
 		QuadRenderer::IndexCount += 6;
@@ -151,30 +151,30 @@ namespace Alexio
 	void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch)
-			QuadRenderer::SetNextBatch();
+			QuadRenderer::SubmitBatch();
 
 		QuadRenderer::CurrentVertexPtr->position = { position.x, position.y, position.z };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
-		QuadRenderer::CurrentVertexPtr->textureIndex = 0.0f;
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 
 		QuadRenderer::CurrentVertexPtr->position = { position.x + size.x, position.y, position.z };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
-		QuadRenderer::CurrentVertexPtr->textureIndex = 0.0f;
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 
 		QuadRenderer::CurrentVertexPtr->position = { position.x + size.x, position.y + size.y, position.z };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
-		QuadRenderer::CurrentVertexPtr->textureIndex = 0.0f;
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 
 		QuadRenderer::CurrentVertexPtr->position = { position.x, position.y + size.y, position.z };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
-		QuadRenderer::CurrentVertexPtr->textureIndex = 0.0f;
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 
 		QuadRenderer::IndexCount += 6;
@@ -183,93 +183,119 @@ namespace Alexio
 		QuadRenderer::WhiteTexture->Bind(0);
 	}
 	
-	//void Renderer::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
-	//{
-	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
-	//		glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-	//
-	//	const std::array<glm::vec2, 4> coordinates =
-	//	{
-	//		glm::vec2(0.0f, 0.0f),
-	//		glm::vec2(1.0f, 0.0f),
-	//		glm::vec2(1.0f, 1.0f),
-	//		glm::vec2(0.0f, 1.0f)
-	//	};
-	//
-	//	for (int i = 0; i < 4; i++)
-	//	{
-	//		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(coordinates[i], 0.0f, 1.0f);
-	//		QuadRenderer::CurrentVertexPtr->color = color;
-	//		QuadRenderer::CurrentVertexPtr->texCoord = coordinates[i];
-	//		QuadRenderer::CurrentVertexPtr++;
-	//	}
-	//
-	//	AIO_LOG_TRACE((const void*)QuadRenderer::CurrentVertexPtr);
-	//
-	//	QuadRenderer::IndexCount += 6;
-	//	QuadRenderer::QuadCount++;
-	//}
-	//
-	//void Renderer::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
-	//{
-	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
-	//		glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-	//
-	//	const std::array<glm::vec3, 4> coordinates =
-	//	{
-	//		glm::vec3(0.0f, 0.0f, 1.0f),
-	//		glm::vec3(1.0f, 0.0f, 1.0f),
-	//		glm::vec3(1.0f, 1.0f, 1.0f),
-	//		glm::vec3(0.0f, 1.0f, 1.0f)
-	//	};
-	//
-	//	for (int i = 0; i < 4; i++)
-	//	{
-	//		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(coordinates[i], 1.0f);
-	//		QuadRenderer::CurrentVertexPtr->color = color;
-	//		QuadRenderer::CurrentVertexPtr->texCoord = coordinates[i];
-	//		QuadRenderer::CurrentVertexPtr++;
-	//	}
-	//
-	//	AIO_LOG_TRACE((const void*)QuadRenderer::CurrentVertexPtr);
-	//
-	//	QuadRenderer::IndexCount += 6;
-	//	QuadRenderer::QuadCount++;
-	//}
-	//
+	void Renderer::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	{
+		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch)
+			QuadRenderer::SubmitBatch();
+
+		glm::vec2 originPoint = position + size * 0.5f;
+		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(originPoint, 1.0f)) *
+			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+		
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(-0.5f, -0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+		
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(0.5f, -0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+		
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+		
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(-0.5f, 0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+		
+		QuadRenderer::IndexCount += 6;
+		QuadRenderer::QuadCount++;
+
+		QuadRenderer::WhiteTexture->Bind(0);
+	}
+
+	void Renderer::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	{
+		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch)
+			QuadRenderer::SubmitBatch();
+
+		glm::vec3 originPoint = position + glm::vec3(size * 0.5f, 0.0f);
+		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), originPoint) *
+			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(-0.5f, -0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(0.5f, -0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(-0.5f, 0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::IndexCount += 6;
+		QuadRenderer::QuadCount++;
+
+		QuadRenderer::WhiteTexture->Bind(0);
+	}
 
 	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch ||
 			QuadRenderer::TextureSlotIndex >= QuadRenderer::MaxTextureSlots)
-			QuadRenderer::SetNextBatch();
+			QuadRenderer::SubmitBatch();
 
-		float texIndex = QuadRenderer::TextureSlotIndex;
+		uint32_t texIndex = QuadRenderer::TextureSlotIndex;
 		for (int i = 1; i < QuadRenderer::TextureSlotIndex; i++)
 		{
 			if (QuadRenderer::TextureIDs[i] == texture->GetID())
-				texIndex = (float)i;
+			{
+				texIndex = i;
+				break;
+			}
 		}
 
-		QuadRenderer::CurrentVertexPtr->position = { position.x, position.y, 0.0f };
+		QuadRenderer::CurrentVertexPtr->position = { position.x, position.y, 1.0f };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = { position.x + size.x, position.y, 0.0f };
+		QuadRenderer::CurrentVertexPtr->position = { position.x + size.x, position.y, 1.0f };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = { position.x + size.x, position.y + size.y, 0.0f };
+		QuadRenderer::CurrentVertexPtr->position = { position.x + size.x, position.y + size.y, 1.0f };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = { position.x, position.y + size.y, 0.0f };
+		QuadRenderer::CurrentVertexPtr->position = { position.x, position.y + size.y, 1.0f };
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
@@ -280,62 +306,172 @@ namespace Alexio
 
 		texture->Bind(texIndex);
 		if (texIndex == QuadRenderer::TextureSlotIndex)
-			QuadRenderer::TextureIDs[QuadRenderer::TextureSlotIndex++] = texture->GetID();
+		{
+			QuadRenderer::TextureIDs[QuadRenderer::TextureSlotIndex] = texture->GetID();
+			QuadRenderer::TextureSlotIndex++;
+		}
 	}
-	//
-	//void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
-	//{
-	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
-	//		glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-	//
-	//	for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
-	//	{
-	//		sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
-	//		sQuadRenderer->vertices[i].color = color;
-	//	}
-	//
-	//	sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
-	//
-	//	texture->Bind(0);
-	//	DrawIndexed(QuadRenderer::Shader, QuadRenderer::VertexArray);
-	//	texture->Unbind();
-	//}
-	//
-	//void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
-	//{
-	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(position, 1.0f)) *
-	//		glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-	//
-	//	for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
-	//	{
-	//		sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
-	//		sQuadRenderer->vertices[i].color = color;
-	//	}
-	//
-	//	sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
-	//	
-	//	texture->Bind(0);
-	//	DrawIndexed(QuadRenderer::Shader, QuadRenderer::VertexArray);
-	//	texture->Unbind();
-	//}
-	//
-	//void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
-	//{
-	//	glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), position) *
-	//		glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
-	//
-	//	for (int i = 0; i < sQuadRenderer->vertices.size(); i++)
-	//	{
-	//		sQuadRenderer->vertices[i].position = transform * glm::vec4(sQuadRenderer->localQuadPositions[i], 1.0f);
-	//		sQuadRenderer->vertices[i].color = color;
-	//	}
-	//
-	//	//sQuadRenderer->vertexBuffer->SetData(sQuadRenderer->vertices.data(), sizeof(QuadVertex) * sQuadRenderer->vertices.size());
-	//	
-	//	texture->Bind(0);
-	//	DrawIndexed(QuadRenderer::Shader, QuadRenderer::VertexArray);
-	//	texture->Unbind();
-	//}
+	
+	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+	{
+		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch ||
+			QuadRenderer::TextureSlotIndex >= QuadRenderer::MaxTextureSlots)
+			QuadRenderer::SubmitBatch();
+
+		uint32_t texIndex = QuadRenderer::TextureSlotIndex;
+		for (int i = 1; i < QuadRenderer::TextureSlotIndex; i++)
+		{
+			if (QuadRenderer::TextureIDs[i] == texture->GetID())
+			{
+				texIndex = i;
+				break;
+			}
+		}
+
+		QuadRenderer::CurrentVertexPtr->position = { position.x, position.y, position.z };
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = { position.x + size.x, position.y, position.z };
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = { position.x + size.x, position.y + size.y, position.z };
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = { position.x, position.y + size.y, position.z };
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::IndexCount += 6;
+		QuadRenderer::QuadCount++;
+
+		texture->Bind(texIndex);
+		if (texIndex == QuadRenderer::TextureSlotIndex)
+		{
+			QuadRenderer::TextureIDs[QuadRenderer::TextureSlotIndex] = texture->GetID();
+			QuadRenderer::TextureSlotIndex++;
+		}
+	}
+	
+	void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	{
+		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch ||
+			QuadRenderer::TextureSlotIndex >= QuadRenderer::MaxTextureSlots)
+			QuadRenderer::SubmitBatch();
+
+		uint32_t texIndex = QuadRenderer::TextureSlotIndex;
+		for (int i = 1; i < QuadRenderer::TextureSlotIndex; i++)
+		{
+			if (QuadRenderer::TextureIDs[i] == texture->GetID())
+			{
+				texIndex = i;
+				break;
+			}
+		}
+		
+		glm::vec2 originPoint = position + size * 0.5f;
+		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(originPoint, 1.0f)) *
+			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(-0.5f, -0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4( 0.5f, -0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4( 0.5f,  0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(-0.5f,  0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::IndexCount += 6;
+		QuadRenderer::QuadCount++;
+
+		texture->Bind(texIndex);
+		if (texIndex == QuadRenderer::TextureSlotIndex)
+		{
+			QuadRenderer::TextureIDs[QuadRenderer::TextureSlotIndex] = texture->GetID();
+			QuadRenderer::TextureSlotIndex++;
+		}
+	}
+	
+	void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	{
+		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch ||
+			QuadRenderer::TextureSlotIndex >= QuadRenderer::MaxTextureSlots)
+			QuadRenderer::SubmitBatch();
+
+		uint32_t texIndex = QuadRenderer::TextureSlotIndex;
+		for (int i = 1; i < QuadRenderer::TextureSlotIndex; i++)
+		{
+			if (QuadRenderer::TextureIDs[i] == texture->GetID())
+			{
+				texIndex = i;
+				break;
+			}
+		}
+
+		glm::vec3 originPoint = position + glm::vec3(size * 0.5f, 0.0f);
+		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), originPoint) *
+			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(-0.5f, -0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(0.5f, -0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(-0.5f, 0.5f, 1.0f, 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::IndexCount += 6;
+		QuadRenderer::QuadCount++;
+
+		texture->Bind(texIndex);
+		if (texIndex == QuadRenderer::TextureSlotIndex)
+		{
+			QuadRenderer::TextureIDs[QuadRenderer::TextureSlotIndex] = texture->GetID();
+			QuadRenderer::TextureSlotIndex++;
+		}
+	}
 
 	//void Renderer::DrawCircle(const glm::vec2& position, const glm::vec4& color, float radius, float thickness, float fade)
 	//{

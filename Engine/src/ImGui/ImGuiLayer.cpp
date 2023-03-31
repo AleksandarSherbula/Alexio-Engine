@@ -46,7 +46,7 @@ namespace Alexio
     {
         char* apiName = "";
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
-                apiName = (Renderer::GetGraphicsAPI() == OpenGL) ? "OpenGL" : "DirectX11";
+                apiName = (Renderer::GetGraphicsAPI() == OpenGL) ? "OpenGL 4.5" : "DirectX11";
         #elif defined(AIO_API_OPENGL)
                 apiName = "OpenGL";
         #elif defined(AIO_API_DX11)
@@ -57,6 +57,8 @@ namespace Alexio
         ImGui::Text("Graphics API: %s", apiName);
         ImGui::Text("Application Time: %.2f", Timer::Get());
         ImGui::Text("Application framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text("Quad Count: %d", QuadRenderer::QuadCount);
+        ImGui::Text("DrawQuad Count: %d", Renderer::DrawQuadCallCount);
         ImGui::End();
     }
 }
