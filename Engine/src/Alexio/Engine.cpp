@@ -46,9 +46,9 @@ namespace Alexio
 			
 			sMainCamera->OnUpdate(Timer::DetlaTime());
 			imgui->Begin();
+
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate(Timer::DetlaTime());
-
 			
 			for (Layer* layer : mLayerStack)
 				layer->OnImGuiRender();

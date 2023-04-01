@@ -8,8 +8,8 @@ struct VS_INPUT
     float3 inPos           : aPosition;
     float3 inLocalPosition : aLocalPosition;
     float4 inColor         : aColor;
-    float inThickness      : aThickness;
-    float inFade           : aFade;
+    float  inThickness     : aThickness;
+    float  inFade          : aFade;
 };
 
 struct VS_OUTPUT

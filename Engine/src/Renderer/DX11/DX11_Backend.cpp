@@ -18,10 +18,8 @@ namespace Alexio
 
 	DX11_Backend::DX11_Backend()
 	{
-		AIO_ASSERT(!sInstance, "OpenGL API object was already been made");
+		AIO_ASSERT(!sInstance, "DirectX11 backend has already been made");
 		sInstance = this;
-
-		GetAdapters();
 	}
 
 	DX11_Backend::~DX11_Backend()
@@ -30,9 +28,6 @@ namespace Alexio
 
 	void DX11_Backend::Initialize()
 	{
-		if (mAdapters.empty())
-			AIO_LOG_ERROR("NO IDXGI Adapter found");
-
 		DXGI_SWAP_CHAIN_DESC scd;
 		ZeroMemory(&scd, sizeof(scd));
 		scd.BufferCount = 2;
@@ -164,16 +159,18 @@ namespace Alexio
 
 	void DX11_Backend::Draw(uint32_t vertexCount)
 	{
+		// Currently not in function. To be reworked
+		/*
 		D3D_PRIMITIVE_TOPOLOGY mode = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
 		switch (vertexCount)
 		{
 		case 0: AIO_LOG_ERROR("No vertices found");        break;
 		case 1: mode = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST; break;
 		case 2: mode = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;  break;
 		}
+		*/
 
-		mDeviceContext->IASetPrimitiveTopology(mode);
+		mDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 		mDeviceContext->Draw(vertexCount, 0);
 	}
 
@@ -241,27 +238,6 @@ namespace Alexio
 	{
 		if (mRenderTargetView)
 			mRenderTargetView->Release();
-	}
-
-	void DX11_Backend::GetAdapters()
-	{
-		if (!mAdapters.empty())
-			mAdapters.clear();
-
-		Microsoft::WRL::ComPtr<IDXGIFactory> pFactory;
-
-		// Create a DXGIFactory object
-		HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)pFactory.GetAddressOf());
-		AIO_ASSERT(!FAILED(hr), "Failed to create DXGIFactory for enumerating adapters: " + ResultInfo(hr) + "\n");
-
-		IDXGIAdapter* pAdapter;
-		UINT index = 0;
-		while (SUCCEEDED(pFactory->EnumAdapters(index, &pAdapter)))
-		{
-			mAdapters.push_back({ pAdapter });
-			mAdapters[index].ptr->GetDesc(&mAdapters[index].description);
-			index += 1;
-		}
 	}
 }
 #endif

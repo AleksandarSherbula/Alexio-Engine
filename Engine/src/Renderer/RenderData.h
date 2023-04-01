@@ -9,14 +9,29 @@
 
 namespace Alexio
 {
-	class PointVertex
+	struct LineVertex
 	{
-	public:
 		glm::vec3 position;
 		glm::vec4 color;
+	};
+
+	class LineRenderer
+	{
 	public:
-		PointVertex();
-		PointVertex(const glm::vec3& position, const glm::vec4& color);
+		static void Init();
+		static void StartNewBatch();
+		static void SubmitBatch();
+		static void End();
+	public:
+		static uint32_t LineCount;
+
+		static LineVertex* CurrentVertexPtr;
+		static const size_t MaxLinesPerBatch = 1000;
+	private:
+		static Ref<VertexArray>  vertexArray;
+		static Ref<VertexBuffer> vertexBuffer;
+		static Ref<Shader>       shader;
+		static LineVertex* baseVertexBuffer;
 	};
 
 	struct QuadVertex
@@ -25,31 +40,6 @@ namespace Alexio
 		glm::vec4 color;
 		glm::vec2 texCoord;
 		uint32_t textureIndex;
-	};
-		
-	class CircleVertex
-	{
-	public:
-		glm::vec3 position;
-		glm::vec3 localPosition;
-		glm::vec4 color;
-		float thickness;
-		float fade;
-	public:
-		CircleVertex();
-		CircleVertex(const glm::vec3& position, const glm::vec4& color, float thickness, float fade);
-	};
-
-	class LineRenderer
-	{
-	public:
-		std::array<PointVertex, 2> vertices;
-
-		Ref<VertexArray>  vertexArray;
-		Ref<VertexBuffer> vertexBuffer;
-		Ref<Shader>       shader;
-	public:
-		LineRenderer();
 	};
 
 	class QuadRenderer
@@ -78,18 +68,35 @@ namespace Alexio
 
 		static QuadVertex* baseVertexBuffer;
 	};
+		
+	struct CircleVertex
+	{	
+		glm::vec3 position;
+		glm::vec3 localPosition;
+		glm::vec4 color;
+		float thickness;
+		float fade;
+	};	
 
 	class CircleRenderer
 	{
 	public:
-		std::array<CircleVertex, 4> vertices;
-		std::array<uint32_t, 6> indices;
-
-		Ref<VertexArray>  vertexArray;
-		Ref<VertexBuffer> vertexBuffer;
-		Ref<IndexBuffer>  indexBuffer;
-		Ref<Shader>       shader;
+		static void Init();
+		static void StartNewBatch();
+		static void SubmitBatch();
+		static void End();
 	public:
-		CircleRenderer();
+		static uint32_t CircleCount;
+		static uint32_t IndexCount;
+
+		static CircleVertex* CurrentVertexPtr;
+		static const size_t MaxCirclesPerBatch = 1000;
+	private:
+		static Ref<VertexArray>  vertexArray;
+		static Ref<VertexBuffer> vertexBuffer;
+		static Ref<IndexBuffer>  indexBuffer;
+		static Ref<Shader>       shader;
+
+		static CircleVertex* baseVertexBuffer;
 	};
 }

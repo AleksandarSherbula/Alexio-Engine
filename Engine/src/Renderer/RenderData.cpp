@@ -2,27 +2,10 @@
 #include "RenderData.h"
 #include "Renderer.h"
 
+#include "ImGui/ImGuiLayer.h"
+
 namespace Alexio
 {
-    CircleVertex::CircleVertex()
-    {
-        this->position = glm::vec3(0.0f);
-        this->localPosition = glm::vec3(0.0f);
-        this->color = glm::vec4(0.0f);
-        this->thickness = 0.0f;
-        this->fade = 0.0f;
-    }
-
-    CircleVertex::CircleVertex(const glm::vec3& position, const glm::vec4& color, float thickness, float fade)
-    {
-        this->position = position;
-        this->localPosition = position;
-        this->color = color;
-        this->thickness = thickness;
-        this->fade = fade;
-    }
-
-
     Ref<VertexArray>  QuadRenderer::vertexArray  = nullptr;
     Ref<VertexBuffer> QuadRenderer::vertexBuffer = nullptr;
     Ref<IndexBuffer>  QuadRenderer::indexBuffer  = nullptr;
@@ -88,6 +71,7 @@ namespace Alexio
         QuadCount = 0;
         IndexCount = 0;
         TextureSlotIndex = 1;
+        Renderer::DrawQuadCallCount = 0;
 
         CurrentVertexPtr = baseVertexBuffer;
     }
@@ -103,13 +87,11 @@ namespace Alexio
             shader->Bind();
 
             Renderer::DrawIndexed(IndexCount);
+            Renderer::DrawQuadCallCount++;
 
             shader->Unbind();
             vertexArray->Unbind();
         }
-
-
-
         StartNewBatch();
     }
 
@@ -118,22 +100,43 @@ namespace Alexio
         delete[] baseVertexBuffer;
     }
 
-    CircleRenderer::CircleRenderer()
-    {
-        vertices[0] = CircleVertex(glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
-        vertices[1] = CircleVertex(glm::vec3( 1.0f, -1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
-        vertices[2] = CircleVertex(glm::vec3( 1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
-        vertices[3] = CircleVertex(glm::vec3(-1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
+    Ref<VertexArray>  CircleRenderer::vertexArray = nullptr;
+    Ref<VertexBuffer> CircleRenderer::vertexBuffer = nullptr;
+    Ref<IndexBuffer>  CircleRenderer::indexBuffer = nullptr;
+    Ref<Shader>       CircleRenderer::shader = nullptr;
 
-        indices =
+    uint32_t CircleRenderer::CircleCount = 0;
+    uint32_t CircleRenderer::IndexCount = 0;
+
+    CircleVertex* CircleRenderer::CurrentVertexPtr = nullptr;
+    CircleVertex* CircleRenderer::baseVertexBuffer = nullptr;
+
+    void CircleRenderer::Init()
+    {
+        const uint32_t maxVertexCount = 4 * MaxCirclesPerBatch;
+        const uint32_t maxIndexCount = 6 * MaxCirclesPerBatch;
+
+        baseVertexBuffer = new CircleVertex[maxVertexCount];
+
+        uint32_t* indices = new uint32_t[maxIndexCount];
+
+        int32_t indexOffset = 0;
+        for (size_t i = 0; i < MaxCirclesPerBatch; i++)
         {
-            0, 1, 2,
-            2, 3, 0
-        };
+            indices[i * 6 + 0] = 0 + indexOffset;
+            indices[i * 6 + 1] = 1 + indexOffset;
+            indices[i * 6 + 2] = 2 + indexOffset;
+            indices[i * 6 + 3] = 2 + indexOffset;
+            indices[i * 6 + 4] = 3 + indexOffset;
+            indices[i * 6 + 5] = 0 + indexOffset;
+
+            indexOffset += 4;
+        }
 
         vertexArray = VertexArray::Create();
-        vertexBuffer = VertexBuffer::Create(vertices.data(), sizeof(CircleVertex) * 4);
-        indexBuffer = IndexBuffer::Create(indices.data(), 6);
+        vertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(CircleVertex));
+        indexBuffer = IndexBuffer::Create(indices, maxIndexCount);
+        delete[] indices;
 
         BufferLayout layout =
         {
@@ -151,25 +154,56 @@ namespace Alexio
         shader = Shader::Create("circle", vertexArray);
     }
 
-    PointVertex::PointVertex()
+    void CircleRenderer::StartNewBatch()
     {
-        this->position = glm::vec3(0.0f);
-        this->color = glm::vec4(0.0f);
+        CircleCount = 0;
+        IndexCount = 0;
+
+        CurrentVertexPtr = baseVertexBuffer;
     }
 
-    PointVertex::PointVertex(const glm::vec3& position, const glm::vec4& color)
+    void CircleRenderer::SubmitBatch()
     {
-        this->position = position;
-        this->color = color;
+        if (CircleCount)
+        {
+            uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)baseVertexBuffer);
+            vertexBuffer->SetData(baseVertexBuffer, dataSize);
+
+            vertexArray->Bind();
+            shader->Bind();
+
+            Renderer::DrawIndexed(IndexCount);
+            Renderer::DrawCircleCallCount++;
+
+            shader->Unbind();
+            vertexArray->Unbind();
+        }
+        StartNewBatch();
     }
 
-    LineRenderer::LineRenderer()
+    void CircleRenderer::End()
     {
-        vertices[0] = PointVertex(glm::vec3( 0.0f, 0.0f, 0.0f),  glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-        vertices[1] = PointVertex(glm::vec3( 0.5f, 0.0f, 0.0f),  glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        delete[] baseVertexBuffer;
+    }
+
+    Ref<VertexArray>  LineRenderer::vertexArray = nullptr;
+    Ref<VertexBuffer> LineRenderer::vertexBuffer = nullptr;
+    Ref<Shader>       LineRenderer::shader = nullptr;
+
+    uint32_t LineRenderer::LineCount = 0;
+
+    LineVertex* LineRenderer::CurrentVertexPtr = nullptr;
+    LineVertex* LineRenderer::baseVertexBuffer = nullptr;
+
+
+    void LineRenderer::Init()
+    {
+        const uint32_t maxVertexCount = 2 * MaxLinesPerBatch;
+
+        baseVertexBuffer = new LineVertex[maxVertexCount];
 
         vertexArray = VertexArray::Create();
-        vertexBuffer = VertexBuffer::Create(vertices.data(), sizeof(PointVertex) * 2);
+        vertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(LineVertex));
 
         BufferLayout layout =
         {
@@ -181,6 +215,37 @@ namespace Alexio
         vertexArray->AddVertexBuffer(vertexBuffer);
 
         shader = Shader::Create("line", vertexArray);
+    }
+
+    void LineRenderer::StartNewBatch()
+    {
+        LineCount = 0;
+
+        CurrentVertexPtr = baseVertexBuffer;
+    }
+
+    void LineRenderer::SubmitBatch()
+    {
+        if (LineCount)
+        {
+            uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)baseVertexBuffer);
+            vertexBuffer->SetData(baseVertexBuffer, dataSize);
+
+            vertexArray->Bind();
+            shader->Bind();
+
+            Renderer::Draw(LineCount * 2);
+            Renderer::DrawCircleCallCount++;
+
+            shader->Unbind();
+            vertexArray->Unbind();
+        }
+        StartNewBatch();
+    }
+
+    void LineRenderer::End()
+    {
+        delete[] baseVertexBuffer;
     }
 }
 

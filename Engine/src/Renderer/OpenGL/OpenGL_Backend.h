@@ -18,7 +18,7 @@ namespace Alexio
 		void Clear(float r, float g, float b, float a) override;
 		void SwapBuffer() override;
 
-		inline std::string GetName() const override { return "OpenGL"; };
+		inline std::string GetName() const override { return "OpenGL 4.5"; };
 	private:
 		void ImGuiBackendInit() override;
 		void ImGuiBackendBegin() override;

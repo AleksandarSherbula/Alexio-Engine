@@ -51,17 +51,18 @@ namespace Alexio
 
 		static void SubmitBatches();
 
-		static void Draw(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
+		static void Draw(uint32_t vertexCount);
 		static void DrawIndexed(uint32_t indexCount);
 
 		static void End();
 	public:
+		static int32_t DrawLineCallCount;
 		static int32_t DrawQuadCallCount;
+		static int32_t DrawCircleCallCount;
 	private:
 		static Ref<RendererBackend> sRendererBackend;
 		static Ref<ConstantBuffer> sCameraBuffer;
 
 		static Ref<LineRenderer> sLineRenderer;
-		static Ref<CircleRenderer> sCircleRenderer;
 	};
 }
