@@ -38,6 +38,8 @@ namespace Alexio
 
 			mWindow->PollEvents();
 			Input::Scan();
+
+			Renderer::Stats = {0};
 			
 			if (!OnUpdate() ||
 				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked
@@ -49,11 +51,11 @@ namespace Alexio
 
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate(Timer::DetlaTime());
-			
-			for (Layer* layer : mLayerStack)
-				layer->OnImGuiRender();
 
 			Renderer::SubmitBatches();
+
+			for (Layer* layer : mLayerStack)
+				layer->OnImGuiRender();
 
 			imgui->End();
 			Renderer::GetBackend()->SwapBuffer();

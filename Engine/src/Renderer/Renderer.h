@@ -43,6 +43,9 @@ namespace Alexio
 		static void DrawSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
 		static void DrawSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
 
+		static void DrawPartialSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec2& tileOffset, const glm::vec2& tileSize, const glm::vec4& colorTint = glm::vec4(1.0f));
+		static void DrawPartialSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec2& tileOffset, const glm::vec2& tileSize, const glm::vec4& colorTint = glm::vec4(1.0f));
+
 		static void DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), float angle = 0.0f);
 		static void DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), float angle = 0.0f);
 
@@ -56,10 +59,28 @@ namespace Alexio
 
 		static void End();
 	public:
-		static int32_t DrawLineCallCount;
-		static int32_t DrawQuadCallCount;
-		static int32_t DrawCircleCallCount;
+		struct Statistics
+		{
+			uint32_t Lines;
+			uint32_t DrawLine;
+
+			uint32_t Quads;
+			uint32_t DrawQuad;
+
+			uint32_t Circles;
+			uint32_t DrawCircle;
+
+			inline void Reset()
+			{
+				Lines = 0;
+				Quads = 0;
+				Circles = 0;
+			}
+		};
+
+		static Statistics Stats;
 	private:
+	
 		static Ref<RendererBackend> sRendererBackend;
 		static Ref<ConstantBuffer> sCameraBuffer;
 

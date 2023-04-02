@@ -24,6 +24,7 @@ namespace Alexio
 		static void End();
 	public:
 		static uint32_t LineCount;
+		static uint32_t DrawingCount;
 
 		static LineVertex* CurrentVertexPtr;
 		static const size_t MaxLinesPerBatch = 1000;
@@ -53,6 +54,7 @@ namespace Alexio
 		static uint32_t QuadCount;
 		static uint32_t IndexCount;
 		static uint32_t TextureSlotIndex;
+		static uint32_t DrawingCount;
 
 		static QuadVertex* CurrentVertexPtr;
 		static const size_t MaxQuadsPerBatch = 1000;
@@ -88,6 +90,7 @@ namespace Alexio
 	public:
 		static uint32_t CircleCount;
 		static uint32_t IndexCount;
+		static uint32_t DrawingCount;
 
 		static CircleVertex* CurrentVertexPtr;
 		static const size_t MaxCirclesPerBatch = 1000;

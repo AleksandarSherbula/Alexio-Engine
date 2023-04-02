@@ -6,6 +6,70 @@
 
 namespace Alexio
 {
+    Ref<VertexArray>  LineRenderer::vertexArray = nullptr;
+    Ref<VertexBuffer> LineRenderer::vertexBuffer = nullptr;
+    Ref<Shader>       LineRenderer::shader = nullptr;
+
+    uint32_t LineRenderer::LineCount = 0;
+    uint32_t LineRenderer::DrawingCount = 0;
+
+    LineVertex* LineRenderer::CurrentVertexPtr = nullptr;
+    LineVertex* LineRenderer::baseVertexBuffer = nullptr;
+
+    void LineRenderer::Init()
+    {
+        const uint32_t maxVertexCount = 2 * MaxLinesPerBatch;
+
+        baseVertexBuffer = new LineVertex[maxVertexCount];
+
+        vertexArray = VertexArray::Create();
+        vertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(LineVertex));
+
+        BufferLayout layout =
+        {
+            {ShaderDataType::Float3, "aPosition" },
+            {ShaderDataType::Float4, "aColor"    }
+        };
+        vertexBuffer->SetLayout(layout);
+
+        vertexArray->AddVertexBuffer(vertexBuffer);
+
+        shader = Shader::Create("line", vertexArray);
+    }
+
+    void LineRenderer::StartNewBatch()
+    {
+        LineCount = 0;
+        DrawingCount = 0;
+        CurrentVertexPtr = baseVertexBuffer;
+    }
+
+    void LineRenderer::SubmitBatch()
+    {
+        if (LineCount)
+        {
+            uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)baseVertexBuffer);
+            vertexBuffer->SetData(baseVertexBuffer, dataSize);
+
+            vertexArray->Bind();
+            shader->Bind();
+
+            Renderer::Draw(LineCount * 2);
+            DrawingCount++;
+            Renderer::Stats.DrawLine++;
+
+            shader->Unbind();
+            vertexArray->Unbind();
+        }
+        StartNewBatch();
+    }
+
+    void LineRenderer::End()
+    {
+        delete[] baseVertexBuffer;
+    }
+
+
     Ref<VertexArray>  QuadRenderer::vertexArray  = nullptr;
     Ref<VertexBuffer> QuadRenderer::vertexBuffer = nullptr;
     Ref<IndexBuffer>  QuadRenderer::indexBuffer  = nullptr;
@@ -15,6 +79,7 @@ namespace Alexio
     uint32_t QuadRenderer::QuadCount  = 0;
     uint32_t QuadRenderer::IndexCount = 0;
     uint32_t QuadRenderer::TextureSlotIndex = 0;
+    uint32_t QuadRenderer::DrawingCount = 0;
 
     std::array<uint32_t, QuadRenderer::MaxTextureSlots> QuadRenderer::TextureIDs = { 0 };
 
@@ -71,7 +136,7 @@ namespace Alexio
         QuadCount = 0;
         IndexCount = 0;
         TextureSlotIndex = 1;
-        Renderer::DrawQuadCallCount = 0;
+        DrawingCount = 0;
 
         CurrentVertexPtr = baseVertexBuffer;
     }
@@ -87,7 +152,8 @@ namespace Alexio
             shader->Bind();
 
             Renderer::DrawIndexed(IndexCount);
-            Renderer::DrawQuadCallCount++;
+            DrawingCount++;
+            Renderer::Stats.DrawQuad++;
 
             shader->Unbind();
             vertexArray->Unbind();
@@ -107,6 +173,7 @@ namespace Alexio
 
     uint32_t CircleRenderer::CircleCount = 0;
     uint32_t CircleRenderer::IndexCount = 0;
+    uint32_t CircleRenderer::DrawingCount = 0;
 
     CircleVertex* CircleRenderer::CurrentVertexPtr = nullptr;
     CircleVertex* CircleRenderer::baseVertexBuffer = nullptr;
@@ -158,6 +225,7 @@ namespace Alexio
     {
         CircleCount = 0;
         IndexCount = 0;
+        DrawingCount = 0;
 
         CurrentVertexPtr = baseVertexBuffer;
     }
@@ -173,7 +241,8 @@ namespace Alexio
             shader->Bind();
 
             Renderer::DrawIndexed(IndexCount);
-            Renderer::DrawCircleCallCount++;
+            DrawingCount++;
+            Renderer::Stats.DrawCircle++;
 
             shader->Unbind();
             vertexArray->Unbind();
@@ -182,68 +251,6 @@ namespace Alexio
     }
 
     void CircleRenderer::End()
-    {
-        delete[] baseVertexBuffer;
-    }
-
-    Ref<VertexArray>  LineRenderer::vertexArray = nullptr;
-    Ref<VertexBuffer> LineRenderer::vertexBuffer = nullptr;
-    Ref<Shader>       LineRenderer::shader = nullptr;
-
-    uint32_t LineRenderer::LineCount = 0;
-
-    LineVertex* LineRenderer::CurrentVertexPtr = nullptr;
-    LineVertex* LineRenderer::baseVertexBuffer = nullptr;
-
-
-    void LineRenderer::Init()
-    {
-        const uint32_t maxVertexCount = 2 * MaxLinesPerBatch;
-
-        baseVertexBuffer = new LineVertex[maxVertexCount];
-
-        vertexArray = VertexArray::Create();
-        vertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(LineVertex));
-
-        BufferLayout layout =
-        {
-            {ShaderDataType::Float3, "aPosition" },
-            {ShaderDataType::Float4, "aColor"    }
-        };
-        vertexBuffer->SetLayout(layout);
-
-        vertexArray->AddVertexBuffer(vertexBuffer);
-
-        shader = Shader::Create("line", vertexArray);
-    }
-
-    void LineRenderer::StartNewBatch()
-    {
-        LineCount = 0;
-
-        CurrentVertexPtr = baseVertexBuffer;
-    }
-
-    void LineRenderer::SubmitBatch()
-    {
-        if (LineCount)
-        {
-            uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)baseVertexBuffer);
-            vertexBuffer->SetData(baseVertexBuffer, dataSize);
-
-            vertexArray->Bind();
-            shader->Bind();
-
-            Renderer::Draw(LineCount * 2);
-            Renderer::DrawCircleCallCount++;
-
-            shader->Unbind();
-            vertexArray->Unbind();
-        }
-        StartNewBatch();
-    }
-
-    void LineRenderer::End()
     {
         delete[] baseVertexBuffer;
     }
