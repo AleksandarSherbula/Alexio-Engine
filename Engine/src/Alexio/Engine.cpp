@@ -27,6 +27,8 @@ namespace Alexio
 		sMainCamera = CreateRef<Camera>(static_cast<float>(mWindow->GetWidth()) / static_cast<float>(mWindow->GetHeight()));
 		Renderer::Init();
 
+		Random::Init();
+
 		AIO_ASSERT(OnStart(), "Failed to initialize application");
 
 		PushOverlay(imgui);
@@ -41,23 +43,23 @@ namespace Alexio
 
 			Renderer::Stats = {0};
 			
+			imgui->Begin();
 			if (!OnUpdate() ||
 				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked
 				(Renderer::GetGraphicsAPI() == DirectX11 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
 				mRunning = false;
 			
 			sMainCamera->OnUpdate(Timer::DetlaTime());
-			imgui->Begin();
 
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate(Timer::DetlaTime());
 
-			Renderer::SubmitBatches();
+			Renderer::Flush();
 
-			for (Layer* layer : mLayerStack)
-				layer->OnImGuiRender();
+			imgui->OnImGuiRender();
 
 			imgui->End();
+
 			Renderer::GetBackend()->SwapBuffer();
 		}
 

@@ -52,7 +52,7 @@ namespace Alexio
 		static void DrawCircle(const glm::vec2& position, const glm::vec4& color = glm::vec4(1.0f), float radius = 0.5f, float thickness = 1.0f, float fade = 0.005f);
 		static void DrawCircle(const glm::vec3& position, const glm::vec4& color = glm::vec4(1.0f), float radius = 0.5f, float thickness = 1.0f, float fade = 0.005f);		
 
-		static void SubmitBatches();
+		static void Flush();
 
 		static void Draw(uint32_t vertexCount);
 		static void DrawIndexed(uint32_t indexCount);

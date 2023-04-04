@@ -128,7 +128,9 @@ namespace Alexio
         shader = Shader::Create("quad", vertexArray);
 
         WhiteTexture = Texture::Create(1, 1, 0xffffffff);
-        TextureIDs[TextureSlotIndex++] = WhiteTexture->GetID();
+        WhiteTexture->Bind(TextureSlotIndex);
+        TextureIDs[TextureSlotIndex] = WhiteTexture->GetID();
+        TextureSlotIndex++;
 	}
 
     void QuadRenderer::StartNewBatch()

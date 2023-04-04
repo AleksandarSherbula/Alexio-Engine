@@ -62,7 +62,7 @@ namespace Alexio
 		sRendererBackend->DrawIndexed(indexCount);
 	}
 
-	void Renderer::SubmitBatches()
+	void Renderer::Flush()
 	{
 		LineRenderer::SubmitBatch();
 		QuadRenderer::SubmitBatch();
@@ -168,8 +168,6 @@ namespace Alexio
 		QuadRenderer::IndexCount += 6;
 		QuadRenderer::QuadCount++;
 		Stats.Quads++;
-
-		QuadRenderer::WhiteTexture->Bind(0);
 	}
 
 	void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
@@ -204,8 +202,6 @@ namespace Alexio
 		QuadRenderer::IndexCount += 6;
 		QuadRenderer::QuadCount++;
 		Stats.Quads++;
-
-		QuadRenderer::WhiteTexture->Bind(0);
 	}
 	
 	void Renderer::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
@@ -244,8 +240,6 @@ namespace Alexio
 		QuadRenderer::IndexCount += 6;
 		QuadRenderer::QuadCount++;
 		Stats.Quads++;
-
-		QuadRenderer::WhiteTexture->Bind(0);
 	}
 
 	void Renderer::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
@@ -284,8 +278,6 @@ namespace Alexio
 		QuadRenderer::IndexCount += 6;
 		QuadRenderer::QuadCount++;
 		Stats.Quads++;
-
-		QuadRenderer::WhiteTexture->Bind(0);
 	}
 
 	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
