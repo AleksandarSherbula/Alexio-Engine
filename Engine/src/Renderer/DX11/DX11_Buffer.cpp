@@ -10,20 +10,16 @@ namespace Alexio
 {
 	DX11_VertexBuffer::DX11_VertexBuffer(uint32_t size)
 	{
-		// Possible subject to change code
 		D3D11_BUFFER_DESC bufferDesc;
 		ZeroMemory(&bufferDesc, sizeof(bufferDesc));
 
 		bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 		bufferDesc.ByteWidth = size;
 		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bufferDesc.CPUAccessFlags = 0;
+		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bufferDesc.MiscFlags = 0;
 
-		D3D11_SUBRESOURCE_DATA vertexBufferData;
-		ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
-
-		HRESULT hr = AIO_DX11_RENDERER->GetDevice()->CreateBuffer(&bufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
+		HRESULT hr = AIO_DX11_RENDERER->GetDevice()->CreateBuffer(&bufferDesc, nullptr, mBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex buffer: " + ResultInfo(hr) + "\n");
 	}
 
@@ -76,13 +72,11 @@ namespace Alexio
 
 	DX11_IndexBuffer::DX11_IndexBuffer(uint32_t* indices, uint32_t count)
 	{
-		mCount = count;
-
 		D3D11_BUFFER_DESC indexBufferDesc;
 		ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
 
 		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		indexBufferDesc.ByteWidth = sizeof(uint32_t) * mCount;
+		indexBufferDesc.ByteWidth = count * sizeof(uint32_t);
 		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		indexBufferDesc.CPUAccessFlags = 0;
 		indexBufferDesc.MiscFlags = 0;

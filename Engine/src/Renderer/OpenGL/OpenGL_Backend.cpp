@@ -38,7 +38,7 @@ namespace Alexio
 
 	OpenGL_Backend::OpenGL_Backend()
 	{
-		AIO_ASSERT(!sInstance, "OpenGL API object was already been made");
+		AIO_ASSERT(!sInstance, "OpenGL backend has already been made");
 		sInstance = this;
 	}
 
@@ -72,6 +72,8 @@ namespace Alexio
 
 	void OpenGL_Backend::Draw(uint32_t vertexCount)
 	{
+		// Currently not in function. To be reworked
+		/*
 		GLenum mode = GL_TRIANGLES;
 
 		switch (vertexCount)
@@ -80,8 +82,9 @@ namespace Alexio
 		case 1: mode = GL_POINT; break;
 		case 2: mode = GL_LINES; break;
 		}
+		*/
 
-		glDrawArrays(mode, 0, vertexCount);
+		glDrawArrays(GL_LINES, 0, vertexCount);
 	}
 
 	void OpenGL_Backend::DrawIndexed(uint32_t indexCount)

@@ -1,6 +1,7 @@
 #include "aio_pch.h"
 #include "ImGui/ImGuiLayer.h"
 #include "Renderer/Renderer.h"
+#include "Alexio/Random.h"
 
 #include "Alexio/Timer.h"
 
@@ -46,7 +47,7 @@ namespace Alexio
     {
         char* apiName = "";
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
-                apiName = (Renderer::GetGraphicsAPI() == OpenGL) ? "OpenGL" : "DirectX11";
+                apiName = (Renderer::GetGraphicsAPI() == OpenGL) ? "OpenGL 4.5" : "DirectX 11";
         #elif defined(AIO_API_OPENGL)
                 apiName = "OpenGL";
         #elif defined(AIO_API_DX11)
@@ -57,6 +58,19 @@ namespace Alexio
         ImGui::Text("Graphics API: %s", apiName);
         ImGui::Text("Application Time: %.2f", Timer::Get());
         ImGui::Text("Application framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text("Random number generated (0 - 10) %d", Random::Range(0, 10));
+        if (ImGui::CollapsingHeader("Rendering Stats")) {
+            ImGui::Indent(); // indent the contents of the list
+            ImGui::Text("Lines: %d", Renderer::Stats.Lines);
+            ImGui::Text("DrawLine: %d", Renderer::Stats.DrawLine);
+            ImGui::Text("");
+            ImGui::Text("Quads: %d", Renderer::Stats.Quads);
+            ImGui::Text("DrawQuad: %d", Renderer::Stats.DrawQuad);
+            ImGui::Text("");
+            ImGui::Text("Circles: %d", Renderer::Stats.Circles);
+            ImGui::Text("DrawCircle: %d", Renderer::Stats.DrawCircle);
+            ImGui::Unindent(); // unindent the contents of the list
+        }
         ImGui::End();
     }
 }

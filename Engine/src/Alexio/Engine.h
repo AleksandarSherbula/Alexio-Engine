@@ -4,6 +4,7 @@
 #include "Log.h"
 #include "Timer.h"
 #include "Utilities.h"
+#include "Random.h"
 
 #include "Math/Math.h"
 #include "Input/Input.h"

@@ -25,6 +25,8 @@ namespace Alexio
 		void Draw(uint32_t vertexCount) override;
 		void DrawIndexed(uint32_t indexCount) override;
 		void Clear(float r, float g, float b, float a) override;
+		void CreateRenderTarget();
+		void CleanRenderTarget();
 		void SwapBuffer() override;
 
 		// Getters
@@ -32,13 +34,7 @@ namespace Alexio
 		inline ID3D11DeviceContext* GetDeviceContext() const { return mDeviceContext.Get(); }
 		inline IDXGISwapChain* GetSwapChain() const { return mSwapChain.Get(); }
 		inline std::string GetName() const override { return "DirectX 11"; }
-
-		void CreateRenderTarget();
-		void CleanRenderTarget();
 	private:
-		// States
-		void GetAdapters();
-
 		void ImGuiBackendInit() override;
 		void ImGuiBackendBegin() override;
 		void ImGuiBackendUpdate() override;
@@ -46,7 +42,6 @@ namespace Alexio
 	private:
 		static DX11_Backend* sInstance;
 	private:
-		std::vector<AdapterData> mAdapters;
 		Microsoft::WRL::ComPtr<ID3D11Device> mDevice;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> mDeviceContext;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;

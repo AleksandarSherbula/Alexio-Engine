@@ -1,94 +1,211 @@
 #include "aio_pch.h"
 #include "RenderData.h"
+#include "Renderer.h"
+
+#include "ImGui/ImGuiLayer.h"
 
 namespace Alexio
 {
-	QuadVertex::QuadVertex()
-	{
-		this->position = glm::vec3(0.0f);
-		this->color = glm::vec4(0.0f);
-		this->texCoord = glm::vec2(0.0f);
-	}
+    Ref<VertexArray>  LineRenderer::vertexArray = nullptr;
+    Ref<VertexBuffer> LineRenderer::vertexBuffer = nullptr;
+    Ref<Shader>       LineRenderer::shader = nullptr;
 
-	QuadVertex::QuadVertex(const glm::vec3& position, const glm::vec4& color, const glm::vec2& texCoord)
-	{
-		this->position = position;
-		this->color = color;
-		this->texCoord = texCoord;
-	}
+    uint32_t LineRenderer::LineCount = 0;
+    uint32_t LineRenderer::DrawingCount = 0;
 
-    CircleVertex::CircleVertex()
+    LineVertex* LineRenderer::CurrentVertexPtr = nullptr;
+    LineVertex* LineRenderer::baseVertexBuffer = nullptr;
+
+    void LineRenderer::Init()
     {
-        this->position = glm::vec3(0.0f);
-        this->localPosition = glm::vec3(0.0f);
-        this->color = glm::vec4(0.0f);
-        this->thickness = 0.0f;
-        this->fade = 0.0f;
-    }
+        const uint32_t maxVertexCount = 2 * MaxLinesPerBatch;
 
-    CircleVertex::CircleVertex(const glm::vec3& position, const glm::vec4& color, float thickness, float fade)
-    {
-        this->position = position;
-        this->localPosition = position;
-        this->color = color;
-        this->thickness = thickness;
-        this->fade = fade;
-    }
+        baseVertexBuffer = new LineVertex[maxVertexCount];
 
-	QuadRenderer::QuadRenderer()
-	{
-        vertices[0] = QuadVertex(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f));
-        vertices[1] = QuadVertex(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f));
-        vertices[2] = QuadVertex(glm::vec3(1.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f));
-        vertices[3] = QuadVertex(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f));
-        
-        localQuadPositions[0] = vertices[0].position;
-        localQuadPositions[1] = vertices[1].position;
-        localQuadPositions[2] = vertices[2].position;
-        localQuadPositions[3] = vertices[3].position;
-        
-        indices =
-        {
-            0, 1, 2,
-            2, 3, 0
-        };
-        
         vertexArray = VertexArray::Create();
-        vertexBuffer = VertexBuffer::Create(vertices.data(), sizeof(QuadVertex) * 4);
-        indexBuffer = IndexBuffer::Create(indices.data(), 6);
+        vertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(LineVertex));
+
+        BufferLayout layout =
+        {
+            {ShaderDataType::Float3, "aPosition" },
+            {ShaderDataType::Float4, "aColor"    }
+        };
+        vertexBuffer->SetLayout(layout);
+
+        vertexArray->AddVertexBuffer(vertexBuffer);
+
+        shader = Shader::Create("line", vertexArray);
+    }
+
+    void LineRenderer::StartNewBatch()
+    {
+        LineCount = 0;
+        DrawingCount = 0;
+        CurrentVertexPtr = baseVertexBuffer;
+    }
+
+    void LineRenderer::SubmitBatch()
+    {
+        if (LineCount)
+        {
+            uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)baseVertexBuffer);
+            vertexBuffer->SetData(baseVertexBuffer, dataSize);
+
+            vertexArray->Bind();
+            shader->Bind();
+
+            Renderer::Draw(LineCount * 2);
+            DrawingCount++;
+            Renderer::Stats.DrawLine++;
+
+            shader->Unbind();
+            vertexArray->Unbind();
+        }
+        StartNewBatch();
+    }
+
+    void LineRenderer::End()
+    {
+        delete[] baseVertexBuffer;
+    }
+
+
+    Ref<VertexArray>  QuadRenderer::vertexArray  = nullptr;
+    Ref<VertexBuffer> QuadRenderer::vertexBuffer = nullptr;
+    Ref<IndexBuffer>  QuadRenderer::indexBuffer  = nullptr;
+    Ref<Shader>       QuadRenderer::shader       = nullptr;
+    Ref<Texture>      QuadRenderer::WhiteTexture = nullptr;
+
+    uint32_t QuadRenderer::QuadCount  = 0;
+    uint32_t QuadRenderer::IndexCount = 0;
+    uint32_t QuadRenderer::TextureSlotIndex = 0;
+    uint32_t QuadRenderer::DrawingCount = 0;
+
+    std::array<uint32_t, QuadRenderer::MaxTextureSlots> QuadRenderer::TextureIDs = { 0 };
+
+    QuadVertex* QuadRenderer::CurrentVertexPtr = nullptr;
+    QuadVertex* QuadRenderer::baseVertexBuffer = nullptr;
+
+    void QuadRenderer::Init()
+    {
+        const uint32_t maxVertexCount = 4 * MaxQuadsPerBatch;
+        const uint32_t maxIndexCount = 6 * MaxQuadsPerBatch;
+
+        baseVertexBuffer = new QuadVertex[maxVertexCount];
+
+        uint32_t* indices = new uint32_t[maxIndexCount];
+
+        int32_t indexOffset = 0;
+        for (size_t i = 0; i < MaxQuadsPerBatch; i++)
+        {
+            indices[i * 6 + 0] = 0 + indexOffset;
+            indices[i * 6 + 1] = 1 + indexOffset;
+            indices[i * 6 + 2] = 2 + indexOffset;
+            indices[i * 6 + 3] = 2 + indexOffset;
+            indices[i * 6 + 4] = 3 + indexOffset;
+            indices[i * 6 + 5] = 0 + indexOffset;
         
+            indexOffset += 4;
+        }
+
+        vertexArray  = VertexArray::Create();
+        vertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(QuadVertex));
+        indexBuffer  = IndexBuffer::Create(indices, maxIndexCount);
+        delete[] indices;
+
         BufferLayout layout =
         {
             {ShaderDataType::Float3, "aPosition" },
             {ShaderDataType::Float4, "aColor"    },
-            {ShaderDataType::Float2, "aTexCoord" }
+            {ShaderDataType::Float2, "aTexCoord" },
+            {ShaderDataType::Int,    "aTexIndex" }
         };
         vertexBuffer->SetLayout(layout);
-        
+
         vertexArray->AddVertexBuffer(vertexBuffer);
         vertexArray->SetIndexBuffer(indexBuffer);
-        
+
         shader = Shader::Create("quad", vertexArray);
 
-        whiteTexture = Texture::Create(1, 1, 0xffffffff);
+        WhiteTexture = Texture::Create(1, 1, 0xffffffff);
+        WhiteTexture->Bind(TextureSlotIndex);
+        TextureIDs[TextureSlotIndex] = WhiteTexture->GetID();
+        TextureSlotIndex++;
 	}
 
-    CircleRenderer::CircleRenderer()
+    void QuadRenderer::StartNewBatch()
     {
-        vertices[0] = CircleVertex(glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
-        vertices[1] = CircleVertex(glm::vec3( 1.0f, -1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
-        vertices[2] = CircleVertex(glm::vec3( 1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
-        vertices[3] = CircleVertex(glm::vec3(-1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
+        QuadCount = 0;
+        IndexCount = 0;
+        TextureSlotIndex = 1;
+        DrawingCount = 0;
 
-        indices =
+        CurrentVertexPtr = baseVertexBuffer;
+    }
+
+    void QuadRenderer::SubmitBatch()
+    {
+        if (QuadCount)
         {
-            0, 1, 2,
-            2, 3, 0
-        };
+            uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)baseVertexBuffer);
+            vertexBuffer->SetData(baseVertexBuffer, dataSize);
+
+            vertexArray->Bind();
+            shader->Bind();
+
+            Renderer::DrawIndexed(IndexCount);
+            DrawingCount++;
+            Renderer::Stats.DrawQuad++;
+
+            shader->Unbind();
+            vertexArray->Unbind();
+        }
+        StartNewBatch();
+    }
+
+    void QuadRenderer::End()
+    {
+        delete[] baseVertexBuffer;
+    }
+
+    Ref<VertexArray>  CircleRenderer::vertexArray = nullptr;
+    Ref<VertexBuffer> CircleRenderer::vertexBuffer = nullptr;
+    Ref<IndexBuffer>  CircleRenderer::indexBuffer = nullptr;
+    Ref<Shader>       CircleRenderer::shader = nullptr;
+
+    uint32_t CircleRenderer::CircleCount = 0;
+    uint32_t CircleRenderer::IndexCount = 0;
+    uint32_t CircleRenderer::DrawingCount = 0;
+
+    CircleVertex* CircleRenderer::CurrentVertexPtr = nullptr;
+    CircleVertex* CircleRenderer::baseVertexBuffer = nullptr;
+
+    void CircleRenderer::Init()
+    {
+        const uint32_t maxVertexCount = 4 * MaxCirclesPerBatch;
+        const uint32_t maxIndexCount = 6 * MaxCirclesPerBatch;
+
+        baseVertexBuffer = new CircleVertex[maxVertexCount];
+
+        uint32_t* indices = new uint32_t[maxIndexCount];
+
+        int32_t indexOffset = 0;
+        for (size_t i = 0; i < MaxCirclesPerBatch; i++)
+        {
+            indices[i * 6 + 0] = 0 + indexOffset;
+            indices[i * 6 + 1] = 1 + indexOffset;
+            indices[i * 6 + 2] = 2 + indexOffset;
+            indices[i * 6 + 3] = 2 + indexOffset;
+            indices[i * 6 + 4] = 3 + indexOffset;
+            indices[i * 6 + 5] = 0 + indexOffset;
+
+            indexOffset += 4;
+        }
 
         vertexArray = VertexArray::Create();
-        vertexBuffer = VertexBuffer::Create(vertices.data(), sizeof(CircleVertex) * 4);
-        indexBuffer = IndexBuffer::Create(indices.data(), 6);
+        vertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(CircleVertex));
+        indexBuffer = IndexBuffer::Create(indices, maxIndexCount);
+        delete[] indices;
 
         BufferLayout layout =
         {
@@ -106,36 +223,38 @@ namespace Alexio
         shader = Shader::Create("circle", vertexArray);
     }
 
-    PointVertex::PointVertex()
+    void CircleRenderer::StartNewBatch()
     {
-        this->position = glm::vec3(0.0f);
-        this->color = glm::vec4(0.0f);
+        CircleCount = 0;
+        IndexCount = 0;
+        DrawingCount = 0;
+
+        CurrentVertexPtr = baseVertexBuffer;
     }
 
-    PointVertex::PointVertex(const glm::vec3& position, const glm::vec4& color)
+    void CircleRenderer::SubmitBatch()
     {
-        this->position = position;
-        this->color = color;
-    }
-
-    LineRenderer::LineRenderer()
-    {
-        vertices[0] = PointVertex(glm::vec3( 0.0f, 0.0f, 0.0f),  glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-        vertices[1] = PointVertex(glm::vec3( 0.5f, 0.0f, 0.0f),  glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-
-        vertexArray = VertexArray::Create();
-        vertexBuffer = VertexBuffer::Create(vertices.data(), sizeof(PointVertex) * 2);
-
-        BufferLayout layout =
+        if (CircleCount)
         {
-            {ShaderDataType::Float3, "aPosition" },
-            {ShaderDataType::Float4, "aColor"    }
-        };
-        vertexBuffer->SetLayout(layout);
+            uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)baseVertexBuffer);
+            vertexBuffer->SetData(baseVertexBuffer, dataSize);
 
-        vertexArray->AddVertexBuffer(vertexBuffer);
+            vertexArray->Bind();
+            shader->Bind();
 
-        shader = Shader::Create("line", vertexArray);
+            Renderer::DrawIndexed(IndexCount);
+            DrawingCount++;
+            Renderer::Stats.DrawCircle++;
+
+            shader->Unbind();
+            vertexArray->Unbind();
+        }
+        StartNewBatch();
+    }
+
+    void CircleRenderer::End()
+    {
+        delete[] baseVertexBuffer;
     }
 }
 

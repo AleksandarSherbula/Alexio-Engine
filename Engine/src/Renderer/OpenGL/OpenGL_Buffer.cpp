@@ -46,11 +46,9 @@ namespace Alexio
 
 	OpenGL_IndexBuffer::OpenGL_IndexBuffer(uint32_t* indices, uint32_t count)
 	{
-		mCount = count;
-
 		glCreateBuffers(1, &mID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mCount * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
 	}
 
 	OpenGL_IndexBuffer::~OpenGL_IndexBuffer()

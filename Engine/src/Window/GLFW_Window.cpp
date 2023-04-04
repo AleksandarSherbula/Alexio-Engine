@@ -42,6 +42,9 @@ namespace Alexio
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 #endif // AIO_DEBUG
 
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+
         mHandle = glfwCreateWindow(mWidth, mHeight, mTitle.c_str(), NULL, NULL);
         AIO_ASSERT(mHandle, "Failed to create a GLFW window");
 

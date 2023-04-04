@@ -10,8 +10,12 @@
 
 namespace Alexio
 {
+	uint32_t DX11_Texture::sID = 1;
+
 	DX11_Texture::DX11_Texture(uint32_t width, uint32_t height, uint32_t whiteTexture)
-	{		
+	{
+		mID = sID;
+
 		D3D11_TEXTURE2D_DESC textureDesc;
 		ZeroMemory(&textureDesc, sizeof(textureDesc));
 
@@ -57,7 +61,8 @@ namespace Alexio
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create white texture: " + ResultInfo(hr) + "\n");
 		
 		hr = AIO_DX11_RENDERER->GetDevice()->CreateShaderResourceView(mTextureBuffer.Get(), nullptr, mTextureResource.GetAddressOf());
-		AIO_ASSERT(SUCCEEDED(hr), "Failed to create texture shader resource view: " + ResultInfo(hr) + "\n");		
+		AIO_ASSERT(SUCCEEDED(hr), "Failed to create texture shader resource view: " + ResultInfo(hr) + "\n");
+		sID++;
 	}
 
 	DX11_Texture::DX11_Texture(const std::string& filepath)
@@ -70,6 +75,7 @@ namespace Alexio
 		{
 			mWidth = width;
 			mHeight = height;
+			mID = sID;
 
 			D3D11_TEXTURE2D_DESC textureDesc;
 			ZeroMemory(&textureDesc, sizeof(textureDesc));
@@ -89,7 +95,7 @@ namespace Alexio
 			D3D11_SAMPLER_DESC sampDesc;
 			ZeroMemory(&sampDesc, sizeof(sampDesc));
 
-			sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+			sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
 			sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 			sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 			sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -119,6 +125,7 @@ namespace Alexio
 
 			hr = AIO_DX11_RENDERER->GetDevice()->CreateShaderResourceView(textureObject, nullptr, mTextureResource.GetAddressOf());
 			AIO_ASSERT(SUCCEEDED(hr), "Failed to create texture shader resource view: " + ResultInfo(hr) + "\n");
+			sID++;
 		}
 	}
 

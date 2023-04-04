@@ -45,19 +45,18 @@ namespace Alexio
 	{
 		float moveSpeed = mZoomLevel;
 		
-		if (Alexio::Input::KeyHeld(A))
-			mPosition.x -= moveSpeed * Timer::DetlaTime();
-		if (Alexio::Input::KeyHeld(D))
+		if (Alexio::Input::KeyHeld(LEFT))
 			mPosition.x += moveSpeed * Timer::DetlaTime();
-		if (Alexio::Input::KeyHeld(W))
-			mPosition.y -= moveSpeed * Timer::DetlaTime();
-		if (Alexio::Input::KeyHeld(S))
+		if (Alexio::Input::KeyHeld(RIGHT))
+			mPosition.x -= moveSpeed * Timer::DetlaTime();
+		if (Alexio::Input::KeyHeld(UP))
 			mPosition.y += moveSpeed * Timer::DetlaTime();
+		if (Alexio::Input::KeyHeld(DOWN))
+			mPosition.y -= moveSpeed * Timer::DetlaTime();
 
 		mView = glm::translate(glm::mat4x4(1.0f), glm::vec3(mPosition, 0.0f)) *
 			glm::rotate(glm::mat4x4(1.0f), glm::radians(mRotation), glm::vec3(0, 0, 1));
-
-		//mView = glm::inverse(transform);
+		
 		mViewProjection = mProjection * mView;
 
 		Renderer::GetCameraBuffer()->SetData(&mViewProjection, sizeof(glm::mat4x4));

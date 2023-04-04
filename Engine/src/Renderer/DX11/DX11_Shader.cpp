@@ -97,7 +97,6 @@ namespace Alexio
 	void DX11_Shader::Bind() const
 	{
 		AIO_DX11_RENDERER->GetDeviceContext()->IASetInputLayout(mVertexLayout.Get());
-		
 
 		AIO_DX11_RENDERER->GetDeviceContext()->VSSetShader(mVertexShader.Get(), NULL, 0);
 		AIO_DX11_RENDERER->GetDeviceContext()->PSSetShader(mPixelShader.Get(), NULL, 0);
