@@ -12,6 +12,7 @@ namespace Alexio
 		~GLFW_Window();
 		void Initialize();
 		void PollEvents() override;
+		glm::vec2 GetMousePositionFromWindowAPI() override;
 
 		inline void* GetHandle() const override { return mHandle; }
 		inline void SetEventCallback(const EventCallbackFn& callback) override { mData.eventCallback = callback; }

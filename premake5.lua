@@ -1,5 +1,5 @@
 workspace "AlexioEngine"
-   startproject "Game"
+   startproject "Sandbox"
    configurations { "Debug", "Release" }
    architecture "x64"
 
@@ -82,8 +82,8 @@ project "Engine"
       defines { "AIO_RELEASE" }
       optimize "On"
 
-project "Game"
-   location "Game"
+project "Sandbox"
+   location "Sandbox"
    kind "ConsoleApp"
    language "C++"
    cppdialect "C++17"

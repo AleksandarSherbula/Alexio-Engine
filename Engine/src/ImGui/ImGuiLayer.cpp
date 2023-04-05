@@ -58,8 +58,8 @@ namespace Alexio
         ImGui::Text("Graphics API: %s", apiName);
         ImGui::Text("Application Time: %.2f", Timer::Get());
         ImGui::Text("Application framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::Text("Random number generated (0 - 10) %d", Random::Range(0, 10));
-        if (ImGui::CollapsingHeader("Rendering Stats")) {
+        if (ImGui::CollapsingHeader("Rendering Stats")) 
+        {
             ImGui::Indent(); // indent the contents of the list
             ImGui::Text("Lines: %d", Renderer::Stats.Lines);
             ImGui::Text("DrawLine: %d", Renderer::Stats.DrawLine);

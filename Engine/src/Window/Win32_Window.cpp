@@ -123,6 +123,14 @@ namespace Alexio
 		}		
 	}
 
+	glm::vec2 Win32_Window::GetMousePositionFromWindowAPI()
+	{
+		POINT mousePos;
+		GetCursorPos(&mousePos);
+		ScreenToClient(mHandle, &mousePos);
+		return glm::vec2(mousePos.x, mousePos.y);
+	}
+
 	LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))

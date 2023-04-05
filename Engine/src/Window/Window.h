@@ -17,6 +17,7 @@ namespace Alexio
 		virtual void Initialize() = 0;
 
 		virtual void PollEvents() = 0;
+		virtual glm::vec2 GetMousePositionFromWindowAPI() = 0;
 
 		inline uint32_t GetWidth()  const { return mWidth; }
 		inline uint32_t GetHeight() const { return mHeight; }

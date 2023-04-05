@@ -13,13 +13,15 @@ namespace Alexio
 		AIO_ASSERT(!sInstance, "An instance of Engine has already been made");
 		sInstance = this;
 
-		Renderer::SetGraphicsAPI(DirectX11);
-		imgui = new ImGUI();
+		SetGraphicsAPI(OpenGL);
+
 		mRunning = true;
 	}
 
 	void Engine::Run()
 	{
+		imgui = new ImGUI();
+
 		mWindow = Window::Create("Alexio Engine", 1280, 720);
 		mWindow->SetEventCallback(AIO_BIND_EVENT_FN(Engine::OnEvent));
 		Input::SetKeyCodes();
@@ -28,8 +30,6 @@ namespace Alexio
 		Renderer::Init();
 
 		Random::Init();
-
-		AIO_ASSERT(OnStart(), "Failed to initialize application");
 
 		PushOverlay(imgui);
 
@@ -44,7 +44,7 @@ namespace Alexio
 			Renderer::Stats = {0};
 			
 			imgui->Begin();
-			if (!OnUpdate() ||
+			if (Alexio::Input::KeyPressed(ESCAPE) ||
 				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked
 				(Renderer::GetGraphicsAPI() == DirectX11 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
 				mRunning = false;
@@ -56,7 +56,8 @@ namespace Alexio
 
 			Renderer::Flush();
 
-			imgui->OnImGuiRender();
+			for (Layer* layer : mLayerStack)
+				layer->OnImGuiRender();
 
 			imgui->End();
 
@@ -92,6 +93,11 @@ namespace Alexio
 	{
 		mLayerStack.PushOverlay(layer);
 		layer->OnAttach();
+	}
+
+	void Engine::SetGraphicsAPI(GraphicsAPI api)
+	{
+		Renderer::SetGraphicsAPI(api);
 	}
 
 	bool Engine::OnWindowClose(WindowCloseEvent& e)

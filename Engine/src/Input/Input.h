@@ -2,6 +2,8 @@
 
 #include "Input/KeyCodes.h"
 
+#include <glm/glm.hpp>
+
 namespace Alexio
 {
 	class Input
@@ -35,8 +37,9 @@ namespace Alexio
 		static bool KeyHeld(int32_t keycode) { return keyStates[keycode].held; }
 		static bool KeyReleased(int32_t keycode) { return keyStates[keycode].released; }
 
-		static inline bool MouseButtonPressed(int32_t mb) { return mouseButtonStates[mb].pressed; }
-		static inline bool MouseButtonHeld(int32_t mb) { return mouseButtonStates[mb].held; }
-		static inline bool MouseButtonReleased(int32_t mb) { return mouseButtonStates[mb].released; }
+		inline static bool MouseButtonPressed(int32_t mb) { return mouseButtonStates[mb].pressed; }
+		inline static bool MouseButtonHeld(int32_t mb) { return mouseButtonStates[mb].held; }
+		inline static bool MouseButtonReleased(int32_t mb) { return mouseButtonStates[mb].released; }
+		static glm::vec2 GetMousePosition();
 	};
 }

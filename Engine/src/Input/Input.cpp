@@ -1,7 +1,7 @@
 #include "aio_pch.h"
 #include "Input/Input.h"
 
-#include "Renderer/Renderer.h"
+#include "Alexio/Engine.h"
 
 namespace Alexio
 {
@@ -54,6 +54,11 @@ namespace Alexio
 	void Input::UpdateMouseState(int32_t mousebutton, bool state)
 	{
 		newMouseButtonState[mousebutton] = state;
+	}
+
+	glm::vec2 Input::GetMousePosition()
+	{
+		return Engine::GetInstance()->GetWindow()->GetMousePositionFromWindowAPI();
 	}
 
 	void Input::SetKeyCodes()

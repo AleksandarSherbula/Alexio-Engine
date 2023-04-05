@@ -25,14 +25,13 @@ namespace Alexio
 
 		void OnEvent(Event& e);
 
-		virtual bool OnStart() = 0;
-		virtual bool OnUpdate() = 0;
-
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
 		inline Window* GetWindow() const { return mWindow.get(); }
 		inline static Camera* GetCamera() { return sMainCamera.get(); }
+
+		void SetGraphicsAPI(GraphicsAPI api);
 
 		inline void SetFullScreen(bool fullscreen) { mWindow->SetFullScreen(fullscreen); }
 		inline bool IsFullScreen() const { return mWindow->IsFullScreen(); }
