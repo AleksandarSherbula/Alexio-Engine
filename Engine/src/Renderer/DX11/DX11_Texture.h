@@ -14,6 +14,7 @@ namespace Alexio
 
 		void Bind(uint32_t slot) override;
 		void Unbind() override;
+		void* GetBackendID() override;
 
 		void SetData(const void* data, uint32_t size) override;
 	private:

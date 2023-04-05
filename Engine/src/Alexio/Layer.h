@@ -12,7 +12,7 @@ namespace Alexio {
 		Layer(const std::string& name = "Layer");
 		virtual ~Layer() = default;
 
-		virtual void OnAttach() {}
+		virtual void OnStart() {}
 		virtual void OnDetach() {}
 		virtual void OnUpdate(float dt) {}
 		virtual void OnImGuiRender() {}

@@ -153,5 +153,9 @@ namespace Alexio
 	void DX11_Texture::Unbind()
 	{
 	}
+	void* DX11_Texture::GetBackendID()
+	{
+		return mTextureResource.Get();
+	}
 }
 #endif

@@ -91,5 +91,9 @@ namespace Alexio
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+	void* OpenGL_Texture::GetBackendID()
+	{
+		return (void*)GetID();
+	}
 }
 #endif

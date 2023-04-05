@@ -7,7 +7,7 @@
 
 namespace Alexio
 {
-    void ImGUI::OnAttach()
+    void ImGUI::OnStart()
     {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();

@@ -9,7 +9,7 @@ namespace Alexio
 	class ImGUI : public Layer
 	{
 	public:
-		void OnAttach() override;
+		void OnStart() override;
 		void OnDetach() override;
 		void OnImGuiRender() override;
 		void Begin();

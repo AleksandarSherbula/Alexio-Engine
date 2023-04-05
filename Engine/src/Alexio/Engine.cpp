@@ -32,6 +32,8 @@ namespace Alexio
 		Random::Init();
 
 		PushOverlay(imgui);
+		for (Layer* layer : mLayerStack)
+			layer->OnStart();
 
 		Timer::StartApp();
 		while (mRunning)
@@ -44,10 +46,9 @@ namespace Alexio
 			Renderer::Stats = {0};
 			
 			imgui->Begin();
-			if (Alexio::Input::KeyPressed(ESCAPE) ||
-				// Manual code for closing on alt + F4 for Win32 API, since the system keys are not being checked
-				(Renderer::GetGraphicsAPI() == DirectX11 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
-				mRunning = false;
+			// Manual check for closing on alt + F4 for Win32 API, since the system keys are not being checked
+			if ((Renderer::GetGraphicsAPI() == DirectX11 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
+				Close();
 			
 			sMainCamera->OnUpdate(Timer::DetlaTime());
 
@@ -92,7 +93,6 @@ namespace Alexio
 	void Engine::PushOverlay(Layer* layer)
 	{
 		mLayerStack.PushOverlay(layer);
-		layer->OnAttach();
 	}
 
 	void Engine::SetGraphicsAPI(GraphicsAPI api)

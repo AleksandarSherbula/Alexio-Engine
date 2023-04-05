@@ -35,6 +35,8 @@ namespace Alexio
 
 		inline void SetFullScreen(bool fullscreen) { mWindow->SetFullScreen(fullscreen); }
 		inline bool IsFullScreen() const { return mWindow->IsFullScreen(); }
+
+		inline void Close() { if (mRunning) mRunning = false; }
 		
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);

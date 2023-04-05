@@ -13,6 +13,7 @@ namespace Alexio
 
 		virtual void Bind(uint32_t slot) = 0;
 		virtual void Unbind() = 0;
+		virtual void* GetBackendID() = 0;
 
 		virtual void SetData(const void* data, uint32_t size) = 0;
 
