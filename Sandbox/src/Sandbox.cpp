@@ -37,20 +37,23 @@ void MainLayer::OnUpdate(float deltaTime)
 {
     framebuffer->Bind();
 
+    Engine::GetInstance()->GetCamera()->OnUpdate(deltaTime);
+
 	Renderer::Clear(0.0f, 0.8f, 1.0f, 1.0f);
     
-	Alexio::Renderer::DrawRotatedQuad({ -0.9f, -0.9f }, { 0.5f , 0.5f }, { 1.0f, 1.0f, 0.0f, 1.0f }, Alexio::Timer::Get());
+	//Alexio::Renderer::DrawRotatedQuad({ -0.0f, -0.0f }, { 0.5f , 0.5f }, { 1.0f, 1.0f, 0.0f, 1.0f }, Alexio::Timer::Get());
     
 	Alexio::Renderer::DrawCircle({ -0.5f, 0.5f, 0.5f }, { 1.0f, 0.5f, 0.0f, 1.0f }, 0.5f);
     
-	for (int i = 0; i < 1100; i++)
+	for (int i = 0; i < 100; i++)
 		Alexio::Renderer::DrawLine({ -1.7f, -0.9f + (i * 0.1f), 0.5f }, { -1.2f, -0.9f + (i * 0.1f), 0.5f }, { 1.0f, 1.0f, 0.0f, 1.0f });
     
 	Alexio::Renderer::DrawPartialSprite(tileMap, { 0.5f, 0.0f }, { 1.501f, 1.0f }, { 1.0f, 0.0f }, { 16.0f, 16.0f });
 	Alexio::Renderer::DrawSprite(texture, { 0.5f,-1.0f }, { 1.0f, 1.0f });
 	Alexio::Renderer::DrawSprite(texture2, { 0.5f, 0.0f }, { 1.0f, 1.0f });
 	Alexio::Renderer::DrawRotatedSprite(texture, { -0.5f, -0.5f, 1.0f }, { 0.5f, 0.5f }, { 1.0f, 1.0f, 1.0f, 1.0f }, Alexio::Timer::Get());
-
+    
+    Renderer::Flush();
     framebuffer->Unbind();
 }
 
@@ -128,7 +131,7 @@ void MainLayer::OnImGuiRender()
         }
 
         ImGui::Begin("Framebuffer");
-        ImGui::Image(framebuffer->GetColorAttachment(), ImVec2(1280.0f, 720.0f));
+        ImGui::Image(framebuffer->GetColorAttachment(), ImVec2(1280, 720));
         ImGui::End();
 
         ImGui::End();

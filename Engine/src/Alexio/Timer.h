@@ -14,7 +14,7 @@ namespace Alexio
 		static void Update();
 
 		static float Get() { return sAppTime; }
-		inline static float DetlaTime() { return sDeltaTime.count(); }
+		inline static float DeltaTime() { return sDeltaTime.count(); }
 	private:
 		static float sAppTime;
 		static std::chrono::duration<float> sDeltaTime;

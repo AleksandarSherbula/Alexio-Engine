@@ -11,6 +11,7 @@ namespace Alexio
 	OpenGL_Framebuffer::OpenGL_Framebuffer(const FramebufferSpecification& spec)
 	{
 		mSpecification = spec;
+		Invalidate();
 	}
 
 	OpenGL_Framebuffer::~OpenGL_Framebuffer()
@@ -25,8 +26,11 @@ namespace Alexio
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &mColorAttachment);
 		glBindTexture(GL_TEXTURE_2D, mColorAttachment);
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, mSpecification.width, mSpecification.height);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mID, 0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mSpecification.width, mSpecification.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mColorAttachment, 0);
 
 		AIO_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 

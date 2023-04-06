@@ -49,13 +49,9 @@ namespace Alexio
 			// Manual check for closing on alt + F4 for Win32 API, since the system keys are not being checked
 			if ((Renderer::GetGraphicsAPI() == DirectX11 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
 				Close();
-			
-			sMainCamera->OnUpdate(Timer::DetlaTime());
 
 			for (Layer* layer : mLayerStack)
-				layer->OnUpdate(Timer::DetlaTime());
-
-			Renderer::Flush();
+				layer->OnUpdate(Timer::DeltaTime());
 
 			for (Layer* layer : mLayerStack)
 				layer->OnImGuiRender();
