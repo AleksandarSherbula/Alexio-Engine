@@ -18,7 +18,6 @@ Sandbox::~Sandbox()
 MainLayer::MainLayer()
 	: Layer("Main")
 {
-	
 }
 
 void MainLayer::OnStart()
