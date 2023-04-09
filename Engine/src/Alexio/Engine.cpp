@@ -50,9 +50,11 @@ namespace Alexio
 			if ((Renderer::GetGraphicsAPI() == DirectX11 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
 				Close();
 
+			sMainCamera->OnUpdate(Timer::DeltaTime());
+
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate(Timer::DeltaTime());
-
+			
 			for (Layer* layer : mLayerStack)
 				layer->OnImGuiRender();
 

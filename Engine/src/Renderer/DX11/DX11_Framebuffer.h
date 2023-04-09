@@ -14,8 +14,15 @@ namespace Alexio
 		void Bind() const override;
 		void Unbind() const override;
 
-		inline void* GetColorAttachment() const override { return nullptr; }
+		inline void* GetColorAttachment() const override 
+		{ 
+			return mColorAttachmentSRV.Get(); 
+		}
 
 		void Invalidate() override;
+	private:
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> mBackBuffer;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> mFrameBufferRTV;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mColorAttachmentSRV;
 	};
 }

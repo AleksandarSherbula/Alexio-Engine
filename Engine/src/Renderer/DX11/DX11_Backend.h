@@ -4,13 +4,8 @@
 
 #if defined(AIO_API_DX11)
 #include <d3d11.h>
+#include <dxgi.h>
 #include <wrl/client.h>
-
-struct AdapterData
-{
-	IDXGIAdapter* ptr = nullptr;
-	DXGI_ADAPTER_DESC description;
-};
 
 namespace Alexio
 {
@@ -33,7 +28,12 @@ namespace Alexio
 		inline ID3D11Device* GetDevice() const { return mDevice.Get(); }
 		inline ID3D11DeviceContext* GetDeviceContext() const { return mDeviceContext.Get(); }
 		inline IDXGISwapChain* GetSwapChain() const { return mSwapChain.Get(); }
+		inline ID3D11RasterizerState* GetRasterizerState() { return mRasterizerState.Get(); }
+		inline ID3D11BlendState* GetBlendState() { return mBlendState.Get(); }
+
 		inline std::string GetName() const override { return "DirectX 11"; }
+
+
 	private:
 		void ImGuiBackendInit() override;
 		void ImGuiBackendBegin() override;
@@ -52,6 +52,7 @@ namespace Alexio
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> mDepthStencilView;
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> mDepthStencilBuffer;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> mDepthStencilState;
+		
 	};
 
 	std::string ResultInfo(HRESULT hr);

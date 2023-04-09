@@ -128,7 +128,6 @@ namespace Alexio
         shader = Shader::Create("quad", vertexArray);
 
         WhiteTexture = Texture::Create(1, 1, 0xffffffff);
-        WhiteTexture->Bind(TextureSlotIndex);
         TextureIDs[TextureSlotIndex] = WhiteTexture->GetID();
         TextureSlotIndex++;
 	}
@@ -152,6 +151,7 @@ namespace Alexio
 
             vertexArray->Bind();
             shader->Bind();
+            WhiteTexture->Bind(0);
 
             Renderer::DrawIndexed(IndexCount);
             DrawingCount++;

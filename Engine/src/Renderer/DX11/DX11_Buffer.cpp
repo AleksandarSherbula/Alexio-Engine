@@ -19,7 +19,7 @@ namespace Alexio
 		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bufferDesc.MiscFlags = 0;
 
-		HRESULT hr = AIO_DX11_RENDERER->GetDevice()->CreateBuffer(&bufferDesc, nullptr, mBuffer.GetAddressOf());
+		HRESULT hr = AIO_DX11_BACKEND->GetDevice()->CreateBuffer(&bufferDesc, nullptr, mBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex buffer: " + ResultInfo(hr) + "\n");
 	}
 
@@ -38,7 +38,7 @@ namespace Alexio
 		ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
 		vertexBufferData.pSysMem = data;
 
-		HRESULT hr = AIO_DX11_RENDERER->GetDevice()->CreateBuffer(&bufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
+		HRESULT hr = AIO_DX11_BACKEND->GetDevice()->CreateBuffer(&bufferDesc, &vertexBufferData, mBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create vertex buffer: " + ResultInfo(hr) + "\n");
 	}
 
@@ -51,7 +51,7 @@ namespace Alexio
 		UINT stride = mLayout.GetStride();
 		UINT offset = 0;
 
-		AIO_DX11_RENDERER->GetDeviceContext()->IASetVertexBuffers(0, 1, mBuffer.GetAddressOf(), &stride, &offset);
+		AIO_DX11_BACKEND->GetDeviceContext()->IASetVertexBuffers(0, 1, mBuffer.GetAddressOf(), &stride, &offset);
 	}
 
 	void DX11_VertexBuffer::Unbind() const
@@ -61,9 +61,9 @@ namespace Alexio
 	void DX11_VertexBuffer::SetData(const void* data, uint32_t size)
 	{
 		D3D11_MAPPED_SUBRESOURCE resource;
-		AIO_DX11_RENDERER->GetDeviceContext()->Map(mBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+		AIO_DX11_BACKEND->GetDeviceContext()->Map(mBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 		memcpy(resource.pData, data, size);
-		AIO_DX11_RENDERER->GetDeviceContext()->Unmap(mBuffer.Get(), 0);
+		AIO_DX11_BACKEND->GetDeviceContext()->Unmap(mBuffer.Get(), 0);
 	}
 
 	/////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ namespace Alexio
 		ZeroMemory(&indexBufferData, sizeof(indexBufferData));
 		indexBufferData.pSysMem = indices;
 
-		HRESULT hr = AIO_DX11_RENDERER->GetDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, mBuffer.GetAddressOf());
+		HRESULT hr = AIO_DX11_BACKEND->GetDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, mBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create index buffer: " + ResultInfo(hr) + "\n");
 	}
 
@@ -95,7 +95,7 @@ namespace Alexio
 
 	void DX11_IndexBuffer::Bind()
 	{
-		AIO_DX11_RENDERER->GetDeviceContext()->IASetIndexBuffer(mBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		AIO_DX11_BACKEND->GetDeviceContext()->IASetIndexBuffer(mBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	}
 
 	void DX11_IndexBuffer::Unbind()
@@ -152,7 +152,7 @@ namespace Alexio
 		bufferDesc.ByteWidth = static_cast<UINT>(block_size + (16 - (block_size % 16)));
 		bufferDesc.StructureByteStride = 0;
 		
-		HRESULT hr = AIO_DX11_RENDERER->GetDevice()->CreateBuffer(&bufferDesc, 0, mBuffer.GetAddressOf());
+		HRESULT hr = AIO_DX11_BACKEND->GetDevice()->CreateBuffer(&bufferDesc, 0, mBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create constant buffer: " + ResultInfo(hr) + "\n");
 	}
 
@@ -163,15 +163,15 @@ namespace Alexio
 	void DX11_ConstantBuffer::SetData(const void* data, uint32_t size)
 	{
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		HRESULT hr = AIO_DX11_RENDERER->GetDeviceContext()->Map(mBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		HRESULT hr = AIO_DX11_BACKEND->GetDeviceContext()->Map(mBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to map constant buffer: " + ResultInfo(hr) + "\n");
 		memcpy(mappedResource.pData, data, size);
-		AIO_DX11_RENDERER->GetDeviceContext()->Unmap(mBuffer.Get(), 0);
+		AIO_DX11_BACKEND->GetDeviceContext()->Unmap(mBuffer.Get(), 0);
 	}
 
 	void DX11_ConstantBuffer::Bind(uint32_t binding)
 	{
-		AIO_DX11_RENDERER->GetDeviceContext()->VSSetConstantBuffers(binding, 1, mBuffer.GetAddressOf());
+		AIO_DX11_BACKEND->GetDeviceContext()->VSSetConstantBuffers(binding, 1, mBuffer.GetAddressOf());
 	}
 }
 #endif

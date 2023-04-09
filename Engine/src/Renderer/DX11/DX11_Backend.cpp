@@ -89,6 +89,8 @@ namespace Alexio
 		hr = mDevice->CreateRasterizerState(&rasterizerDesc, mRasterizerState.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create rasterizer state: " + ResultInfo(hr) + "\n");
 
+		mDeviceContext->RSSetState(mRasterizerState.Get());
+
 		D3D11_BLEND_DESC blendDesc;
 		ZeroMemory(&blendDesc, sizeof(blendDesc));
 
@@ -101,39 +103,12 @@ namespace Alexio
 
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 
 		hr = mDevice->CreateBlendState(&blendDesc, mBlendState.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create blend state: " + ResultInfo(hr) + "\n");
 
-		D3D11_TEXTURE2D_DESC depthStencilDesc;
-		depthStencilDesc.Width = Engine::GetInstance()->GetWindow()->GetWidth();
-		depthStencilDesc.Height = Engine::GetInstance()->GetWindow()->GetHeight();
-		depthStencilDesc.MipLevels = 1;
-		depthStencilDesc.ArraySize = 1;
-		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthStencilDesc.SampleDesc.Count = 1;
-		depthStencilDesc.SampleDesc.Quality = 0;
-		depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		depthStencilDesc.CPUAccessFlags = 0;
-		depthStencilDesc.MiscFlags = 0;
-
-		hr = mDevice->CreateTexture2D(&depthStencilDesc, NULL, mDepthStencilBuffer.GetAddressOf());
-		AIO_ASSERT(SUCCEEDED(hr), "Failed to create depth stencil buffer: " + ResultInfo(hr) + "\n");
-
-		hr = mDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), NULL, mDepthStencilView.GetAddressOf());
-		AIO_ASSERT(SUCCEEDED(hr), "Failed to create depth stencil view: " + ResultInfo(hr) + "\n");	
-
-		//Create depth stencil state
-		D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
-		ZeroMemory(&depthStencilStateDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-		depthStencilStateDesc.DepthEnable = true;
-		depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-
-		mDevice->CreateDepthStencilState(&depthStencilStateDesc, mDepthStencilState.GetAddressOf());
-		AIO_ASSERT(SUCCEEDED(hr), "Failed to create depth stencil state: " + ResultInfo(hr) + "\n");
+		mDeviceContext->OMSetBlendState(mBlendState.Get(), nullptr, 0xffffff);
 
 		AIO_LOG_INFO("DirectX 11 Initialized");
 	}
@@ -182,12 +157,9 @@ namespace Alexio
 
 	void DX11_Backend::Clear(float r, float g, float b, float a)
 	{
-		FLOAT bgColor[] = { r, g, b, a };
+		FLOAT bgColor[] = { r, g, b, a };		
 		mDeviceContext->ClearRenderTargetView(mRenderTargetView.Get(), bgColor);
-		mDeviceContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), nullptr);
-		mDeviceContext->RSSetState(mRasterizerState.Get());
-		mDeviceContext->OMSetBlendState(mBlendState.Get(), NULL, 0xffffff);
 	}
 
 	void DX11_Backend::SwapBuffer()
@@ -231,7 +203,7 @@ namespace Alexio
 	{
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
 		mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(backBuffer.GetAddressOf()));
-		mDevice->CreateRenderTargetView(backBuffer.Get(), NULL, mRenderTargetView.GetAddressOf());
+		mDevice->CreateRenderTargetView(backBuffer.Get(), NULL, mRenderTargetView.GetAddressOf());		
 	}
 
 	void DX11_Backend::CleanRenderTarget()
