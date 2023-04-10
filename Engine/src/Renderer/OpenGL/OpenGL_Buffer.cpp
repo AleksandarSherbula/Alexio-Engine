@@ -84,9 +84,8 @@ namespace Alexio
 	void OpenGL_VertexArray::Bind() const
 	{
 		glBindVertexArray(mID);
-
-		for (auto& vertexBuffer : mVertexBuffers)
-			vertexBuffer->Bind();
+		
+		mVertexBuffer->Bind();
 
 		if (mIndexBuffer != nullptr)
 			mIndexBuffer->Bind();
@@ -94,8 +93,7 @@ namespace Alexio
 
 	void OpenGL_VertexArray::Unbind() const
 	{
-		for (auto& vertexBuffer : mVertexBuffers)
-			vertexBuffer->Unbind();
+		mVertexBuffer->Unbind();
 		if (mIndexBuffer != nullptr)
 			mIndexBuffer->Unbind();
 
@@ -104,14 +102,11 @@ namespace Alexio
 
 	void OpenGL_VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
-		mVertexBuffers.push_back(vertexBuffer);
+		mVertexBuffer = vertexBuffer;
 	}
 
 	void OpenGL_VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
-		glBindVertexArray(mID);
-
-		indexBuffer->Bind();
 		mIndexBuffer = indexBuffer;
 	}
 

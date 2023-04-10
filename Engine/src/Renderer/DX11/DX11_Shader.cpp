@@ -65,15 +65,13 @@ namespace Alexio
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to load shader: " + mVertexSource + "\n" + reinterpret_cast<const char*>(vertexErrorMessage->GetBufferPointer()));		
 
 		std::vector<D3D11_INPUT_ELEMENT_DESC> layoutDesc;
-		for (auto& vertexBuffer : vertexArray->GetVertexBuffers())
-		{
-			auto& layout = vertexBuffer->GetLayout();
-			for (auto& element : layout)
-			{
-				layoutDesc.push_back({ element.name.c_str(), 0, ShaderDataTypeSizeToDX11BaseType(element.type), 0, element.offset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
-			}
-		}
+		auto& vertexBuffer = vertexArray->GetVertexBuffer();
 		
+		auto& layout = vertexBuffer->GetLayout();
+		for (auto& element : layout)
+		{
+			layoutDesc.push_back({ element.name.c_str(), 0, ShaderDataTypeSizeToDX11BaseType(element.type), 0, element.offset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+		}
 
 		hr = AIO_DX11_BACKEND->GetDevice()->CreateInputLayout(layoutDesc.data(),
 			layoutDesc.size(),

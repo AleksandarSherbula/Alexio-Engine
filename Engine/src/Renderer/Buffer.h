@@ -144,12 +144,12 @@ namespace Alexio
 		virtual void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) = 0;
 		virtual void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) = 0;
 
-		inline std::vector<Ref<VertexBuffer>> GetVertexBuffers() { return mVertexBuffers; }
+		inline Ref<VertexBuffer> GetVertexBuffer() { return mVertexBuffer; }
 		inline Ref<IndexBuffer> GetIndexBuffer() { return mIndexBuffer; }
 
 		static Ref<VertexArray> Create();
 	protected:
-		std::vector<Ref<VertexBuffer>> mVertexBuffers;
+		Ref<VertexBuffer> mVertexBuffer;
 		Ref<IndexBuffer> mIndexBuffer;
 	};
 

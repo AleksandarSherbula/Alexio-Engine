@@ -4,7 +4,7 @@
 namespace Alexio
 {
 	Engine* Engine::sInstance = nullptr;
-	Ref<Camera> Engine::sMainCamera = nullptr;
+	
 
 	Engine::Engine()
 	{
@@ -20,18 +20,17 @@ namespace Alexio
 
 	void Engine::Run()
 	{
-		imgui = new ImGUI();
+		mImGuiLayer = new ImGuiLayer();
 
 		mWindow = Window::Create("Alexio Engine", 1280, 720);
 		mWindow->SetEventCallback(AIO_BIND_EVENT_FN(Engine::OnEvent));
 		Input::SetKeyCodes();
 
-		sMainCamera = CreateRef<Camera>(static_cast<float>(mWindow->GetWidth()) / static_cast<float>(mWindow->GetHeight()));
 		Renderer::Init();
 
 		Random::Init();
 
-		PushOverlay(imgui);
+		PushOverlay(mImGuiLayer);
 		for (Layer* layer : mLayerStack)
 			layer->OnStart();
 
@@ -45,12 +44,10 @@ namespace Alexio
 
 			Renderer::Stats = {0};
 			
-			imgui->Begin();
+			mImGuiLayer->Begin();
 			// Manual check for closing on alt + F4 for Win32 API, since the system keys are not being checked
 			if ((Renderer::GetGraphicsAPI() == DirectX11 && (Input::KeyHeld(L_ALT) && Input::KeyPressed(F4))))
 				Close();
-
-			sMainCamera->OnUpdate(Timer::DeltaTime());
 
 			for (Layer* layer : mLayerStack)
 				layer->OnUpdate(Timer::DeltaTime());
@@ -58,7 +55,7 @@ namespace Alexio
 			for (Layer* layer : mLayerStack)
 				layer->OnImGuiRender();
 
-			imgui->End();
+			mImGuiLayer->End();
 
 			Renderer::GetBackend()->SwapBuffer();
 		}
@@ -71,10 +68,7 @@ namespace Alexio
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(AIO_BIND_EVENT_FN(Engine::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(AIO_BIND_EVENT_FN(Engine::OnWindowResize));
-
-		if (sMainCamera != nullptr)
-			sMainCamera->OnEvent(e);
-
+				
 		for (auto it = mLayerStack.end(); it != mLayerStack.begin();)
 		{
 			(*--it)->OnEvent(e);

@@ -7,7 +7,7 @@
 
 namespace Alexio
 {
-    void ImGUI::OnStart()
+    void ImGuiLayer::OnStart()
     {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -27,23 +27,33 @@ namespace Alexio
         Renderer::GetBackend()->ImGuiBackendInit();
     }
 
-    void ImGUI::Begin()
+    void ImGuiLayer::Begin()
     {
         Renderer::GetBackend()->ImGuiBackendBegin();
     }
 
-    void ImGUI::End()
+    void ImGuiLayer::End()
     {
         Renderer::GetBackend()->ImGuiBackendUpdate();
     }
 
-    void ImGUI::OnDetach()
+    void ImGuiLayer::OnDetach()
     {
         Renderer::GetBackend()->ImGuiBackendShutDown();
         ImGui::DestroyContext();
     }
 
-    void ImGUI::OnImGuiRender()
+    void ImGuiLayer::OnImGuiRender()
     {
+    }
+
+    void ImGuiLayer::OnEvent(Event& e)
+    {
+        if (mBlockEvents)
+        {
+            ImGuiIO& io = ImGui::GetIO();
+            e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+            e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+        }
     }
 }

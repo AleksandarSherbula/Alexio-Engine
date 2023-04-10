@@ -117,8 +117,7 @@ namespace Alexio
 
 	void DX11_VertexArray::Bind() const
 	{
-		for (auto& vertexBuffer : mVertexBuffers)
-			vertexBuffer->Bind();
+		mVertexBuffer->Bind();
 		if (mIndexBuffer != nullptr)
 			mIndexBuffer->Bind();
 	}
@@ -129,7 +128,7 @@ namespace Alexio
 
 	void DX11_VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
-		mVertexBuffers.push_back(vertexBuffer);	
+		mVertexBuffer = vertexBuffer;
 	}
 
 	void DX11_VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)

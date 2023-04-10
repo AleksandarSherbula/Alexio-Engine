@@ -29,7 +29,6 @@ namespace Alexio
 		void PushOverlay(Layer* layer);
 
 		inline Window* GetWindow() const { return mWindow.get(); }
-		inline static Camera* GetCamera() { return sMainCamera.get(); }
 
 		void SetGraphicsAPI(GraphicsAPI api);
 
@@ -37,7 +36,7 @@ namespace Alexio
 		inline bool IsFullScreen() const { return mWindow->IsFullScreen(); }
 
 		inline void Close() { if (mRunning) mRunning = false; }
-		
+		ImGuiLayer* GetImGuiLayer() { return mImGuiLayer; }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
@@ -46,9 +45,8 @@ namespace Alexio
 		bool mRunning;
 		
 		LayerStack mLayerStack;
-		ImGUI* imgui;
+		ImGuiLayer* mImGuiLayer;
 	private:
 		static Engine* sInstance;
-		static Ref<Camera> sMainCamera;
 	};
 }

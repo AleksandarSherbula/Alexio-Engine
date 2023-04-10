@@ -4,9 +4,11 @@
 
 namespace Alexio
 {
+    Ref<Camera> EditorLayer::sCamera = nullptr;
+
     Editor::Editor()
     {
-        SetGraphicsAPI(DirectX11);
+        SetGraphicsAPI(OpenGL);
 
         PushLayer(new EditorLayer());
     }
@@ -22,6 +24,9 @@ namespace Alexio
 
     void EditorLayer::OnStart()
     {
+        sCamera = CreateRef<Camera>(static_cast<float>(Engine::GetInstance()->GetWindow()->GetWidth()) 
+            / static_cast<float>(Engine::GetInstance()->GetWindow()->GetHeight()));
+
         texture = Texture::Create("assets/images/AlexioLogo(Black).png");
         texture2 = Texture::Create("assets/images/awesomeface.png");
         tileMap = Texture::Create("assets/images/tilemap.png");
@@ -35,6 +40,9 @@ namespace Alexio
 
     void EditorLayer::OnUpdate(float deltaTime)
     {
+        if (mViewportFocused)
+            sCamera->OnUpdate(deltaTime);
+
         framebuffer->Bind();
         framebuffer->Clear(0.0f, 0.8f, 1.0f, 1.0f);
 
@@ -111,7 +119,6 @@ namespace Alexio
             apiName = "DirectX11";
         #endif
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
         ImGui::Begin("App Info");
         ImGui::Text("Graphics API: %s", apiName);
         ImGui::Text("");
@@ -136,13 +143,19 @@ namespace Alexio
         ImGui::Unindent();
         ImGui::End();
 
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
         ImGui::Begin("Viewport");
+
+        mViewportFocused = ImGui::IsWindowFocused();
+        mViewportHovered = ImGui::IsWindowHovered();
+        Engine::GetInstance()->GetImGuiLayer()->BlockEvents(!mViewportFocused || !mViewportHovered);
+
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         if (mViewportSize != *((glm::vec2*)&viewportPanelSize))
         {
             framebuffer->OnResize(viewportPanelSize.x, viewportPanelSize.y);
             mViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-            Engine::GetCamera()->UpdateProjection(viewportPanelSize.x, viewportPanelSize.y); // TO DO: Set a Camera to run only for Viewport
+            sCamera->UpdateProjection(viewportPanelSize.x, viewportPanelSize.y); // TO DO: Set a Camera to run only for Viewport
         }
         ImVec2 uv0 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(0, 1) : ImVec2(0, 0); // Top-left UV coordinate
         ImVec2 uv1 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(1, 0) : ImVec2(1, 1); // Bottom-right UV coordinate
@@ -156,5 +169,7 @@ namespace Alexio
 
     void EditorLayer::OnEvent(Event& event)
     {
+        if (sCamera != nullptr && mViewportFocused)
+            sCamera->OnEvent(event);
     }
 }

@@ -72,27 +72,24 @@ namespace Alexio
 
 	void OpenGL_Shader::Compile(const Ref<VertexArray>& vertexArray)
 	{
-		// Move into shader class
 		vertexArray->Bind();
 
-		for (auto& vertexBuffer : vertexArray->GetVertexBuffers())
-		{
-			AIO_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "VertexBuffer has no layout");
-			vertexBuffer->Bind();
+		auto& vertexBuffer = vertexArray->GetVertexBuffer();
+		AIO_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "VertexBuffer has no layout");
+		vertexBuffer->Bind();
 
-			uint32_t index = 0;
-			auto& layout = vertexBuffer->GetLayout();
-			for (auto& element : layout)
-			{
-				glEnableVertexAttribArray(index);
-				glVertexAttribPointer(index,
-					element.GetComponentCount(),
-					ShaderDataTypeSizeToOpenGLBaseType(element.type),
-					element.normalized ? GL_TRUE : GL_FALSE,
-					layout.GetStride(),
-					(const void*)element.offset);
-				index++;
-			}
+		uint32_t index = 0;
+		auto& layout = vertexBuffer->GetLayout();
+		for (auto& element : layout)
+		{
+			glEnableVertexAttribArray(index);
+			glVertexAttribPointer(index,
+				element.GetComponentCount(),
+				ShaderDataTypeSizeToOpenGLBaseType(element.type),
+				element.normalized ? GL_TRUE : GL_FALSE,
+				layout.GetStride(),
+				(const void*)element.offset);
+			index++;
 		}
 
 		GLuint program = glCreateProgram();
