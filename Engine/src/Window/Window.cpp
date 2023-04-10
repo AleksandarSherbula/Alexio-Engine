@@ -11,13 +11,13 @@ namespace Alexio
     {
     }
 
-    Ref<Window> Window::Create(const std::string& title, uint32_t width, uint32_t height)
+    Ref<Window> Window::Create(const std::string& title, uint32_t width, uint32_t height, const EventCallbackFn& eventCallback)
     {
 #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
         switch (Renderer::GetGraphicsAPI())
         {
-            case OpenGL:  return CreateRef<GLFW_Window>(title, width, height);
-            case DirectX11: return CreateRef<Win32_Window>(title, width, height);
+            case OpenGL:  return CreateRef<GLFW_Window>(title, width, height, eventCallback);
+            case DirectX11: return CreateRef<Win32_Window>(title, width, height, eventCallback);
         }
 #elif defined(AIO_API_OPENGL)
         return std::make_shared<GLFW_Window>(title, width, height);

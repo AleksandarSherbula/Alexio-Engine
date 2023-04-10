@@ -14,12 +14,15 @@ namespace Alexio
         AIO_LOG_ERROR("GLFW Error {0}: {1}", error, description);
     }
 
-    GLFW_Window::GLFW_Window(const std::string& title, uint32_t width, uint32_t height)
+    GLFW_Window::GLFW_Window(const std::string& title, uint32_t width, uint32_t height, const EventCallbackFn& eventCallback)
     {
         mTitle = title;
-        mWidth = mCallbackData.width = width;
-        mHeight = mCallbackData.height = height;
+        mCallbackData.width = width;
+        mCallbackData.height = height;
+        mCallbackData.eventCallback = eventCallback;
         mIsFullScreen = false;
+
+        Initialize();
     }
 
     GLFW_Window::~GLFW_Window()
@@ -42,9 +45,9 @@ namespace Alexio
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-        //glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
+        glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
 
-        mHandle = glfwCreateWindow(mWidth, mHeight, mTitle.c_str(), NULL, NULL);
+        mHandle = glfwCreateWindow(mCallbackData.width, mCallbackData.height, mTitle.c_str(), NULL, NULL);
         AIO_ASSERT(mHandle, "Failed to create a GLFW window");
 
         glfwMakeContextCurrent(mHandle);
@@ -76,14 +79,14 @@ namespace Alexio
         if (fullscreen)
         {
             glfwGetWindowPos(mHandle, &mPosX, &mPosY);
-            glfwGetWindowSize(mHandle, (int32_t*)&mWidth, (int32_t*)&mHeight);
+            glfwGetWindowSize(mHandle, (int32_t*)&mCallbackData.width, (int32_t*)&mCallbackData.height);
 
             const GLFWvidmode* mode = glfwGetVideoMode(mMonitor);
             glfwSetWindowMonitor(mHandle, mMonitor, 0, 0, mode->width, mode->height, 0);
         }
         else
         {
-            glfwSetWindowMonitor(mHandle, nullptr, mPosX, mPosY, mWidth, mHeight, (int32_t)Renderer::GetBackend()->IsVSync());
+            glfwSetWindowMonitor(mHandle, nullptr, mPosX, mPosY, mCallbackData.width, mCallbackData.height, (int32_t)Renderer::GetBackend()->IsVSync());
         }
         mIsFullScreen = fullscreen;
     }

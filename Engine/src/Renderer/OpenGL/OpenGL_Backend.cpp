@@ -90,12 +90,12 @@ namespace Alexio
 	void OpenGL_Backend::SwapBuffer()
 	{
 		glfwSwapInterval((int)mVSync);
-		glfwSwapBuffers((GLFWwindow*)Engine::GetInstance()->GetWindow()->GetHandle());
+		glfwSwapBuffers((GLFWwindow*)Engine::Get()->GetWindow()->GetHandle());
 	}
 
 	void OpenGL_Backend::ImGuiBackendInit()
 	{
-		ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)Engine::GetInstance()->GetWindow()->GetHandle(), true);
+		ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)Engine::Get()->GetWindow()->GetHandle(), true);
 		ImGui_ImplOpenGL3_Init("#version 450 core");
 	}
 

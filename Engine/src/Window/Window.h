@@ -26,24 +26,18 @@ namespace Alexio
 		virtual void PollEvents() = 0;
 		virtual glm::vec2 GetMousePositionFromWindowAPI() = 0;
 
-		inline uint32_t GetWidth()  const { return mWidth; }
-		inline uint32_t GetHeight() const { return mHeight; }
+		inline uint32_t GetWidth()  const { return mCallbackData.width; }
+		inline uint32_t GetHeight() const { return mCallbackData.height; }
 
-		inline void SetWidth(uint32_t width) { mWidth = width; }
-		inline void SetHeight(uint32_t height) { mHeight = height; }
 		inline bool IsFullScreen() const { return mIsFullScreen; }
-
-		inline void SetEventCallback(const EventCallbackFn& callback) { mCallbackData.eventCallback = callback; Initialize(); }
 
 		WindowDataFromCallback GetCallbackData() { return mCallbackData; }
 		
 		virtual void* GetHandle() const = 0;
 		virtual void SetFullScreen(bool fullscreen) = 0;
 	
-		static Ref<Window> Create(const std::string& title, uint32_t width, uint32_t height);
+		static Ref<Window> Create(const std::string& title, uint32_t width, uint32_t height, const EventCallbackFn& eventCallback);
 	protected:
-		uint32_t mWidth;
-		uint32_t mHeight;
 		std::string mTitle;
 
 		WindowDataFromCallback mCallbackData;

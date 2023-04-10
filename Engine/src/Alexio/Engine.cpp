@@ -22,8 +22,7 @@ namespace Alexio
 	{
 		mImGuiLayer = new ImGuiLayer();
 
-		mWindow = Window::Create("Alexio Engine", 1280, 720);
-		mWindow->SetEventCallback(AIO_BIND_EVENT_FN(Engine::OnEvent));
+		mWindow = Window::Create("Alexio Engine", 1280, 720, AIO_BIND_EVENT_FN(Engine::OnEvent));
 		Input::SetKeyCodes();
 
 		Renderer::Init();

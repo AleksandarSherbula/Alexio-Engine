@@ -37,7 +37,7 @@ namespace Alexio
 		scd.BufferDesc.RefreshRate.Denominator = 1;
 		scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		scd.OutputWindow = (HWND)Engine::GetInstance()->GetWindow()->GetHandle();
+		scd.OutputWindow = (HWND)Engine::Get()->GetWindow()->GetHandle();
 		scd.SampleDesc.Count = 1;
 		scd.SampleDesc.Quality = 0;
 		scd.Windowed = TRUE;
@@ -73,8 +73,8 @@ namespace Alexio
 		ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
 		viewport.TopLeftX = 0;
 		viewport.TopLeftY = 0;
-		viewport.Width = Engine::GetInstance()->GetWindow()->GetCallbackData().width;
-		viewport.Height = Engine::GetInstance()->GetWindow()->GetCallbackData().height;
+		viewport.Width = Engine::Get()->GetWindow()->GetCallbackData().width;
+		viewport.Height = Engine::Get()->GetWindow()->GetCallbackData().height;
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 
@@ -156,7 +156,7 @@ namespace Alexio
 
 	void DX11_Backend::ImGuiBackendInit()
 	{
-		HWND hwnd = (HWND)Engine::GetInstance()->GetWindow()->GetHandle();
+		HWND hwnd = (HWND)Engine::Get()->GetWindow()->GetHandle();
 		ImGui_ImplWin32_Init(hwnd);
 		ImGui_ImplDX11_Init(mDevice.Get(), mDeviceContext.Get());
 	}

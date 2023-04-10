@@ -8,7 +8,7 @@ namespace Alexio
 	class Win32_Window : public Window
 	{
 	public:
-		Win32_Window(const std::string& title, uint32_t width, uint32_t height);
+		Win32_Window(const std::string& title, uint32_t width, uint32_t height, const EventCallbackFn& eventCallback);
 		~Win32_Window();
 		void Initialize() override;
 		void PollEvents() override;

@@ -8,7 +8,7 @@ namespace Alexio
 
     Editor::Editor()
     {
-        SetGraphicsAPI(OpenGL);
+        SetGraphicsAPI(DirectX11);
 
         PushLayer(new EditorLayer());
     }
@@ -24,15 +24,15 @@ namespace Alexio
 
     void EditorLayer::OnStart()
     {
-        sCamera = CreateRef<Camera>(static_cast<float>(Engine::GetInstance()->GetWindow()->GetWidth()) 
-            / static_cast<float>(Engine::GetInstance()->GetWindow()->GetHeight()));
+        sCamera = CreateRef<Camera>(static_cast<float>(Engine::Get()->ScreenWidth())
+            / static_cast<float>(Engine::Get()->ScreenHeight()));
 
-        texture = Texture::Create("assets/images/AlexioLogo(Black).png");
+        texture =  Texture::Create("assets/images/AlexioLogo(Black).png");
         texture2 = Texture::Create("assets/images/awesomeface.png");
-        tileMap = Texture::Create("assets/images/tilemap.png");
+        tileMap =  Texture::Create("assets/images/tilemap.png");
 
-        fbSpec.width = Engine::GetInstance()->GetWindow()->GetWidth();
-        fbSpec.height = Engine::GetInstance()->GetWindow()->GetHeight();
+        fbSpec.width = Engine::Get()->ScreenWidth();
+        fbSpec.height = Engine::Get()->ScreenHeight();
         fbSpec.samples = 1;
 
         framebuffer = Framebuffer::Create(fbSpec);
@@ -103,7 +103,7 @@ namespace Alexio
             if (ImGui::BeginMenu("File"))
             {
                 if (ImGui::MenuItem("Exit", NULL, false, dockSpaceOpen != NULL))
-                    Engine::GetInstance()->Close();
+                    Engine::Get()->Close();
                 ImGui::EndMenu();
             }
 
@@ -148,7 +148,7 @@ namespace Alexio
 
         mViewportFocused = ImGui::IsWindowFocused();
         mViewportHovered = ImGui::IsWindowHovered();
-        Engine::GetInstance()->GetImGuiLayer()->BlockEvents(!mViewportFocused || !mViewportHovered);
+        Engine::Get()->GetImGuiLayer()->BlockEvents(!mViewportFocused || !mViewportHovered);
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         if (mViewportSize != *((glm::vec2*)&viewportPanelSize))

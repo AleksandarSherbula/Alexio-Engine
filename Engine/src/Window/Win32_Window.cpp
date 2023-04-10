@@ -13,17 +13,19 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 namespace Alexio
 {
-	static EventCallbackFn ecFn;
-
-	Win32_Window::Win32_Window(const std::string& title, uint32_t width, uint32_t height)
+	Win32_Window::Win32_Window(const std::string& title, uint32_t width, uint32_t height, const EventCallbackFn& eventCallback)
 	{
 		mTitle = title;
-		mWidth = width;
-		mHeight = height;
+		mCallbackData.width = width;
+		mCallbackData.height = height;
+		mCallbackData.eventCallback = eventCallback;
+
 		mWindowClass = L"Win32 Class";
 		m_hInstance = GetModuleHandle(nullptr);
 
 		mIsFullScreen = false;
+
+		Initialize();
 	}
 
 	Win32_Window::~Win32_Window()
@@ -54,8 +56,8 @@ namespace Alexio
 		
 		windowRect.left = 50;
 		windowRect.top = 50;
-		windowRect.right = windowRect.left + mWidth;
-		windowRect.bottom = windowRect.top + mHeight;
+		windowRect.right = windowRect.left + mCallbackData.width;
+		windowRect.bottom = windowRect.top + mCallbackData.height;
 		if (!AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE))
 			std::cout << "Failed to adjust window" << std::endl;
 
@@ -65,7 +67,7 @@ namespace Alexio
 		
 		AIO_ASSERT(mHandle, "Failed to create a Window: {0}", ResultInfo(GetLastError()));
 		
-		ShowWindow(mHandle, SW_SHOW);
+		ShowWindow(mHandle, SW_MAXIMIZE);
 		SetForegroundWindow(mHandle);
 		SetFocus(mHandle);
 	}

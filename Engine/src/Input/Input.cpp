@@ -58,7 +58,7 @@ namespace Alexio
 
 	glm::vec2 Input::GetMousePosition()
 	{
-		return Engine::GetInstance()->GetWindow()->GetMousePositionFromWindowAPI();
+		return Engine::Get()->GetWindow()->GetMousePositionFromWindowAPI();
 	}
 
 	void Input::SetKeyCodes()
@@ -71,10 +71,8 @@ namespace Alexio
 		mapKeys[0x5A] = Key::Z;
 
 #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
-        if (Renderer::GetGraphicsAPI() == OpenGL)
-            SetGLFWKeyCodes(mapKeys);
-        else if (Renderer::GetGraphicsAPI() == DirectX11)
-            SetWin32KeyCodes(mapKeys);
+        if (Renderer::GetGraphicsAPI() == OpenGL) SetGLFWKeyCodes(mapKeys);
+        else if (Renderer::GetGraphicsAPI() == DirectX11) SetWin32KeyCodes(mapKeys);
 #elif defined(AIO_API_OPENGL)
         SetGLFWKeyCodes(mapKeys);
 #elif defined(AIO_API_DX11)

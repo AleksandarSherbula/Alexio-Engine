@@ -8,7 +8,7 @@ namespace Alexio
 	class GLFW_Window : public Window
 	{
 	public:
-		GLFW_Window(const std::string& title, uint32_t width, uint32_t height);
+		GLFW_Window(const std::string& title, uint32_t width, uint32_t height, const EventCallbackFn& eventCallback);
 		~GLFW_Window();
 		void Initialize();
 		void PollEvents() override;
