@@ -34,22 +34,6 @@ namespace Alexio
 		Microsoft::WRL::ComPtr<ID3D11Buffer> mBuffer;
 	};
 
-	class DX11_VertexArray : public VertexArray
-	{
-	public:
-		DX11_VertexArray();
-		~DX11_VertexArray();
-
-		void Bind() const override;
-		void Unbind() const override;
-
-		void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer);
-		void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer);
-
-	private:
-		uint32_t mID;
-	};
-
 	class DX11_ConstantBuffer : public ConstantBuffer
 	{
 	public:

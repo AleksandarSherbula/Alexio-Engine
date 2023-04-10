@@ -26,37 +26,37 @@ namespace Alexio
 		return DXGI_FORMAT_UNKNOWN;
 	}
 
-	DX11_Shader::DX11_Shader(const std::string& name, const Ref<VertexArray>& vertexArray)
+	DX11_Shader::DX11_Shader(const std::string& name, const Ref<VertexBuffer>& vertexBuffer)
 	{
 		mName = name;
 		mVertexSource = mPixelSource = "assets/shaders/DX11/" + name + ".hlsl";
 
-		Compile(vertexArray);
+		Compile(vertexBuffer);
 	}
 
-	DX11_Shader::DX11_Shader(const std::string& name, const std::string& filepath, const Ref<VertexArray>& vertexArray)
+	DX11_Shader::DX11_Shader(const std::string& name, const std::string& filepath, const Ref<VertexBuffer>& vertexBuffer)
 	{
 		mName = name;
 		mVertexSource = filepath;
 		mPixelSource = filepath;
 
-		Compile(vertexArray);
+		Compile(vertexBuffer);
 	}
 
-	DX11_Shader::DX11_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexArray>& vertexArray)
+	DX11_Shader::DX11_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexBuffer>& vertexBuffer)
 	{
 		mName = name;
 		mVertexSource = vertexSrc;
 		mPixelSource = pixelSrc;
 
-		Compile(vertexArray);
+		Compile(vertexBuffer);
 	}
 
 	DX11_Shader::~DX11_Shader()
 	{
 	}
 
-	void DX11_Shader::Compile(const Ref<VertexArray>& vertexArray)
+	void DX11_Shader::Compile(const Ref<VertexBuffer>& vertexBuffer)
 	{
 		////////// VERTEX SHADER /////////////////
 		ID3DBlob* vertexErrorMessage;
@@ -65,7 +65,6 @@ namespace Alexio
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to load shader: " + mVertexSource + "\n" + reinterpret_cast<const char*>(vertexErrorMessage->GetBufferPointer()));		
 
 		std::vector<D3D11_INPUT_ELEMENT_DESC> layoutDesc;
-		auto& vertexBuffer = vertexArray->GetVertexBuffer();
 		
 		auto& layout = vertexBuffer->GetLayout();
 		for (auto& element : layout)

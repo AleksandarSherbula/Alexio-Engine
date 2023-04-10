@@ -135,24 +135,6 @@ namespace Alexio
 		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 	};
 
-	class VertexArray
-	{
-	public:
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
-
-		virtual void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) = 0;
-		virtual void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) = 0;
-
-		inline Ref<VertexBuffer> GetVertexBuffer() { return mVertexBuffer; }
-		inline Ref<IndexBuffer> GetIndexBuffer() { return mIndexBuffer; }
-
-		static Ref<VertexArray> Create();
-	protected:
-		Ref<VertexBuffer> mVertexBuffer;
-		Ref<IndexBuffer> mIndexBuffer;
-	};
-
 	class ConstantBuffer
 	{
 	public:

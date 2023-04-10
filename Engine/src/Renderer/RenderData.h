@@ -29,7 +29,6 @@ namespace Alexio
 		static LineVertex* CurrentVertexPtr;
 		static const size_t MaxLinesPerBatch = 1000;
 	private:
-		static Ref<VertexArray>  vertexArray;
 		static Ref<VertexBuffer> vertexBuffer;
 		static Ref<Shader>       shader;
 		static LineVertex* baseVertexBuffer;
@@ -63,7 +62,6 @@ namespace Alexio
 
 		static Ref<Texture>      WhiteTexture;
 	private:
-		static Ref<VertexArray>  vertexArray;
 		static Ref<VertexBuffer> vertexBuffer;
 		static Ref<IndexBuffer>  indexBuffer;
 		static Ref<Shader>       shader;
@@ -95,7 +93,6 @@ namespace Alexio
 		static CircleVertex* CurrentVertexPtr;
 		static const size_t MaxCirclesPerBatch = 1000;
 	private:
-		static Ref<VertexArray>  vertexArray;
 		static Ref<VertexBuffer> vertexBuffer;
 		static Ref<IndexBuffer>  indexBuffer;
 		static Ref<Shader>       shader;

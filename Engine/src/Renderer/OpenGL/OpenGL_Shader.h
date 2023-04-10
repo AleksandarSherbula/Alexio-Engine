@@ -8,9 +8,9 @@ namespace Alexio
 	class OpenGL_Shader : public Shader
 	{
 	public:
-		OpenGL_Shader(const std::string& name, const Ref<VertexArray>& vertexArray);
-		OpenGL_Shader(const std::string& name, const std::string& filepath, const Ref<VertexArray>& vertexArray);
-		OpenGL_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexArray>& vertexArray);
+		OpenGL_Shader(const std::string& name, const Ref<VertexBuffer>& vertexBuffer);
+		OpenGL_Shader(const std::string& name, const std::string& filepath, const Ref<VertexBuffer>& vertexBuffer);
+		OpenGL_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexBuffer>& vertexBuffer);
 		~OpenGL_Shader();
 
 
@@ -27,7 +27,7 @@ namespace Alexio
 		void SetMat3x3(const std::string& name, const glm::mat3x3& matrix) override;
 		void SetMat4x4(const std::string& name, const glm::mat4x4& matrix) override;
 	private:
-		void Compile(const Ref<VertexArray>& vertexArray);
+		void Compile(const Ref<VertexBuffer>& vertexBuffer);
 		std::string ReadFile(const std::string& filepath);
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
 	private:

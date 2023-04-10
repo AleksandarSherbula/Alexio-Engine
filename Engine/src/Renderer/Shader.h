@@ -13,9 +13,9 @@ namespace Alexio
 	public:
 		virtual ~Shader() = default;
 
-		static Ref<Shader> Create(const std::string& name, const Ref<VertexArray>& vertexArray);
-		static Ref<Shader> Create(const std::string& name, const std::string& filepath, const Ref<VertexArray>& vertexArray);
-		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexArray>& vertexArray);
+		static Ref<Shader> Create(const std::string& name, const Ref<VertexBuffer>& vertexBuffer);
+		static Ref<Shader> Create(const std::string& name, const std::string& filepath, const Ref<VertexBuffer>& vertexBuffer);
+		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexBuffer>& vertexBuffer);
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;

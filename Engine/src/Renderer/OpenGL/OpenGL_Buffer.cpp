@@ -7,36 +7,49 @@ namespace Alexio
 {
 	OpenGL_VertexBuffer::OpenGL_VertexBuffer(uint32_t size)
 	{
-		glCreateBuffers(1, &mID);
-		glBindBuffer(GL_ARRAY_BUFFER, mID);
+		glCreateVertexArrays(1, &mVAO);
+		glBindVertexArray(mVAO);
+
+		glCreateBuffers(1, &mVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+
+		glBindVertexArray(0);
 	}
 
 	OpenGL_VertexBuffer::OpenGL_VertexBuffer(const void* data, uint32_t size)
 	{
-		glCreateBuffers(1, &mID);
-		glBindBuffer(GL_ARRAY_BUFFER, mID);
+		glCreateVertexArrays(1, &mVAO);
+		glBindVertexArray(mVAO);
+
+		glCreateBuffers(1, &mVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 		glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
+
+		glBindVertexArray(0);
 	}
 
 	OpenGL_VertexBuffer::~OpenGL_VertexBuffer()
 	{
-		glDeleteBuffers(1, &mID);
+		glDeleteBuffers(1, &mVBO);
+		glDeleteVertexArrays(1, &mVAO);
 	}
 
 	void OpenGL_VertexBuffer::Bind() const
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, mID);
+		glBindVertexArray(mVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 	}
 
 	void OpenGL_VertexBuffer::Unbind() const
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 	}
 
 	void OpenGL_VertexBuffer::SetData(const void* data, uint32_t size)
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, mID);
+		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 	}
 
@@ -65,50 +78,10 @@ namespace Alexio
 	{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
-	
+
 	/////////////////////////////////////////////////////
-	///////////VERTEX ARRAY//////////////////////////////
+	///////////UNIFORM BUFFER////////////////////////////
 	/////////////////////////////////////////////////////
-
-	OpenGL_VertexArray::OpenGL_VertexArray()
-	{
-		glCreateVertexArrays(1, &mID);
- 		glBindVertexArray(mID);
-	}
-
-	OpenGL_VertexArray::~OpenGL_VertexArray()
-	{
-		glDeleteVertexArrays(1, &mID);
-	}
-
-	void OpenGL_VertexArray::Bind() const
-	{
-		glBindVertexArray(mID);
-		
-		mVertexBuffer->Bind();
-
-		if (mIndexBuffer != nullptr)
-			mIndexBuffer->Bind();
-	}
-
-	void OpenGL_VertexArray::Unbind() const
-	{
-		mVertexBuffer->Unbind();
-		if (mIndexBuffer != nullptr)
-			mIndexBuffer->Unbind();
-
-		glBindVertexArray(0);
-	}
-
-	void OpenGL_VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
-	{
-		mVertexBuffer = vertexBuffer;
-	}
-
-	void OpenGL_VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
-	{
-		mIndexBuffer = indexBuffer;
-	}
 
 	UniformBuffer::UniformBuffer(uint32_t block_size, uint32_t slot)
 	{

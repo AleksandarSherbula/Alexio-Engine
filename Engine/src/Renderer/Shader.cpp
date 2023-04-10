@@ -7,13 +7,13 @@
 
 namespace Alexio
 {
-    Ref<Shader> Shader::Create(const std::string& name, const Ref<VertexArray>& vertexArray)
+    Ref<Shader> Shader::Create(const std::string& name, const const Ref<VertexBuffer>& vertexBuffer)
     {
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             switch (Renderer::GetGraphicsAPI())
             {
-            case OpenGL:    return CreateRef<OpenGL_Shader>(name, vertexArray);
-            case DirectX11: return CreateRef<DX11_Shader>(name, vertexArray);
+            case OpenGL:    return CreateRef<OpenGL_Shader>(name, vertexBuffer);
+            case DirectX11: return CreateRef<DX11_Shader>(name, vertexBuffer);
             }
         #elif defined(AIO_API_OPENGL)
             return CreateRef<OpenGL_Shader>(name, va);
@@ -24,13 +24,13 @@ namespace Alexio
             return nullptr;
     }
 
-    Ref<Shader> Shader::Create(const std::string& name, const std::string& filepath, const Ref<VertexArray>& vertexArray)
+    Ref<Shader> Shader::Create(const std::string& name, const std::string& filepath, const Ref<VertexBuffer>& vertexBuffer)
 	{
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             switch (Renderer::GetGraphicsAPI())
             {
-            case OpenGL:    return CreateRef<OpenGL_Shader>(name, filepath, vertexArray);
-            case DirectX11: return CreateRef<DX11_Shader>(name, filepath, vertexArray);
+            case OpenGL:    return CreateRef<OpenGL_Shader>(name, filepath, vertexBuffer);
+            case DirectX11: return CreateRef<DX11_Shader>(name, filepath, vertexBuffer);
             }
         #elif defined(AIO_API_OPENGL)
             return CreateRef<OpenGL_Shader>(name, filepath, vertexArray);
@@ -41,13 +41,13 @@ namespace Alexio
             return nullptr;
 	}
 
-    Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexArray>& vertexArray)
+    Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexBuffer>& vertexBuffer)
     {
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             switch (Renderer::GetGraphicsAPI())
             {
-            case OpenGL:    return CreateRef<OpenGL_Shader>(name, vertexSrc, pixelSrc, vertexArray);
-            case DirectX11: return CreateRef<DX11_Shader>(name, vertexSrc, pixelSrc, vertexArray);
+            case OpenGL:    return CreateRef<OpenGL_Shader>(name, vertexSrc, pixelSrc, vertexBuffer);
+            case DirectX11: return CreateRef<DX11_Shader>(name, vertexSrc, pixelSrc, vertexBuffer);
             }
         #elif defined(AIO_API_OPENGL)
             return CreateRef<OpenGL_Shader>(name, vertexSrc, pixelSrc, vertexArray);

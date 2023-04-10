@@ -18,8 +18,8 @@ namespace Alexio
 
 		void SetData(const void* data, uint32_t size) override;
 	private:
-		uint32_t mID;
-		
+		uint32_t mVBO;
+		uint32_t mVAO;
 	};
 
 	class OpenGL_IndexBuffer : public IndexBuffer
@@ -30,22 +30,6 @@ namespace Alexio
 
 		void Bind() override;
 		void Unbind() override;
-
-	private:
-		uint32_t mID;
-	};
-
-	class OpenGL_VertexArray : public VertexArray
-	{
-	public:
-		OpenGL_VertexArray();
-		~OpenGL_VertexArray();
-
-		void Bind() const override;
-		void Unbind() const override;
-
-		void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer);
-		void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer);
 
 	private:
 		uint32_t mID;

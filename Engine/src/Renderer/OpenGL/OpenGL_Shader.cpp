@@ -39,30 +39,30 @@ namespace Alexio
 	}
 
 
-	OpenGL_Shader::OpenGL_Shader(const std::string& name, const Ref<VertexArray>& vertexArray)
+	OpenGL_Shader::OpenGL_Shader(const std::string& name, const Ref<VertexBuffer>& vertexBuffer)
 	{
 		mName = name;
 		std::string source = ReadFile("assets/shaders/OpenGL/" + name + ".glsl");
 		mShaderSource = PreProcess(source);
 
-		Compile(vertexArray);
+		Compile(vertexBuffer);
 	}
 
-	OpenGL_Shader::OpenGL_Shader(const std::string& name, const std::string& filepath, const Ref<VertexArray>& vertexArray)
+	OpenGL_Shader::OpenGL_Shader(const std::string& name, const std::string& filepath, const Ref<VertexBuffer>& vertexBuffer)
 	{
 		mName = name;
 		std::string source = ReadFile(filepath);
 		mShaderSource = PreProcess(source);
 
-		Compile(vertexArray);
+		Compile(vertexBuffer);
 	}
 
-	OpenGL_Shader::OpenGL_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexArray>& vertexArray)
+	OpenGL_Shader::OpenGL_Shader(const std::string& name, const std::string& vertexSrc, const std::string& pixelSrc, const Ref<VertexBuffer>& vertexBuffer)
 	{
 		mShaderSource[GL_VERTEX_SHADER] = vertexSrc;
 		mShaderSource[GL_FRAGMENT_SHADER] = pixelSrc;
 
-		Compile(vertexArray);
+		Compile(vertexBuffer);
 	}
 
 	OpenGL_Shader::~OpenGL_Shader()
@@ -70,11 +70,8 @@ namespace Alexio
 		glDeleteProgram(mID);
 	}
 
-	void OpenGL_Shader::Compile(const Ref<VertexArray>& vertexArray)
-	{
-		vertexArray->Bind();
-
-		auto& vertexBuffer = vertexArray->GetVertexBuffer();
+	void OpenGL_Shader::Compile(const Ref<VertexBuffer>& vertexBuffer)
+	{		
 		AIO_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "VertexBuffer has no layout");
 		vertexBuffer->Bind();
 

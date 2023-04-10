@@ -6,7 +6,6 @@
 
 namespace Alexio
 {
-    Ref<VertexArray>  LineRenderer::vertexArray = nullptr;
     Ref<VertexBuffer> LineRenderer::vertexBuffer = nullptr;
     Ref<Shader>       LineRenderer::shader = nullptr;
 
@@ -22,7 +21,6 @@ namespace Alexio
 
         baseVertexBuffer = new LineVertex[maxVertexCount];
 
-        vertexArray = VertexArray::Create();
         vertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(LineVertex));
 
         BufferLayout layout =
@@ -32,9 +30,7 @@ namespace Alexio
         };
         vertexBuffer->SetLayout(layout);
 
-        vertexArray->AddVertexBuffer(vertexBuffer);
-
-        shader = Shader::Create("line", vertexArray);
+        shader = Shader::Create("line", vertexBuffer);
     }
 
     void LineRenderer::StartNewBatch()
@@ -51,7 +47,7 @@ namespace Alexio
             uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)baseVertexBuffer);
             vertexBuffer->SetData(baseVertexBuffer, dataSize);
 
-            vertexArray->Bind();
+            vertexBuffer->Bind();
             shader->Bind();
 
             Renderer::Draw(LineCount * 2);
@@ -59,7 +55,7 @@ namespace Alexio
             Renderer::Stats.DrawLine++;
 
             shader->Unbind();
-            vertexArray->Unbind();
+            vertexBuffer->Unbind();
         }
         StartNewBatch();
     }
@@ -69,8 +65,6 @@ namespace Alexio
         delete[] baseVertexBuffer;
     }
 
-
-    Ref<VertexArray>  QuadRenderer::vertexArray  = nullptr;
     Ref<VertexBuffer> QuadRenderer::vertexBuffer = nullptr;
     Ref<IndexBuffer>  QuadRenderer::indexBuffer  = nullptr;
     Ref<Shader>       QuadRenderer::shader       = nullptr;
@@ -107,8 +101,6 @@ namespace Alexio
         
             indexOffset += 4;
         }
-
-        vertexArray  = VertexArray::Create();
         vertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(QuadVertex));
         indexBuffer  = IndexBuffer::Create(indices, maxIndexCount);
         delete[] indices;
@@ -122,10 +114,7 @@ namespace Alexio
         };
         vertexBuffer->SetLayout(layout);
 
-        vertexArray->AddVertexBuffer(vertexBuffer);
-        vertexArray->SetIndexBuffer(indexBuffer);
-
-        shader = Shader::Create("quad", vertexArray);
+        shader = Shader::Create("quad", vertexBuffer);
 
         WhiteTexture = Texture::Create(1, 1, 0xffffffff);
         TextureIDs[TextureSlotIndex] = WhiteTexture->GetID();
@@ -149,7 +138,8 @@ namespace Alexio
             uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)baseVertexBuffer);
             vertexBuffer->SetData(baseVertexBuffer, dataSize);
 
-            vertexArray->Bind();
+            vertexBuffer->Bind();
+            indexBuffer->Bind();
             shader->Bind();
             WhiteTexture->Bind(0);
 
@@ -158,7 +148,8 @@ namespace Alexio
             Renderer::Stats.DrawQuad++;
 
             shader->Unbind();
-            vertexArray->Unbind();
+            indexBuffer->Unbind();
+            vertexBuffer->Unbind();
         }
         StartNewBatch();
     }
@@ -168,7 +159,6 @@ namespace Alexio
         delete[] baseVertexBuffer;
     }
 
-    Ref<VertexArray>  CircleRenderer::vertexArray = nullptr;
     Ref<VertexBuffer> CircleRenderer::vertexBuffer = nullptr;
     Ref<IndexBuffer>  CircleRenderer::indexBuffer = nullptr;
     Ref<Shader>       CircleRenderer::shader = nullptr;
@@ -201,8 +191,6 @@ namespace Alexio
 
             indexOffset += 4;
         }
-
-        vertexArray = VertexArray::Create();
         vertexBuffer = VertexBuffer::Create(maxVertexCount * sizeof(CircleVertex));
         indexBuffer = IndexBuffer::Create(indices, maxIndexCount);
         delete[] indices;
@@ -217,10 +205,7 @@ namespace Alexio
         };
         vertexBuffer->SetLayout(layout);
 
-        vertexArray->AddVertexBuffer(vertexBuffer);
-        vertexArray->SetIndexBuffer(indexBuffer);
-
-        shader = Shader::Create("circle", vertexArray);
+        shader = Shader::Create("circle", vertexBuffer);
     }
 
     void CircleRenderer::StartNewBatch()
@@ -239,7 +224,8 @@ namespace Alexio
             uint32_t dataSize = (uint32_t)((uint8_t*)CurrentVertexPtr - (uint8_t*)baseVertexBuffer);
             vertexBuffer->SetData(baseVertexBuffer, dataSize);
 
-            vertexArray->Bind();
+            vertexBuffer->Bind();
+            indexBuffer->Bind();
             shader->Bind();
 
             Renderer::DrawIndexed(IndexCount);
@@ -247,7 +233,8 @@ namespace Alexio
             Renderer::Stats.DrawCircle++;
 
             shader->Unbind();
-            vertexArray->Unbind();
+            indexBuffer->Unbind();
+            vertexBuffer->Unbind();
         }
         StartNewBatch();
     }

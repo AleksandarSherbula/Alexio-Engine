@@ -103,40 +103,6 @@ namespace Alexio
 	}
 
 	/////////////////////////////////////////////////////
-	///////////VERTEX DATA///////////////////////////////
-	/////////////////////////////////////////////////////
-
-	DX11_VertexArray::DX11_VertexArray()
-	{
-		
-	}
-
-	DX11_VertexArray::~DX11_VertexArray()
-	{
-	}
-
-	void DX11_VertexArray::Bind() const
-	{
-		mVertexBuffer->Bind();
-		if (mIndexBuffer != nullptr)
-			mIndexBuffer->Bind();
-	}
-
-	void DX11_VertexArray::Unbind() const
-	{
-	}
-
-	void DX11_VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
-	{
-		mVertexBuffer = vertexBuffer;
-	}
-
-	void DX11_VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
-	{		
-		mIndexBuffer = indexBuffer;
-	}
-
-	/////////////////////////////////////////////////////
 	///////////CONSTANT BUFFER///////////////////////////
 	/////////////////////////////////////////////////////
 
