@@ -13,10 +13,10 @@
 #endif
 
 #if defined (AIO_API_OPENGL)
-#define AIO_OPENGL_BACKEND dynamic_cast<OpenGL_Backend*>(Renderer::GetBackend())
+#define AIO_OPENGL_BACKEND dynamic_cast<OpenGL_Backend*>(Renderer::GetBackend().get())
 #endif
 #if defined (AIO_API_DX11)
-#define AIO_DX11_BACKEND  dynamic_cast<DX11_Backend*>(Renderer::GetBackend())
+#define AIO_DX11_BACKEND  dynamic_cast<DX11_Backend*>(Renderer::GetBackend().get())
 #endif
 #if defined (AIO_API_DX11) && !defined(AIO_PLATFORM_WINDOWS)
 #error  DirectX11 is only supported on Windows

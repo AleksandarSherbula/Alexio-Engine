@@ -15,7 +15,6 @@ namespace Alexio
 		glm::vec2 GetMousePositionFromWindowAPI() override;
 
 		inline void* GetHandle() const override { return mHandle; }
-		void SetEventCallback(const EventCallbackFn& callback) override;
 		void SetFullScreen(bool fullscreen) override;
 	private:
 		HWND mHandle;

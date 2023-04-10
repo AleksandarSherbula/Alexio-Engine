@@ -1,5 +1,5 @@
 workspace "AlexioEngine"
-   startproject "Sandbox"
+   startproject "Editor"
    configurations { "Debug", "Release" }
    architecture "x64"
 
@@ -82,8 +82,8 @@ project "Engine"
       defines { "AIO_RELEASE" }
       optimize "On"
 
-project "Sandbox"
-   location "Sandbox"
+project "Editor"
+   location "Editor"
    kind "ConsoleApp"
    language "C++"
    cppdialect "C++17"
@@ -127,4 +127,51 @@ project "Sandbox"
       defines
       {
          "AIO_PLATFORM_WINDOWS"
-      }  
+      }
+      
+   project "Sandbox"
+      location "Sandbox"
+      kind "ConsoleApp"
+      language "C++"
+      cppdialect "C++17"
+      staticruntime "On"
+      
+      targetdir "build/%{prj.name}/bin/%{cfg.system}/%{cfg.buildcfg}-%{cfg.architecture}"
+      objdir    "build/%{prj.name}/intermediate/%{cfg.system}/%{cfg.buildcfg}-%{cfg.architecture}"
+      
+      files
+      {
+         "%{prj.name}/src/**.h",
+         "%{prj.name}/src/**.cpp"
+      }
+   
+      includedirs
+      {
+         "Engine/dependecies/spdlog/include",
+         "Engine/src",
+         "Engine/dependecies/",
+         "%{IncludeDir.ImGUI}",
+         "%{IncludeDir.GLM}"
+      }
+   
+      links
+      {
+         "Engine"
+      }
+   
+      filter "configurations:Debug"
+         defines { "AIO_DEBUG" }
+         symbols "On"
+      
+      filter "configurations:Release"
+         defines { "AIO_RELEASE" }
+         optimize "On"
+   
+      filter "system:windows"
+         staticruntime "On"
+         systemversion "latest"
+         
+         defines
+         {
+            "AIO_PLATFORM_WINDOWS"
+         }      

@@ -5,6 +5,8 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/DX11/DX11_Backend.h"
 
+#include "Alexio/Engine.h"
+
 #include <imgui.h>
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -15,9 +17,9 @@ namespace Alexio
 
 	Win32_Window::Win32_Window(const std::string& title, uint32_t width, uint32_t height)
 	{
+		mTitle = title;
 		mWidth = width;
 		mHeight = height;
-		mTitle = title;
 		mWindowClass = L"Win32 Class";
 		m_hInstance = GetModuleHandle(nullptr);
 
@@ -57,24 +59,15 @@ namespace Alexio
 		if (!AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE))
 			std::cout << "Failed to adjust window" << std::endl;
 
-		DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-		DWORD dwStyle = WS_CAPTION | WS_SYSMENU | WS_VISIBLE | WS_THICKFRAME;
-
 		mHandle = CreateWindowEx(0, mWindowClass, StringToWide(mTitle).c_str(), WS_OVERLAPPEDWINDOW,
 			windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
-			NULL, NULL, m_hInstance, NULL);
+			NULL, NULL, m_hInstance, &mCallbackData);
 		
 		AIO_ASSERT(mHandle, "Failed to create a Window: {0}", ResultInfo(GetLastError()));
-
-		ShowWindow(mHandle, SW_SHOWDEFAULT);
+		
+		ShowWindow(mHandle, SW_MAXIMIZE);
 		SetForegroundWindow(mHandle);
 		SetFocus(mHandle);
-	}
-
-	void Win32_Window::SetEventCallback(const EventCallbackFn& callback)
-	{		
-		ecFn = callback;
-		Initialize();
 	}
 
 	void Win32_Window::SetFullScreen(bool fullscreen)
@@ -139,26 +132,40 @@ namespace Alexio
 		// WINDOW EVENTS
 		switch (uMsg)
 		{
+		case WM_CREATE:
+		{
+			CREATESTRUCT* createStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
+			WindowDataFromCallback* data = reinterpret_cast<WindowDataFromCallback*>(createStruct->lpCreateParams);
+			SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(data));
+			return 0;
+		}
 		case WM_SIZE:
 		{			
 			UINT width = LOWORD(lParam);
 			UINT height = HIWORD(lParam);
 
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+			data->width = width;
+			data->height = height;
+			
 			WindowResizeEvent event(width, height);
-			ecFn(event);
+			data->eventCallback(event);
 			return 0;
 		}
 		case WM_CLOSE:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			WindowCloseEvent event;
-			ecFn(event);
+			data->eventCallback(event);
 			return 0;
 		}
-
 
 		// KEY EVENTS
 		case WM_SYSKEYDOWN:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			int32_t keycode;
 			int32_t isRight = (lParam >> 24) & 0x01;
 
@@ -170,12 +177,14 @@ namespace Alexio
 				keycode = Input::mapKeys[wParam];
 			}
 			KeyPressedEvent event(wParam, LOWORD(lParam));
-			ecFn(event);
+			data->eventCallback(event);
 			Input::UpdateKeyState(keycode, true);
 			return 0;
 		}
 		case WM_SYSKEYUP:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			int32_t keycode;
 			int32_t isRight = (lParam >> 24) & 0x01;
 
@@ -187,14 +196,16 @@ namespace Alexio
 				keycode = Input::mapKeys[wParam];
 			}
 			KeyPressedEvent event(wParam, LOWORD(lParam));
-			ecFn(event);
+			data->eventCallback(event);
 			Input::UpdateKeyState(keycode, false);
 			return 0;
 		}
 		case WM_KEYDOWN:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			KeyPressedEvent event(wParam, LOWORD(lParam));
-			ecFn(event);
+			data->eventCallback(event);
 
 			int32_t keycode;
 			bool isRight;
@@ -220,8 +231,11 @@ namespace Alexio
 		}
 		case WM_KEYUP:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			KeyReleasedEvent event(wParam);
-			ecFn(event);
+			data->eventCallback(event);
+			
 
 			int32_t keycode;
 			int32_t isRight;
@@ -249,30 +263,40 @@ namespace Alexio
 		// MOUSE PRESS EVENTS
 		case WM_LBUTTONDOWN:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			MouseButtonPressedEvent event(MK_LBUTTON);
-			ecFn(event);
+			data->eventCallback(event);
+			
 			Input::UpdateMouseState(L_BUTTON, true);
 			return 0;
 		}
 		case WM_RBUTTONDOWN:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);			
+
 			MouseButtonPressedEvent event(MK_RBUTTON);
-			ecFn(event);
+			data->eventCallback(event);
+			
 			Input::UpdateMouseState(R_BUTTON, true);
 			return 0;
 		}
 		case WM_MBUTTONDOWN:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			MouseButtonPressedEvent event(MK_MBUTTON);
-			ecFn(event);
+			data->eventCallback(event);
 			Input::UpdateMouseState(M_BUTTON, true);
 			return 0;
 		}
 		case WM_XBUTTONDOWN:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			int mouseButton = (wParam & MK_XBUTTON1) | (wParam & MK_XBUTTON2);
 			MouseButtonPressedEvent event(mouseButton);
-			ecFn(event);
+			data->eventCallback(event);
 			if (mouseButton == 32)
 				mouseButton = X_BUTTON1;
 			else if (mouseButton == 64)
@@ -284,32 +308,40 @@ namespace Alexio
 		// MOUSE RELEASE EVENTS
 		case WM_LBUTTONUP:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			MouseButtonReleasedEvent event(MK_LBUTTON);
-			ecFn(event);
+			data->eventCallback(event);
 			Input::UpdateMouseState(L_BUTTON, false);
 			return 0;
 		}
 		case WM_RBUTTONUP:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			MouseButtonReleasedEvent event(MK_RBUTTON);
-			ecFn(event);
+			data->eventCallback(event);
 			Input::UpdateMouseState(R_BUTTON, false);
 			return 0;
 		}
 		case WM_MBUTTONUP:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			MouseButtonReleasedEvent event(MK_MBUTTON);
-			ecFn(event);
+			data->eventCallback(event);
 			Input::UpdateMouseState(M_BUTTON, false);
 			return 0;
 		}
 		case WM_XBUTTONUP:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			UINT xbuttoncode = wParam;
 			if (wParam == 131072)		xbuttoncode = (wParam | 0x0040) & 0x0040;
 			else if (wParam == 65536)	xbuttoncode = (wParam | 0x0020) & 0x0020;
 			MouseButtonReleasedEvent event(xbuttoncode);
-			ecFn(event);
+			data->eventCallback(event);
 			if (xbuttoncode == 32)
 				xbuttoncode = X_BUTTON1;
 			else if (xbuttoncode == 64)
@@ -321,17 +353,21 @@ namespace Alexio
 		// MOUSE SCROLL EVENTS
 		case WM_MOUSEWHEEL:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			// I have no mouse to test the x-axis scrolling so for now it's set to 0.
 			MouseScrolledEvent event(0, GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA);
-			ecFn(event);
+			data->eventCallback(event);
 			return 0;
 		}
 
 		// MOUSE MOVE EVENTS
 		case WM_MOUSEMOVE:
 		{
+			WindowDataFromCallback* data = (WindowDataFromCallback*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
 			MouseMovedEvent event((float)LOWORD(lParam), (float)HIWORD(lParam));
-			ecFn(event);
+			data->eventCallback(event);
 			return 0;
 		}
 

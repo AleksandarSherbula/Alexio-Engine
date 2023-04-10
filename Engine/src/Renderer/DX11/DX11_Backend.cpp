@@ -15,7 +15,6 @@ namespace Alexio
 {
 	DX11_Backend* DX11_Backend::sInstance = nullptr;
 
-
 	DX11_Backend::DX11_Backend()
 	{
 		AIO_ASSERT(!sInstance, "DirectX11 backend has already been made");
@@ -74,8 +73,8 @@ namespace Alexio
 		ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
 		viewport.TopLeftX = 0;
 		viewport.TopLeftY = 0;
-		viewport.Width = (FLOAT)Engine::GetInstance()->GetWindow()->GetWidth();
-		viewport.Height = (FLOAT)Engine::GetInstance()->GetWindow()->GetHeight();
+		viewport.Width = Engine::GetInstance()->GetWindow()->GetCallbackData().width;
+		viewport.Height = Engine::GetInstance()->GetWindow()->GetCallbackData().height;
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 
@@ -110,17 +109,16 @@ namespace Alexio
 
 		mDeviceContext->OMSetBlendState(mBlendState.Get(), nullptr, 0xffffff);
 
+		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), nullptr);
+
 		AIO_LOG_INFO("DirectX 11 Initialized");
 	}
 
 	void DX11_Backend::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
-		if (mDevice != nullptr)
-		{
-			CleanRenderTarget();
-			mSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
-			CreateRenderTarget();
-		}
+		CleanRenderTarget();
+		mSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+		CreateRenderTarget();
 
 		D3D11_VIEWPORT viewport;
 		ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
@@ -134,17 +132,6 @@ namespace Alexio
 
 	void DX11_Backend::Draw(uint32_t vertexCount)
 	{
-		// Currently not in function. To be reworked
-		/*
-		D3D_PRIMITIVE_TOPOLOGY mode = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		switch (vertexCount)
-		{
-		case 0: AIO_LOG_ERROR("No vertices found");        break;
-		case 1: mode = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST; break;
-		case 2: mode = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;  break;
-		}
-		*/
-
 		mDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 		mDeviceContext->Draw(vertexCount, 0);
 	}
@@ -157,7 +144,7 @@ namespace Alexio
 
 	void DX11_Backend::Clear(float r, float g, float b, float a)
 	{
-		FLOAT bgColor[] = { r, g, b, a };		
+		FLOAT bgColor[] = { r, g, b, a };
 		mDeviceContext->ClearRenderTargetView(mRenderTargetView.Get(), bgColor);
 		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), nullptr);
 	}
@@ -203,13 +190,18 @@ namespace Alexio
 	{
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
 		mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(backBuffer.GetAddressOf()));
-		mDevice->CreateRenderTargetView(backBuffer.Get(), NULL, mRenderTargetView.GetAddressOf());		
+		mDevice->CreateRenderTargetView(backBuffer.Get(), NULL, mRenderTargetView.GetAddressOf());
 	}
 
 	void DX11_Backend::CleanRenderTarget()
 	{
 		if (mRenderTargetView)
 			mRenderTargetView->Release();
+	}
+
+	void DX11_Backend::SetRenderTarget()
+	{
+		mDeviceContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), nullptr);
 	}
 }
 #endif

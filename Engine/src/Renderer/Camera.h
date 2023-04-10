@@ -20,7 +20,9 @@ namespace Alexio
 		bool OnMouseScroll(MouseScrolledEvent& e);
 
 		void OnUpdate(float dt);
-		void UpdateProjection();
+		void UpdateProjection(float width, float height);
+
+		void OnResize(float width, float height);
 	private:
 		glm::vec2 mPosition;
 		float mRotation;

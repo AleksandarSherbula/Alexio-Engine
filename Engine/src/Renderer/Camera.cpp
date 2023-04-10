@@ -46,13 +46,13 @@ namespace Alexio
 		float moveSpeed = mZoomLevel;
 		
 		if (Alexio::Input::KeyHeld(LEFT))
-			mPosition.x += moveSpeed * Timer::DeltaTime();
-		if (Alexio::Input::KeyHeld(RIGHT))
 			mPosition.x -= moveSpeed * Timer::DeltaTime();
+		if (Alexio::Input::KeyHeld(RIGHT))
+			mPosition.x += moveSpeed * Timer::DeltaTime();
 		if (Alexio::Input::KeyHeld(UP))
-			mPosition.y += moveSpeed * Timer::DeltaTime();
-		if (Alexio::Input::KeyHeld(DOWN))
 			mPosition.y -= moveSpeed * Timer::DeltaTime();
+		if (Alexio::Input::KeyHeld(DOWN))
+			mPosition.y += moveSpeed * Timer::DeltaTime();
 
 		mView = glm::translate(glm::mat4x4(1.0f), glm::vec3(mPosition, 0.0f)) *
 			glm::rotate(glm::mat4x4(1.0f), glm::radians(mRotation), glm::vec3(0, 0, 1));
@@ -63,8 +63,14 @@ namespace Alexio
 		Renderer::GetCameraBuffer()->Bind(0);
 	}
 
-	void Camera::UpdateProjection()
+	void Camera::UpdateProjection(float width, float height)
 	{
-		
+		mAspectRatio = width / height;
+		mProjection = glm::ortho(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, mZoomLevel, -mZoomLevel);
+	}
+
+	void Camera::OnResize(float width, float height)
+	{
+
 	}
 }

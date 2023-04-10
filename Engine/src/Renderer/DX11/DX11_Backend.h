@@ -22,6 +22,7 @@ namespace Alexio
 		void Clear(float r, float g, float b, float a) override;
 		void CreateRenderTarget();
 		void CleanRenderTarget();
+		void SetRenderTarget();
 		void SwapBuffer() override;
 
 		// Getters

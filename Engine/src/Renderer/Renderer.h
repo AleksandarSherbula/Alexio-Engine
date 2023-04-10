@@ -17,14 +17,14 @@ namespace Alexio
 
 		static void Clear(float r, float g, float b, float a);
 
-		inline static void SetVSync(bool vSync) { sRendererBackend->SetVSync(vSync); }
-		inline static bool IsVSync() { return sRendererBackend->IsVSync(); }
+		inline static void SetVSync(bool vSync) { sBackend->SetVSync(vSync); }
+		inline static bool IsVSync() { return sBackend->IsVSync(); }
 
-		inline static RendererBackend* GetBackend() { return sRendererBackend.get(); }
-		inline static ConstantBuffer* GetCameraBuffer() { return sCameraBuffer.get(); }
+		inline static Ref<RendererBackend>& GetBackend() { return sBackend; }
+		inline static Ref<ConstantBuffer>& GetCameraBuffer() { return sCameraBuffer; }
 
-		inline static void SetGraphicsAPI(GraphicsAPI api) { sRendererBackend->SetGraphicsAPI(api); }
-		inline static GraphicsAPI GetGraphicsAPI() { return sRendererBackend->GetGraphicsAPI(); }
+		inline static void SetGraphicsAPI(GraphicsAPI api) { sBackend->SetGraphicsAPI(api); }
+		inline static GraphicsAPI GetGraphicsAPI() { return sBackend->GetGraphicsAPI(); }
 
 		static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
@@ -79,9 +79,8 @@ namespace Alexio
 		};
 
 		static Statistics Stats;
-	private:
-	
-		static Ref<RendererBackend> sRendererBackend;
+	private:	
+		static Ref<RendererBackend> sBackend;
 		static Ref<ConstantBuffer> sCameraBuffer;
 
 		static Ref<LineRenderer> sLineRenderer;

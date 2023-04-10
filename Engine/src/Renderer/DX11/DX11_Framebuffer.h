@@ -14,12 +14,12 @@ namespace Alexio
 		void Bind() const override;
 		void Unbind() const override;
 
-		inline void* GetColorAttachment() const override 
-		{ 
-			return mColorAttachmentSRV.Get(); 
-		}
+		void Clear(float r, float g, float b, float a) override;
+
+		inline void* GetColorAttachment() const override { return mColorAttachmentSRV.Get(); }
 
 		void Invalidate() override;
+		void OnResize(float width, float height) override;
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> mBackBuffer;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> mFrameBufferRTV;

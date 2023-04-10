@@ -16,6 +16,7 @@ namespace Alexio
 
 	OpenGL_Framebuffer::~OpenGL_Framebuffer()
 	{
+		glDeleteTextures(1, &mColorAttachment);
 		glDeleteFramebuffers(1, &mID);
 	}
 
@@ -37,14 +38,35 @@ namespace Alexio
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	void OpenGL_Framebuffer::OnResize(float width, float height)
+	{
+		mSpecification.width = width;
+		mSpecification.height = height;
+
+		if (mID)
+		{
+			glDeleteTextures(1, &mColorAttachment);
+			glDeleteFramebuffers(1, &mID);
+		}
+
+		Invalidate();
+	}
+
 	void OpenGL_Framebuffer::Bind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, mID);
+		glViewport(0, 0, mSpecification.width, mSpecification.height);
 	}
 
 	void OpenGL_Framebuffer::Unbind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void OpenGL_Framebuffer::Clear(float r, float g, float b, float a)
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(r, g, b, a);
 	}
 }
 

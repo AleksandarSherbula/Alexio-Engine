@@ -10,6 +10,13 @@ namespace Alexio
 {
 	using EventCallbackFn = std::function<void(Event&)>;
 
+	struct WindowDataFromCallback
+	{
+		uint32_t width, height;
+
+		EventCallbackFn eventCallback;
+	};
+
 	class Window
 	{
 	public:
@@ -26,8 +33,11 @@ namespace Alexio
 		inline void SetHeight(uint32_t height) { mHeight = height; }
 		inline bool IsFullScreen() const { return mIsFullScreen; }
 
+		inline void SetEventCallback(const EventCallbackFn& callback) { mCallbackData.eventCallback = callback; Initialize(); }
+
+		WindowDataFromCallback GetCallbackData() { return mCallbackData; }
+		
 		virtual void* GetHandle() const = 0;
-		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetFullScreen(bool fullscreen) = 0;
 	
 		static Ref<Window> Create(const std::string& title, uint32_t width, uint32_t height);
@@ -35,6 +45,8 @@ namespace Alexio
 		uint32_t mWidth;
 		uint32_t mHeight;
 		std::string mTitle;
+
+		WindowDataFromCallback mCallbackData;
 
 		bool mIsFullScreen;
 	};

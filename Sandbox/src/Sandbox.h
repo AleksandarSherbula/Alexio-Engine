@@ -17,10 +17,6 @@ public:
 	std::shared_ptr<Alexio::Texture> texture;
 	std::shared_ptr<Alexio::Texture> texture2;
 	std::shared_ptr<Alexio::Texture> tileMap;
-
-	Alexio::FramebufferSpecification fbSpec;
-
-	std::shared_ptr<Alexio::Framebuffer> framebuffer;
 public:
 	MainLayer();
 

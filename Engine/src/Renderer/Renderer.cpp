@@ -4,7 +4,7 @@
 
 namespace Alexio
 {
-	Ref<RendererBackend> Renderer::sRendererBackend = nullptr;
+	Ref<RendererBackend> Renderer::sBackend = nullptr;
 	Ref<ConstantBuffer>  Renderer::sCameraBuffer    = nullptr;
 	Ref<LineRenderer>    Renderer::sLineRenderer    = nullptr;
 	Renderer::Statistics Renderer::Stats = { 0 };
@@ -19,9 +19,8 @@ namespace Alexio
 
 	void Renderer::Init()
 	{
-		sRendererBackend = RendererBackend::Create();
-
-		sRendererBackend->Initialize();
+		sBackend = RendererBackend::Create();
+		sBackend->Initialize();
 
 		sCameraBuffer = ConstantBuffer::Create(sizeof(glm::mat4x4), 0);
 
@@ -31,7 +30,7 @@ namespace Alexio
 
 		StartBatches();
 
-		sRendererBackend->SetVSync(true);
+		sBackend->SetVSync(true);
 	}
 
 	void Renderer::StartBatches()
@@ -43,23 +42,23 @@ namespace Alexio
 
 	void Renderer::Clear(float r, float g, float b, float a)
 	{
-		sRendererBackend->Clear(r, g, b, a);
+		sBackend->Clear(r, g, b, a);
 	}
 
 	void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
-		if (sRendererBackend != nullptr)
-			sRendererBackend->SetViewport(x, y, width, height);
+		if (sBackend != nullptr)
+			sBackend->SetViewport(x, y, width, height);
 	}
 
 	void Renderer::Draw(uint32_t vertexCount)
 	{
-		sRendererBackend->Draw(vertexCount);
+		sBackend->Draw(vertexCount);
 	}
 
 	void Renderer::DrawIndexed(uint32_t indexCount)
 	{
-		sRendererBackend->DrawIndexed(indexCount);
+		sBackend->DrawIndexed(indexCount);
 	}
 
 	void Renderer::Flush()

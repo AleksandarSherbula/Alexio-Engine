@@ -19,7 +19,11 @@ namespace Alexio
 
 		virtual void* GetColorAttachment() const = 0;
 
+		virtual void Clear(float r, float g, float b, float a) = 0;
+
 		inline const FramebufferSpecification& GetSpecification() const { return mSpecification; }
+
+		virtual void OnResize(float width, float height) = 0;
 
 		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
 	protected:

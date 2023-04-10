@@ -21,14 +21,27 @@ namespace Alexio
 	}
 	void DX11_Framebuffer::Bind() const
 	{
-		FLOAT bgColor[] = { 0.0f, 0.8f, 1.0f, 1.0f };
 		AIO_DX11_BACKEND->GetDeviceContext()->OMSetRenderTargets(1, mFrameBufferRTV.GetAddressOf(), nullptr);
-		AIO_DX11_BACKEND->GetDeviceContext()->ClearRenderTargetView(mFrameBufferRTV.Get(), bgColor);
+
+		D3D11_VIEWPORT viewport;
+		ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+		viewport.TopLeftX = 0;
+		viewport.TopLeftY = 0;
+		viewport.Width = (FLOAT)mSpecification.width;
+		viewport.Height = (FLOAT)mSpecification.height;
+
+		AIO_DX11_BACKEND->GetDeviceContext()->RSSetViewports(1, &viewport);
 	}
 
 	void DX11_Framebuffer::Unbind() const
 	{
-		//AIO_DX11_BACKEND->GetDeviceContext()->OMSetBlendState(AIO_DX11_BACKEND->GetBlendState(), nullptr, 0xffffff);
+		AIO_DX11_BACKEND->SetRenderTarget();
+	}
+
+	void DX11_Framebuffer::Clear(float r, float g, float b, float a)
+	{
+		FLOAT bgColor[] = { r, g, b, a };
+		AIO_DX11_BACKEND->GetDeviceContext()->ClearRenderTargetView(mFrameBufferRTV.Get(), bgColor);
 	}
 
 	void DX11_Framebuffer::Invalidate()
@@ -47,8 +60,6 @@ namespace Alexio
 		texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 		texDesc.CPUAccessFlags = 0;
 		texDesc.MiscFlags = 0;
-
-		DXGI_FORMAT format = texDesc.Format;
 
 		HRESULT hr = AIO_DX11_BACKEND->GetDevice()->CreateTexture2D(&texDesc, nullptr, mBackBuffer.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create back buffer: " + ResultInfo(hr) + "\n");
@@ -70,5 +81,17 @@ namespace Alexio
 
 		hr = AIO_DX11_BACKEND->GetDevice()->CreateShaderResourceView(mBackBuffer.Get(), &shaderResourceViewDesc, mColorAttachmentSRV.GetAddressOf());
 		AIO_ASSERT(SUCCEEDED(hr), "Failed to create shader resource view: " + ResultInfo(hr) + "\n");
+	}
+
+	void DX11_Framebuffer::OnResize(float width, float height)
+	{
+		mSpecification.width = width;
+		mSpecification.height = height;
+
+		mBackBuffer->Release();
+		mColorAttachmentSRV->Release();
+		mFrameBufferRTV->Release();
+
+		Invalidate();
 	}
 }

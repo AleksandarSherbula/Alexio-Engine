@@ -16,12 +16,10 @@ namespace Alexio
 
     GLFW_Window::GLFW_Window(const std::string& title, uint32_t width, uint32_t height)
     {
-        mTitle = mData.title = title;
-        mWidth = mData.width = width;
-        mHeight = mData.height = height;
+        mTitle = title;
+        mWidth = mCallbackData.width = width;
+        mHeight = mCallbackData.height = height;
         mIsFullScreen = false;
-
-        Initialize();
     }
 
     GLFW_Window::~GLFW_Window()
@@ -44,12 +42,13 @@ namespace Alexio
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+        glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
 
         mHandle = glfwCreateWindow(mWidth, mHeight, mTitle.c_str(), NULL, NULL);
         AIO_ASSERT(mHandle, "Failed to create a GLFW window");
 
         glfwMakeContextCurrent(mHandle);
-        glfwSetWindowUserPointer(mHandle, &mData);
+        glfwSetWindowUserPointer(mHandle, &mCallbackData);
 
         mMonitor = glfwGetPrimaryMonitor();
 
