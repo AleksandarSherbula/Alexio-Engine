@@ -24,7 +24,7 @@ namespace Alexio
 
 		std::shared_ptr<Alexio::Framebuffer> framebuffer;
 
-		glm::vec2 mViewportSize = { 0.0f, 0.0f };
+		Vector2 mViewportSize = { 0.0f, 0.0f };
 
 		bool mViewportFocused = false, mViewportHovered = false;
 

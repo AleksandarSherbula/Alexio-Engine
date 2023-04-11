@@ -12,7 +12,7 @@ namespace Alexio
 		mZoomLevel = 1.0f;
 		
 		mProjection = glm::ortho(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, mZoomLevel, -mZoomLevel);
-		mView = glm::mat4x4(1.0f);
+		mView = Mat4x4(1.0f);
 		mViewProjection = mProjection * mView;
 
 		mPosition = { 0.0f, 0.0f };
@@ -54,12 +54,12 @@ namespace Alexio
 		if (Alexio::Input::KeyHeld(DOWN))
 			mPosition.y += moveSpeed * Timer::DeltaTime();
 
-		mView = glm::translate(glm::mat4x4(1.0f), glm::vec3(mPosition, 0.0f)) *
-			glm::rotate(glm::mat4x4(1.0f), glm::radians(mRotation), glm::vec3(0, 0, 1));
+		mView = glm::translate(Mat4x4(1.0f), glm::vec3(mPosition, 0.0f)) *
+			glm::rotate(Mat4x4(1.0f), glm::radians(mRotation), glm::vec3(0, 0, 1));
 		
 		mViewProjection = mProjection * mView;
 
-		Renderer::GetCameraBuffer()->SetData(&mViewProjection, sizeof(glm::mat4x4));
+		Renderer::GetCameraBuffer()->SetData(&mViewProjection, sizeof(Mat4x4));
 		Renderer::GetCameraBuffer()->Bind(0);
 	}
 

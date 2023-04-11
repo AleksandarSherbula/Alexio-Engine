@@ -203,7 +203,7 @@ namespace Alexio
 		glUniformMatrix3fv(glGetUniformLocation(mID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
-	void OpenGL_Shader::SetMat4x4(const std::string& name, const glm::mat4x4& matrix)
+	void OpenGL_Shader::SetMat4x4(const std::string& name, const Mat4x4& matrix)
 	{
 		glUniformMatrix4fv(glGetUniformLocation(mID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 	}

@@ -25,7 +25,7 @@ namespace Alexio
 		void SetFloat4(const std::string& name, const glm::vec4& value) override;
 
 		void SetMat3x3(const std::string& name, const glm::mat3x3& matrix) override;
-		void SetMat4x4(const std::string& name, const glm::mat4x4& matrix) override;
+		void SetMat4x4(const std::string& name, const Mat4x4& matrix) override;
 	private:
 		void Compile(const Ref<VertexBuffer>& vertexBuffer);
 		std::string ReadFile(const std::string& filepath);

@@ -22,7 +22,7 @@ namespace Alexio
 		sBackend = RendererBackend::Create();
 		sBackend->Initialize();
 
-		sCameraBuffer = ConstantBuffer::Create(sizeof(glm::mat4x4), 0);
+		sCameraBuffer = ConstantBuffer::Create(sizeof(Mat4x4), 0);
 
 		LineRenderer::Init();
 		QuadRenderer::Init();
@@ -209,8 +209,8 @@ namespace Alexio
 			QuadRenderer::SubmitBatch();
 
 		glm::vec2 originPoint = position + size * 0.5f;
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(originPoint, 1.0f)) *
-			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+		Mat4x4 transform = glm::translate(Mat4x4(1.0f), glm::vec3(originPoint, 1.0f)) *
+			glm::rotate(Mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), glm::vec3(size, 1.0f));
 		
 		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[0], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
@@ -247,8 +247,8 @@ namespace Alexio
 			QuadRenderer::SubmitBatch();
 
 		glm::vec3 originPoint = position + glm::vec3(size * 0.5f, 0.0f);
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), originPoint) *
-			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+		Mat4x4 transform = glm::translate(Mat4x4(1.0f), originPoint) *
+			glm::rotate(Mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), glm::vec3(size, 1.0f));
 
 		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[0], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
@@ -467,8 +467,8 @@ namespace Alexio
 		}
 		
 		glm::vec2 originPoint = position + size * 0.5f;
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), glm::vec3(originPoint, 1.0f)) *
-			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+		Mat4x4 transform = glm::translate(Mat4x4(1.0f), glm::vec3(originPoint, 1.0f)) *
+			glm::rotate(Mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), glm::vec3(size, 1.0f));
 
 		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[0], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
@@ -523,8 +523,8 @@ namespace Alexio
 		}
 
 		glm::vec3 originPoint = position + glm::vec3(size * 0.5f, 0.0f);
-		glm::mat4x4 transform = glm::translate(glm::mat4x4(1.0f), originPoint) *
-			glm::rotate(glm::mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4x4(1.0f), glm::vec3(size, 1.0f));
+		Mat4x4 transform = glm::translate(Mat4x4(1.0f), originPoint) *
+			glm::rotate(Mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), glm::vec3(size, 1.0f));
 
 		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[0], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;

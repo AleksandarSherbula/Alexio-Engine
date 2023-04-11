@@ -29,7 +29,7 @@ namespace Alexio
 		virtual void SetFloat4(const std::string& name, const glm::vec4& value) = 0;
 
 		virtual void SetMat3x3(const std::string& name, const glm::mat3x3& matrix) = 0;
-		virtual void SetMat4x4(const std::string& name, const glm::mat4x4& matrix) = 0;
+		virtual void SetMat4x4(const std::string& name, const Mat4x4& matrix) = 0;
 
 		inline const std::string& GetName() const { return mName; }
 	protected:

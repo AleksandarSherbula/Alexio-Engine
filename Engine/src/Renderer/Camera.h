@@ -11,7 +11,7 @@ namespace Alexio
 		Camera() = default;
 		Camera(float aspectRatio);
 		
-		inline glm::vec2& Position() { return mPosition; }
+		inline Vector2& Position() { return mPosition; }
 		inline float& Rotation() { return mRotation; }
 		inline float& ZoomLevel() { return mZoomLevel; }
 
@@ -24,14 +24,14 @@ namespace Alexio
 
 		void OnResize(float width, float height);
 	private:
-		glm::vec2 mPosition;
+		Vector2 mPosition;
 		float mRotation;
 		float mZoomLevel;
 
 		float mAspectRatio;
 
-		glm::mat4x4 mProjection;
-		glm::mat4x4 mView;
-		glm::mat4x4 mViewProjection;
+		Mat4x4 mProjection;
+		Mat4x4 mView;
+		Mat4x4 mViewProjection;
 	};
 }
