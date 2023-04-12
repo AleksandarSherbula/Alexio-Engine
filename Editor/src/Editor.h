@@ -28,6 +28,9 @@ namespace Alexio
 
 		bool mViewportFocused = false, mViewportHovered = false;
 
+		Ref<Scene> mScene;
+		entt::entity mSquareEntity;
+
 		static Ref<Camera> sCamera;
 	public:
 		EditorLayer();

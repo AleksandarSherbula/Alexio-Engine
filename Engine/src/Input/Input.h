@@ -2,7 +2,7 @@
 
 #include "Input/KeyCodes.h"
 
-#include <glm/glm.hpp>
+#include "Math/Math.h"
 
 namespace Alexio
 {
@@ -40,6 +40,6 @@ namespace Alexio
 		inline static bool MouseButtonPressed(int32_t mb) { return mouseButtonStates[mb].pressed; }
 		inline static bool MouseButtonHeld(int32_t mb) { return mouseButtonStates[mb].held; }
 		inline static bool MouseButtonReleased(int32_t mb) { return mouseButtonStates[mb].released; }
-		static glm::vec2 GetMousePosition();
+		static Vector2 GetMousePosition();
 	};
 }

@@ -20,9 +20,9 @@ namespace Alexio
 		void SetInt(const std::string& name, int32_t value) override {}
 		void SetIntArray(const std::string& name, int32_t* values, uint32_t count) override {}
 		void SetFloat(const std::string& name, float value) override {}
-		void SetFloat2(const std::string& name, const glm::vec2& value) override {}
-		void SetFloat3(const std::string& name, const glm::vec3& value) override {}
-		void SetFloat4(const std::string& name, const glm::vec4& value) override {}
+		void SetFloat2(const std::string& name, const Vector2& value) override {}
+		void SetFloat3(const std::string& name, const Vector3& value) override {}
+		void SetFloat4(const std::string& name, const Vector4& value) override {}
 
 		void SetMat3x3(const std::string& name, const glm::mat3x3& matrix) override {}
 		void SetMat4x4(const std::string& name, const Mat4x4& matrix) override {}

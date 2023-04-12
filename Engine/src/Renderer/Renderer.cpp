@@ -9,12 +9,12 @@ namespace Alexio
 	Ref<LineRenderer>    Renderer::sLineRenderer    = nullptr;
 	Renderer::Statistics Renderer::Stats = { 0 };
 
-	static std::array<glm::vec3, 4> localPosition = 
+	static std::array<Vector3, 4> localPosition = 
 	{
-		glm::vec3(-0.5f, -0.5f, 0.0f),
-		glm::vec3( 0.5f, -0.5f, 0.0f),
-		glm::vec3( 0.5f,  0.5f, 0.0f),
-		glm::vec3(-0.5f,  0.5f, 0.0f),
+		Vector3(-0.5f, -0.5f, 0.0f),
+		Vector3( 0.5f, -0.5f, 0.0f),
+		Vector3( 0.5f,  0.5f, 0.0f),
+		Vector3(-0.5f,  0.5f, 0.0f),
 	}; 
 
 	void Renderer::Init()
@@ -75,16 +75,16 @@ namespace Alexio
 		CircleRenderer::End();
 	}
 
-	void Renderer::DrawLine(const glm::vec2& p0, const glm::vec2& p1, const glm::vec4& color)
+	void Renderer::DrawLine(const Vector2& p0, const Vector2& p1, const Vector4& color)
 	{
 		if (LineRenderer::LineCount >= LineRenderer::MaxLinesPerBatch)
 			LineRenderer::SubmitBatch();
 		
-		LineRenderer::CurrentVertexPtr->position = glm::vec3(p0, 0.0f);
+		LineRenderer::CurrentVertexPtr->position = Vector3(p0, 0.0f);
 		LineRenderer::CurrentVertexPtr->color = color;
 		LineRenderer::CurrentVertexPtr++;
 
-		LineRenderer::CurrentVertexPtr->position = glm::vec3(p1, 0.0f);
+		LineRenderer::CurrentVertexPtr->position = Vector3(p1, 0.0f);
 		LineRenderer::CurrentVertexPtr->color = color;
 		LineRenderer::CurrentVertexPtr++;
 
@@ -92,7 +92,7 @@ namespace Alexio
 		Stats.Lines++;
 	}
 
-	void Renderer::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
+	void Renderer::DrawLine(const Vector3& p0, const Vector3& p1, const Vector4& color)
 	{
 		if (LineRenderer::LineCount >= LineRenderer::MaxLinesPerBatch)
 			LineRenderer::SubmitBatch();
@@ -109,12 +109,12 @@ namespace Alexio
 		Stats.Lines++;
 	}
 
-	void Renderer::DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+	void Renderer::DrawRect(const Vector2& position, const Vector2& size, const Vector4& color)
 	{
-		glm::vec2 p0 = position;
-		glm::vec2 p1 = { position.x + size.x, position.y};
-		glm::vec2 p2 = { position.x + size.x, position.y + size.y};
-		glm::vec2 p3 = { position.x, position.y + size.y};
+		Vector2 p0 = position;
+		Vector2 p1 = { position.x + size.x, position.y};
+		Vector2 p2 = { position.x + size.x, position.y + size.y};
+		Vector2 p3 = { position.x, position.y + size.y};
 
 		DrawLine(p0, p1, color);
 		DrawLine(p1, p2, color);
@@ -122,12 +122,12 @@ namespace Alexio
 		DrawLine(p3, p0, color);
 	}
 
-	void Renderer::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+	void Renderer::DrawRect(const Vector3& position, const Vector2& size, const Vector4& color)
 	{
-		glm::vec3 p0 = position;
-		glm::vec3 p1 = { position.x + size.x, position.y, position.z };
-		glm::vec3 p2 = { position.x + size.x, position.y + size.y, position.z };
-		glm::vec3 p3 = { position.x, position.y + size.y, position.z };
+		Vector3 p0 = position;
+		Vector3 p1 = { position.x + size.x, position.y, position.z };
+		Vector3 p2 = { position.x + size.x, position.y + size.y, position.z };
+		Vector3 p3 = { position.x, position.y + size.y, position.z };
 
 		DrawLine(p0, p1, color);
 		DrawLine(p1, p2, color);
@@ -135,7 +135,7 @@ namespace Alexio
 		DrawLine(p3, p0, color);
 	}
 
-	void Renderer::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+	void Renderer::DrawQuad(const Vector2& position, const Vector2& size, const Vector4& color)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch)
 			QuadRenderer::SubmitBatch();
@@ -169,7 +169,7 @@ namespace Alexio
 		Stats.Quads++;
 	}
 
-	void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+	void Renderer::DrawQuad(const Vector3& position, const Vector2& size, const Vector4& color)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch)
 			QuadRenderer::SubmitBatch();
@@ -202,35 +202,69 @@ namespace Alexio
 		QuadRenderer::QuadCount++;
 		Stats.Quads++;
 	}
+
+	void Renderer::DrawQuad(const Mat4x4& transform, const Vector4& color)
+	{
+		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch)
+			QuadRenderer::SubmitBatch();
+
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[0], 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[1], 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[2], 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[3], 1.0f);
+		QuadRenderer::CurrentVertexPtr->color = color;
+		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
+		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
+		QuadRenderer::CurrentVertexPtr++;
+
+		QuadRenderer::IndexCount += 6;
+		QuadRenderer::QuadCount++;
+		Stats.Quads++;
+	}
 	
-	void Renderer::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	void Renderer::DrawRotatedQuad(const Vector2& position, const Vector2& size, const Vector4& color, float angle)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch)
 			QuadRenderer::SubmitBatch();
 
-		glm::vec2 originPoint = position + size * 0.5f;
-		Mat4x4 transform = glm::translate(Mat4x4(1.0f), glm::vec3(originPoint, 1.0f)) *
-			glm::rotate(Mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), glm::vec3(size, 1.0f));
+		Vector2 originPoint = position + size * 0.5f;
+		Mat4x4 transform = glm::translate(Mat4x4(1.0f), Vector3(originPoint, 1.0f)) *
+			glm::rotate(Mat4x4(1.0f), angle, Vector3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), Vector3(size, 1.0f));
 		
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[0], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[0], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 		
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[1], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[1], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 		
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[2], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[2], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 		
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[3], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[3], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
@@ -241,34 +275,34 @@ namespace Alexio
 		Stats.Quads++;
 	}
 
-	void Renderer::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	void Renderer::DrawRotatedQuad(const Vector3& position, const Vector2& size, const Vector4& color, float angle)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch)
 			QuadRenderer::SubmitBatch();
 
-		glm::vec3 originPoint = position + glm::vec3(size * 0.5f, 0.0f);
+		Vector3 originPoint = position + Vector3(size * 0.5f, 0.0f);
 		Mat4x4 transform = glm::translate(Mat4x4(1.0f), originPoint) *
-			glm::rotate(Mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), glm::vec3(size, 1.0f));
+			glm::rotate(Mat4x4(1.0f), angle, Vector3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), Vector3(size, 1.0f));
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[0], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[0], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[1], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[1], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[2], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[2], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[3], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[3], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = 0;
@@ -279,7 +313,7 @@ namespace Alexio
 		Stats.Quads++;
 	}
 
-	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+	void Renderer::DrawSprite(const Ref<Texture>& texture, const Vector2& position, const Vector2& size, const Vector4& color)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch ||
 			QuadRenderer::TextureSlotIndex >= QuadRenderer::MaxTextureSlots)
@@ -331,7 +365,7 @@ namespace Alexio
 		}
 	}
 	
-	void Renderer::DrawSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+	void Renderer::DrawSprite(const Ref<Texture>& texture, const Vector3& position, const Vector2& size, const Vector4& color)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch ||
 			QuadRenderer::TextureSlotIndex >= QuadRenderer::MaxTextureSlots)
@@ -383,7 +417,7 @@ namespace Alexio
 		}
 	}
 
-	void Renderer::DrawPartialSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec2& tileOffset, const glm::vec2& tileSize, const glm::vec4& colorTint)
+	void Renderer::DrawPartialSprite(const Ref<Texture>& texture, const Vector2& position, const Vector2& size, const Vector2& tileOffset, const Vector2& tileSize, const Vector4& colorTint)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch ||
 			QuadRenderer::TextureSlotIndex >= QuadRenderer::MaxTextureSlots)
@@ -399,15 +433,15 @@ namespace Alexio
 			}
 		}
 
-		const std::array<glm::vec2, 4> textureCoordinates =
+		const std::array<Vector2, 4> textureCoordinates =
 		{
-			glm::vec2((tileOffset.x * tileSize.x)       / texture->GetWidth(), (tileOffset.y * tileSize.y)       / texture->GetHeight()),
-			glm::vec2(((tileOffset.x + 1) * tileSize.x) / texture->GetWidth(), (tileOffset.y * tileSize.y)       / texture->GetHeight()),
-			glm::vec2(((tileOffset.x + 1) * tileSize.x) / texture->GetWidth(), ((tileOffset.y + 1) * tileSize.y) / texture->GetHeight()),
-			glm::vec2(((tileOffset.x) * tileSize.x)     / texture->GetWidth(), ((tileOffset.y + 1) * tileSize.y) / texture->GetHeight())
+			Vector2((tileOffset.x * tileSize.x)       / texture->GetWidth(), (tileOffset.y * tileSize.y)       / texture->GetHeight()),
+			Vector2(((tileOffset.x + 1) * tileSize.x) / texture->GetWidth(), (tileOffset.y * tileSize.y)       / texture->GetHeight()),
+			Vector2(((tileOffset.x + 1) * tileSize.x) / texture->GetWidth(), ((tileOffset.y + 1) * tileSize.y) / texture->GetHeight()),
+			Vector2(((tileOffset.x) * tileSize.x)     / texture->GetWidth(), ((tileOffset.y + 1) * tileSize.y) / texture->GetHeight())
 		};
 
-		const glm::vec2 finalSize = glm::vec2(size.x * tileSize.x / texture->GetWidth(), size.y * tileSize.y / texture->GetHeight());
+		const Vector2 finalSize = Vector2(size.x * tileSize.x / texture->GetWidth(), size.y * tileSize.y / texture->GetHeight());
 
 		QuadRenderer::CurrentVertexPtr->position = { position.x, position.y, 0.0f };
 		QuadRenderer::CurrentVertexPtr->color = colorTint;
@@ -446,11 +480,11 @@ namespace Alexio
 
 	}
 
-	void Renderer::DrawPartialSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec2& tileOffset, const glm::vec2& tileSize, const glm::vec4& colorTint)
+	void Renderer::DrawPartialSprite(const Ref<Texture>& texture, const Vector3& position, const Vector2& size, const Vector2& tileOffset, const Vector2& tileSize, const Vector4& colorTint)
 	{
 	}
 	
-	void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const Vector2& position, const Vector2& size, const Vector4& color, float angle)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch ||
 			QuadRenderer::TextureSlotIndex >= QuadRenderer::MaxTextureSlots)
@@ -466,29 +500,29 @@ namespace Alexio
 			}
 		}
 		
-		glm::vec2 originPoint = position + size * 0.5f;
-		Mat4x4 transform = glm::translate(Mat4x4(1.0f), glm::vec3(originPoint, 1.0f)) *
-			glm::rotate(Mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), glm::vec3(size, 1.0f));
+		Vector2 originPoint = position + size * 0.5f;
+		Mat4x4 transform = glm::translate(Mat4x4(1.0f), Vector3(originPoint, 1.0f)) *
+			glm::rotate(Mat4x4(1.0f), angle, Vector3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), Vector3(size, 1.0f));
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[0], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[0], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[1], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[1], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[2], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[2], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[3], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[3], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
@@ -506,7 +540,7 @@ namespace Alexio
 		}
 	}
 	
-	void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float angle)
+	void Renderer::DrawRotatedSprite(const Ref<Texture>& texture, const Vector3& position, const Vector2& size, const Vector4& color, float angle)
 	{
 		if (QuadRenderer::QuadCount >= QuadRenderer::MaxQuadsPerBatch ||
 			QuadRenderer::TextureSlotIndex >= QuadRenderer::MaxTextureSlots)
@@ -522,29 +556,29 @@ namespace Alexio
 			}
 		}
 
-		glm::vec3 originPoint = position + glm::vec3(size * 0.5f, 0.0f);
+		Vector3 originPoint = position + Vector3(size * 0.5f, 0.0f);
 		Mat4x4 transform = glm::translate(Mat4x4(1.0f), originPoint) *
-			glm::rotate(Mat4x4(1.0f), angle, glm::vec3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), glm::vec3(size, 1.0f));
+			glm::rotate(Mat4x4(1.0f), angle, Vector3(0, 0, 1)) * glm::scale(Mat4x4(1.0f), Vector3(size, 1.0f));
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[0], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[0], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 0.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[1], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[1], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 0.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[2], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[2], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 1.0f, 1.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
 		QuadRenderer::CurrentVertexPtr++;
 
-		QuadRenderer::CurrentVertexPtr->position = transform * glm::vec4(localPosition[3], 1.0f);
+		QuadRenderer::CurrentVertexPtr->position = transform * Vector4(localPosition[3], 1.0f);
 		QuadRenderer::CurrentVertexPtr->color = color;
 		QuadRenderer::CurrentVertexPtr->texCoord = { 0.0f, 1.0f };
 		QuadRenderer::CurrentVertexPtr->textureIndex = texIndex;
@@ -562,34 +596,34 @@ namespace Alexio
 		}
 	}
 
-	void Renderer::DrawCircle(const glm::vec2& position, const glm::vec4& color, float radius, float thickness, float fade)
+	void Renderer::DrawCircle(const Vector2& position, const Vector4& color, float radius, float thickness, float fade)
 	{
 		if (CircleRenderer::CircleCount >= CircleRenderer::MaxCirclesPerBatch)
 			CircleRenderer::SubmitBatch();
 
-		CircleRenderer::CurrentVertexPtr->position = glm::vec4(position.x - radius, position.y - radius, 0.0f, 1.0f);
-		CircleRenderer::CurrentVertexPtr->localPosition = glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->position = Vector4(position.x - radius, position.y - radius, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->localPosition = Vector4(-1.0f, -1.0f, 0.0f, 1.0f);
 		CircleRenderer::CurrentVertexPtr->color = color;
 		CircleRenderer::CurrentVertexPtr->thickness = thickness;
 		CircleRenderer::CurrentVertexPtr->fade = fade;
 		CircleRenderer::CurrentVertexPtr++;
 
-		CircleRenderer::CurrentVertexPtr->position = glm::vec4(position.x + radius, position.y - radius, 0.0f, 1.0f);
-		CircleRenderer::CurrentVertexPtr->localPosition = glm::vec4(1.0f, -1.0f, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->position = Vector4(position.x + radius, position.y - radius, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->localPosition = Vector4(1.0f, -1.0f, 0.0f, 1.0f);
 		CircleRenderer::CurrentVertexPtr->color = color;
 		CircleRenderer::CurrentVertexPtr->thickness = thickness;
 		CircleRenderer::CurrentVertexPtr->fade = fade;
 		CircleRenderer::CurrentVertexPtr++;
 
-		CircleRenderer::CurrentVertexPtr->position = glm::vec4(position.x + radius, position.y + radius, 0.0f, 1.0f);
-		CircleRenderer::CurrentVertexPtr->localPosition = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->position = Vector4(position.x + radius, position.y + radius, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->localPosition = Vector4(1.0f, 1.0f, 0.0f, 1.0f);
 		CircleRenderer::CurrentVertexPtr->color = color;
 		CircleRenderer::CurrentVertexPtr->thickness = thickness;
 		CircleRenderer::CurrentVertexPtr->fade = fade;
 		CircleRenderer::CurrentVertexPtr++;
 
-		CircleRenderer::CurrentVertexPtr->position = glm::vec4(position.x - radius, position.y + radius, 0.0f, 1.0f);
-		CircleRenderer::CurrentVertexPtr->localPosition = glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->position = Vector4(position.x - radius, position.y + radius, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->localPosition = Vector4(-1.0f, 1.0f, 0.0f, 1.0f);
 		CircleRenderer::CurrentVertexPtr->color = color;
 		CircleRenderer::CurrentVertexPtr->thickness = thickness;
 		CircleRenderer::CurrentVertexPtr->fade = fade;
@@ -600,34 +634,34 @@ namespace Alexio
 		Stats.Circles++;
 	}
 
-	void Renderer::DrawCircle(const glm::vec3& position, const glm::vec4& color, float radius, float thickness, float fade)
+	void Renderer::DrawCircle(const Vector3& position, const Vector4& color, float radius, float thickness, float fade)
 	{
 		if (CircleRenderer::CircleCount >= CircleRenderer::MaxCirclesPerBatch)
 			CircleRenderer::SubmitBatch();
 
-		CircleRenderer::CurrentVertexPtr->position = glm::vec4(position.x - radius, position.y - radius, position.z, 1.0f);
-		CircleRenderer::CurrentVertexPtr->localPosition = glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->position = Vector4(position.x - radius, position.y - radius, position.z, 1.0f);
+		CircleRenderer::CurrentVertexPtr->localPosition = Vector4(-1.0f, -1.0f, 0.0f, 1.0f);
 		CircleRenderer::CurrentVertexPtr->color = color;
 		CircleRenderer::CurrentVertexPtr->thickness = thickness;
 		CircleRenderer::CurrentVertexPtr->fade = fade;
 		CircleRenderer::CurrentVertexPtr++;
 
-		CircleRenderer::CurrentVertexPtr->position = glm::vec4(position.x + radius, position.y - radius, position.z, 1.0f);
-		CircleRenderer::CurrentVertexPtr->localPosition = glm::vec4(1.0f, -1.0f, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->position = Vector4(position.x + radius, position.y - radius, position.z, 1.0f);
+		CircleRenderer::CurrentVertexPtr->localPosition = Vector4(1.0f, -1.0f, 0.0f, 1.0f);
 		CircleRenderer::CurrentVertexPtr->color = color;
 		CircleRenderer::CurrentVertexPtr->thickness = thickness;
 		CircleRenderer::CurrentVertexPtr->fade = fade;
 		CircleRenderer::CurrentVertexPtr++;
 
-		CircleRenderer::CurrentVertexPtr->position = glm::vec4(position.x + radius, position.y + radius, position.z, 1.0f);
-		CircleRenderer::CurrentVertexPtr->localPosition = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->position = Vector4(position.x + radius, position.y + radius, position.z, 1.0f);
+		CircleRenderer::CurrentVertexPtr->localPosition = Vector4(1.0f, 1.0f, 0.0f, 1.0f);
 		CircleRenderer::CurrentVertexPtr->color = color;
 		CircleRenderer::CurrentVertexPtr->thickness = thickness;
 		CircleRenderer::CurrentVertexPtr->fade = fade;
 		CircleRenderer::CurrentVertexPtr++;
 
-		CircleRenderer::CurrentVertexPtr->position = glm::vec4(position.x - radius, position.y + radius, position.z, 1.0f);
-		CircleRenderer::CurrentVertexPtr->localPosition = glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f);
+		CircleRenderer::CurrentVertexPtr->position = Vector4(position.x - radius, position.y + radius, position.z, 1.0f);
+		CircleRenderer::CurrentVertexPtr->localPosition = Vector4(-1.0f, 1.0f, 0.0f, 1.0f);
 		CircleRenderer::CurrentVertexPtr->color = color;
 		CircleRenderer::CurrentVertexPtr->thickness = thickness;
 		CircleRenderer::CurrentVertexPtr->fade = fade;

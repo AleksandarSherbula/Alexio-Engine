@@ -28,29 +28,31 @@ namespace Alexio
 
 		static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
-		static void DrawLine(const glm::vec2& p0, const glm::vec2& p1, const glm::vec4& color = glm::vec4(1.0f));
-		static void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color = glm::vec4(1.0f));
+		static void DrawLine(const Vector2& p0, const Vector2& p1, const Vector4& color = Vector4(1.0f));
+		static void DrawLine(const Vector3& p0, const Vector3& p1, const Vector4& color = Vector4(1.0f));
 
-		static void DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
-		static void DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
+		static void DrawRect(const Vector2& position, const Vector2& size, const Vector4& color = Vector4(1.0f));
+		static void DrawRect(const Vector3& position, const Vector2& size, const Vector4& color = Vector4(1.0f));
 
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
+		static void DrawQuad(const Vector2& position, const Vector2& size, const Vector4& color = Vector4(1.0f));
+		static void DrawQuad(const Vector3& position, const Vector2& size, const Vector4& color = Vector4(1.0f));
 
-		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), float angle = 0.0f);
-		static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), float angle = 0.0f);
+		static void DrawQuad(const Mat4x4& transform, const Vector4& color);
 
-		static void DrawSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
-		static void DrawSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
+		static void DrawRotatedQuad(const Vector2& position, const Vector2& size, const Vector4& color = Vector4(1.0f), float angle = 0.0f);
+		static void DrawRotatedQuad(const Vector3& position, const Vector2& size, const Vector4& color = Vector4(1.0f), float angle = 0.0f);
 
-		static void DrawPartialSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec2& tileOffset, const glm::vec2& tileSize, const glm::vec4& colorTint = glm::vec4(1.0f));
-		static void DrawPartialSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec2& tileOffset, const glm::vec2& tileSize, const glm::vec4& colorTint = glm::vec4(1.0f));
+		static void DrawSprite(const Ref<Texture>& texture, const Vector2& position, const Vector2& size, const Vector4& color = Vector4(1.0f));
+		static void DrawSprite(const Ref<Texture>& texture, const Vector3& position, const Vector2& size, const Vector4& color = Vector4(1.0f));
 
-		static void DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec2& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), float angle = 0.0f);
-		static void DrawRotatedSprite(const Ref<Texture>& texture, const glm::vec3& position, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), float angle = 0.0f);
+		static void DrawPartialSprite(const Ref<Texture>& texture, const Vector2& position, const Vector2& size, const Vector2& tileOffset, const Vector2& tileSize, const Vector4& colorTint = Vector4(1.0f));
+		static void DrawPartialSprite(const Ref<Texture>& texture, const Vector3& position, const Vector2& size, const Vector2& tileOffset, const Vector2& tileSize, const Vector4& colorTint = Vector4(1.0f));
 
-		static void DrawCircle(const glm::vec2& position, const glm::vec4& color = glm::vec4(1.0f), float radius = 0.5f, float thickness = 1.0f, float fade = 0.005f);
-		static void DrawCircle(const glm::vec3& position, const glm::vec4& color = glm::vec4(1.0f), float radius = 0.5f, float thickness = 1.0f, float fade = 0.005f);		
+		static void DrawRotatedSprite(const Ref<Texture>& texture, const Vector2& position, const Vector2& size, const Vector4& color = Vector4(1.0f), float angle = 0.0f);
+		static void DrawRotatedSprite(const Ref<Texture>& texture, const Vector3& position, const Vector2& size, const Vector4& color = Vector4(1.0f), float angle = 0.0f);
+
+		static void DrawCircle(const Vector2& position, const Vector4& color = Vector4(1.0f), float radius = 0.5f, float thickness = 1.0f, float fade = 0.005f);
+		static void DrawCircle(const Vector3& position, const Vector4& color = Vector4(1.0f), float radius = 0.5f, float thickness = 1.0f, float fade = 0.005f);		
 
 		static void Flush();
 

@@ -63,12 +63,12 @@ namespace Alexio
         glfwPollEvents();
     }
 
-    glm::vec2 GLFW_Window::GetMousePositionFromWindowAPI()
+    Vector2 GLFW_Window::GetMousePositionFromWindowAPI()
     {
         double x, y;
         glfwGetCursorPos(mHandle, &x, &y);
 
-        return glm::vec2(x, y);
+        return Vector2(x, y);
     }
 
     void GLFW_Window::SetFullScreen(bool fullscreen)

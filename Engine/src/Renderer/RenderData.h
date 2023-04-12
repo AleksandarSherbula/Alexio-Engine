@@ -11,8 +11,8 @@ namespace Alexio
 {
 	struct LineVertex
 	{
-		glm::vec3 position;
-		glm::vec4 color;
+		Vector3 position;
+		Vector4 color;
 	};
 
 	class LineRenderer
@@ -36,9 +36,9 @@ namespace Alexio
 
 	struct QuadVertex
 	{	
-		glm::vec3 position;
-		glm::vec4 color;
-		glm::vec2 texCoord;
+		Vector3 position;
+		Vector4 color;
+		Vector2 texCoord;
 		uint32_t textureIndex;
 	};
 
@@ -71,9 +71,9 @@ namespace Alexio
 		
 	struct CircleVertex
 	{	
-		glm::vec3 position;
-		glm::vec3 localPosition;
-		glm::vec4 color;
+		Vector3 position;
+		Vector3 localPosition;
+		Vector4 color;
 		float thickness;
 		float fade;
 	};	

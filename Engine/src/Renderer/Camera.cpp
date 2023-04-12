@@ -54,8 +54,8 @@ namespace Alexio
 		if (Alexio::Input::KeyHeld(DOWN))
 			mPosition.y += moveSpeed * Timer::DeltaTime();
 
-		mView = glm::translate(Mat4x4(1.0f), glm::vec3(mPosition, 0.0f)) *
-			glm::rotate(Mat4x4(1.0f), glm::radians(mRotation), glm::vec3(0, 0, 1));
+		mView = glm::translate(Mat4x4(1.0f), Vector3(mPosition, 0.0f)) *
+			glm::rotate(Mat4x4(1.0f), glm::radians(mRotation), Vector3(0, 0, 1));
 		
 		mViewProjection = mProjection * mView;
 

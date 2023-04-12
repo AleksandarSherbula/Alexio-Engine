@@ -8,7 +8,7 @@ namespace Alexio
 
     Editor::Editor()
     {
-        SetGraphicsAPI(OpenGL);
+        SetGraphicsAPI(DirectX11);
 
         PushLayer(new EditorLayer());
     }
@@ -27,9 +27,17 @@ namespace Alexio
         sCamera = CreateRef<Camera>(static_cast<float>(Engine::Get()->ScreenWidth())
             / static_cast<float>(Engine::Get()->ScreenHeight()));
 
-        texture =  Texture::Create("assets/images/AlexioLogo(Black).png");
+        texture  = Texture::Create("assets/images/AlexioLogo(Black).png");
         texture2 = Texture::Create("assets/images/awesomeface.png");
-        tileMap =  Texture::Create("assets/images/tilemap.png");
+        tileMap  = Texture::Create("assets/images/tilemap.png");
+
+        mScene = CreateRef<Scene>();
+
+        auto square = mScene->CreateEntity();
+        mScene->Reg().emplace<TransformComponent>(square);
+        mScene->Reg().emplace<SpriteRendererComponent>(square, Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+
+        mSquareEntity = square;
 
         fbSpec.width = Engine::Get()->ScreenWidth();
         fbSpec.height = Engine::Get()->ScreenHeight();
@@ -46,17 +54,20 @@ namespace Alexio
         framebuffer->Bind();
         framebuffer->Clear(0.0f, 0.8f, 1.0f, 1.0f);
 
-        Renderer::DrawRotatedQuad({ -0.9f, -0.9f }, { 0.5f , 0.5f }, { 1.0f, 1.0f, 0.0f, 1.0f }, Timer::Get());
+        //Renderer::DrawRotatedQuad({ -0.9f, -0.9f }, { 0.5f , 0.5f }, { 1.0f, 1.0f, 0.0f, 1.0f }, Timer::Get());
+        //
+        //Renderer::DrawCircle({ -0.5f, 0.5f }, { 1.0f, 0.5f, 0.0f, 1.0f }, 0.5f, 1.0f, 0.5f);
+        //
+        //for (int i = 0; i < 20; i++)
+        //    Renderer::DrawLine({ -1.7f, -0.9f + (i * 0.1f), 0.5f }, { -1.2f, -0.9f + (i * 0.1f), 0.5f }, { 1.0f, 1.0f, 0.0f, 1.0f });
+        //
+        //Renderer::DrawPartialSprite(tileMap, { 0.5f, 0.0f }, { 1.501f, 1.0f }, { 1.0f, 0.0f }, { 16.0f, 16.0f });
+        //Renderer::DrawSprite(texture, { 0.5f,-1.0f }, { 1.0f, 1.0f });
+        //Renderer::DrawSprite(texture2, { 0.5f, 0.0f }, { 1.0f, 1.0f });
+        //Renderer::DrawRotatedSprite(texture, { -0.5f, -0.5f, 1.0f }, { 0.5f, 0.5f }, { 1.0f, 1.0f, 1.0f, 1.0f }, Timer::Get());
 
-        Renderer::DrawCircle({ -0.5f, 0.5f }, { 1.0f, 0.5f, 0.0f, 1.0f }, 0.5f, 1.0f, 0.5f);
+        mScene->OnUpdate();
 
-        for (int i = 0; i < 20; i++)
-            Renderer::DrawLine({ -1.7f, -0.9f + (i * 0.1f), 0.5f }, { -1.2f, -0.9f + (i * 0.1f), 0.5f }, { 1.0f, 1.0f, 0.0f, 1.0f });
-
-        Renderer::DrawPartialSprite(tileMap, { 0.5f, 0.0f }, { 1.501f, 1.0f }, { 1.0f, 0.0f }, { 16.0f, 16.0f });
-        Renderer::DrawSprite(texture, { 0.5f,-1.0f }, { 1.0f, 1.0f });
-        Renderer::DrawSprite(texture2, { 0.5f, 0.0f }, { 1.0f, 1.0f });
-        Renderer::DrawRotatedSprite(texture, { -0.5f, -0.5f, 1.0f }, { 0.5f, 0.5f }, { 1.0f, 1.0f, 1.0f, 1.0f }, Timer::Get());
 
         Renderer::Flush();
         framebuffer->Unbind();
@@ -140,6 +151,8 @@ namespace Alexio
         ImGui::Text("");
         ImGui::Text("Circles: %d", Renderer::Stats.Circles);
         ImGui::Text("DrawCircle: %d", Renderer::Stats.DrawCircle);
+        auto& squareColor = mScene->Reg().get<SpriteRendererComponent>(mSquareEntity).color;
+        ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
         ImGui::Unindent();
         ImGui::End();
 

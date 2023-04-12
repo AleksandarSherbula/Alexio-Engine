@@ -12,8 +12,6 @@ namespace Alexio
 		AIO_ASSERT(!sInstance, "An instance of Engine has already been made");
 		sInstance = this;
 
-		TestEntt ent;
-
 		SetGraphicsAPI(OpenGL);
 		mRunning = true;
 	}

@@ -3,6 +3,7 @@
 #include "Alexio/Utilities.h"
 #include "Events/Events.h"
 #include "Input/Input.h"
+#include "Math/Math.h"
 
 #include <functional>
 
@@ -24,7 +25,7 @@ namespace Alexio
 		virtual void Initialize() = 0;
 
 		virtual void PollEvents() = 0;
-		virtual glm::vec2 GetMousePositionFromWindowAPI() = 0;
+		virtual Vector2 GetMousePositionFromWindowAPI() = 0;
 
 		inline uint32_t GetWidth()  const { return mCallbackData.width; }
 		inline uint32_t GetHeight() const { return mCallbackData.height; }

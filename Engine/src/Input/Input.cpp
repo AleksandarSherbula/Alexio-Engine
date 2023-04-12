@@ -56,7 +56,7 @@ namespace Alexio
 		newMouseButtonState[mousebutton] = state;
 	}
 
-	glm::vec2 Input::GetMousePosition()
+	Vector2 Input::GetMousePosition()
 	{
 		return Engine::Get()->GetWindow()->GetMousePositionFromWindowAPI();
 	}
