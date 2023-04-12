@@ -5,8 +5,6 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/DX11/DX11_Backend.h"
 
-#include "Alexio/Engine.h"
-
 #include <imgui.h>
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

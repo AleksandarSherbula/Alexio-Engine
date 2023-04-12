@@ -8,13 +8,7 @@ namespace Alexio
 
     Editor::Editor()
     {
-        SetGraphicsAPI(DirectX11);
-
-        glm::vec2 v1 = { 0.5f, 0.5f };
-        Vector2 v2 = { 0.5f, 0.5f };
-
-        AIO_LOG_TRACE("glm::vec2 size: {0}", sizeof(glm::vec2));
-        AIO_LOG_TRACE("Vector2 size: {0}", sizeof(Vector2));
+        SetGraphicsAPI(OpenGL);
 
         PushLayer(new EditorLayer());
     }

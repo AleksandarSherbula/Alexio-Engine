@@ -4,7 +4,6 @@
 namespace Alexio
 {
 	Engine* Engine::sInstance = nullptr;
-	
 
 	Engine::Engine()
 	{
@@ -13,8 +12,9 @@ namespace Alexio
 		AIO_ASSERT(!sInstance, "An instance of Engine has already been made");
 		sInstance = this;
 
-		SetGraphicsAPI(OpenGL);
+		TestEntt ent;
 
+		SetGraphicsAPI(OpenGL);
 		mRunning = true;
 	}
 

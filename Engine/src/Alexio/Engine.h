@@ -12,6 +12,7 @@
 #include "Window/Window.h"
 #include "Renderer/Renderer.h"
 #include "ImGui/ImGuiLayer.h"
+#include "TestEntt.h"
 
 namespace Alexio
 {

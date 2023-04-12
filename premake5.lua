@@ -8,6 +8,7 @@ IncludeDir["GLFW"]  = "Engine/dependecies/GLFW/include"
 IncludeDir["GLAD"]  = "Engine/dependecies/GLAD/include"
 IncludeDir["ImGUI"] = "Engine/dependecies/imgui"
 IncludeDir["GLM"]   = "Engine/dependecies/glm"
+IncludeDir["Entt"]  = "Engine/dependecies/entt/include"
 
 group "Dependencies"
    include "Engine/dependecies/GLFW"
@@ -49,7 +50,8 @@ project "Engine"
       "%{IncludeDir.GLFW}",
       "%{IncludeDir.GLAD}",
       "%{IncludeDir.ImGUI}",
-      "%{IncludeDir.GLM}"
+      "%{IncludeDir.GLM}",
+      "%{IncludeDir.Entt}"
    }
 
    links
