@@ -1,12 +1,12 @@
-[submodule "Engine/dependecies/spdlog"]
-	path = Engine/dependecies/spdlog
+[submodule "Engine/dependencies/spdlog"]
+	path = Engine/dependencies/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "Engine/dependecies/GLFW"]
-	path = Engine/dependecies/GLFW
+[submodule "Engine/dependencies/GLFW"]
+	path = Engine/dependencies/GLFW
 	url = https://github.com/AleksandarSherbula/GLFW
-[submodule "Engine/dependecies/imgui"]
-	path = Engine/dependecies/imgui
+[submodule "Engine/dependencies/imgui"]
+	path = Engine/dependencies/imgui
 	url = https://github.com/AleksandarSherbula/imgui
-[submodule "Engine/dependecies/glm"]
-	path = Engine/dependecies/glm
+[submodule "Engine/dependencies/glm"]
+	path = Engine/dependencies/glm
 	url = https://github.com/g-truc/glm
