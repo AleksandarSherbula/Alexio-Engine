@@ -4,16 +4,16 @@ workspace "AlexioEngine"
    architecture "x64"
 
 IncludeDir = {}
-IncludeDir["GLFW"]  = "Engine/dependecies/GLFW/include"
-IncludeDir["GLAD"]  = "Engine/dependecies/GLAD/include"
-IncludeDir["ImGUI"] = "Engine/dependecies/imgui"
-IncludeDir["GLM"]   = "Engine/dependecies/glm"
-IncludeDir["Entt"]  = "Engine/dependecies/entt/include"
+IncludeDir["GLFW"]  = "Engine/dependencies/GLFW/include"
+IncludeDir["GLAD"]  = "Engine/dependencies/GLAD/include"
+IncludeDir["ImGUI"] = "Engine/dependencies/imgui"
+IncludeDir["GLM"]   = "Engine/dependencies/glm"
+IncludeDir["Entt"]  = "Engine/dependencies/entt/include"
 
 group "Dependencies"
-   include "Engine/dependecies/GLFW"
-   include "Engine/dependecies/GLAD"
-   include "Engine/dependecies/imgui"
+   include "Engine/dependencies/GLFW"
+   include "Engine/dependencies/GLAD"
+   include "Engine/dependencies/imgui"
 group ""
 
 project "Engine"
@@ -33,8 +33,8 @@ project "Engine"
    {
       "%{prj.name}/src/**.h",
       "%{prj.name}/src/**.cpp",
-      "%{prj.name}/dependecies/stb_image/stb_image.h",
-      "%{prj.name}/dependecies/stb_image/stb_image.cpp",
+      "%{prj.name}/dependencies/stb_image/stb_image.h",
+      "%{prj.name}/dependencies/stb_image/stb_image.cpp",
    }
 
    defines
@@ -45,8 +45,8 @@ project "Engine"
    includedirs
    {
       "%{prj.name}/src",
-      "%{prj.name}/dependecies/spdlog/include",
-      "%{prj.name}/dependecies/",
+      "%{prj.name}/dependencies/spdlog/include",
+      "%{prj.name}/dependencies/",
       "%{IncludeDir.GLFW}",
       "%{IncludeDir.GLAD}",
       "%{IncludeDir.ImGUI}",
@@ -102,9 +102,9 @@ project "Editor"
 
    includedirs
    {
-      "Engine/dependecies/spdlog/include",
+      "Engine/dependencies/spdlog/include",
       "Engine/src",
-      "Engine/dependecies/",
+      "Engine/dependencies/",
       "%{IncludeDir.ImGUI}",
       "%{IncludeDir.GLM}"
    }
@@ -149,9 +149,9 @@ project "Editor"
    
       includedirs
       {
-         "Engine/dependecies/spdlog/include",
+         "Engine/dependencies/spdlog/include",
          "Engine/src",
-         "Engine/dependecies/",
+         "Engine/dependencies/",
          "%{IncludeDir.ImGUI}",
          "%{IncludeDir.GLM}"
       }

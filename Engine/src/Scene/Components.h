@@ -4,26 +4,36 @@
 
 namespace Alexio
 {
+	struct TagComponent
+	{
+		std::string Tag;
+
+		TagComponent() = default;
+		TagComponent(const TagComponent&) = default;
+		TagComponent(const std::string& tag)
+			: Tag(tag) {}
+	};
+
 	struct TransformComponent
 	{
-		Mat4x4 transform{ 1.0f };
+		Mat4x4 Transform{ 1.0f };
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
 		TransformComponent(const Mat4x4& transform)
-			: transform(transform) {}
+			: Transform(transform) {}
 
-		operator Mat4x4& () { return transform; }
-		operator const Mat4x4& () const { return transform; }
+		operator Mat4x4& () { return Transform; }
+		operator const Mat4x4& () const { return Transform; }
 	};
 
 	struct SpriteRendererComponent
 	{
-		Vector4 color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		Vector4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const Vector4& color)
-			: color(color) {}
+			: Color(color) {}
 	};
 }

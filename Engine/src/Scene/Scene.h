@@ -1,20 +1,23 @@
 #pragma once
 
-#include "../../dependecies/entt/include/entity/entt.hpp"
+#include "..\..\Engine\dependencies\entt\include\entity\entt.hpp"
 #include "Components.h"
 
 namespace Alexio
 {
+	class Object;
+
 	class Scene
 	{
 	public:
 		Scene();
 		~Scene();
 	
-		entt::entity CreateEntity();
-		inline entt::registry& Reg() { return mRegistry; }
-	
-		void OnUpdate();	
+		Object CreateEntity(const std::string& name = std::string());
+		
+		entt::registry& Reg() { return mRegistry; }
+
+		void OnUpdate();
 	private:
 		entt::registry mRegistry;
 	};

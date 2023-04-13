@@ -13,6 +13,7 @@
 #include "Renderer/Renderer.h"
 #include "ImGui/ImGuiLayer.h"
 #include "Scene/Scene.h"
+#include "Scene/Object.h"
 
 namespace Alexio
 {

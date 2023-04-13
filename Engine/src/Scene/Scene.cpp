@@ -1,5 +1,6 @@
 #include "aio_pch.h"
 #include "Scene.h"
+#include "Object.h"
 
 #include "Renderer/Renderer.h"
 
@@ -37,9 +38,13 @@ namespace Alexio
 	
 	}
 
-	entt::entity Scene::CreateEntity()
+	Object Scene::CreateEntity(const std::string& name)
 	{
-		return mRegistry.create();
+		Object object = {mRegistry.create(), this};
+		object.AddComponent<TransformComponent>();
+		TagComponent& tag = object.AddComponent<TagComponent>();
+		tag.Tag = name.empty() ? "Undefined" : name;
+		return object;
 	}
 
 	void Scene::OnUpdate()
@@ -49,7 +54,7 @@ namespace Alexio
 		{
 			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 	
-			Renderer::DrawQuad(transform, sprite.color);
+			Renderer::DrawQuad(transform, sprite.Color);
 		}
 	}
 	

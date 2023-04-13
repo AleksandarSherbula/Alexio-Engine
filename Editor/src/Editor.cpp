@@ -31,13 +31,10 @@ namespace Alexio
         texture2 = Texture::Create("assets/images/awesomeface.png");
         tileMap  = Texture::Create("assets/images/tilemap.png");
 
-        mScene = CreateRef<Scene>();
+        mCurrentScene = CreateRef<Scene>();
 
-        auto square = mScene->CreateEntity();
-        mScene->Reg().emplace<TransformComponent>(square);
-        mScene->Reg().emplace<SpriteRendererComponent>(square, Vector4(0.0f, 0.0f, 1.0f, 1.0f));
-
-        mSquareEntity = square;
+        mSquare = mCurrentScene->CreateEntity("Square");
+        mSquare.AddComponent<SpriteRendererComponent>(Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 
         fbSpec.width = Engine::Get()->ScreenWidth();
         fbSpec.height = Engine::Get()->ScreenHeight();
@@ -66,8 +63,7 @@ namespace Alexio
         //Renderer::DrawSprite(texture2, { 0.5f, 0.0f }, { 1.0f, 1.0f });
         //Renderer::DrawRotatedSprite(texture, { -0.5f, -0.5f, 1.0f }, { 0.5f, 0.5f }, { 1.0f, 1.0f, 1.0f, 1.0f }, Timer::Get());
 
-        mScene->OnUpdate();
-
+        mCurrentScene->OnUpdate();
 
         Renderer::Flush();
         framebuffer->Unbind();
@@ -151,9 +147,16 @@ namespace Alexio
         ImGui::Text("");
         ImGui::Text("Circles: %d", Renderer::Stats.Circles);
         ImGui::Text("DrawCircle: %d", Renderer::Stats.DrawCircle);
-        auto& squareColor = mScene->Reg().get<SpriteRendererComponent>(mSquareEntity).color;
-        ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+        ImGui::Text("");
         ImGui::Unindent();
+        if (mSquare)
+        {
+            TagComponent& tag = mSquare.GetComponent<TagComponent>();
+            SpriteRendererComponent sprRenderer = mSquare.GetComponent<SpriteRendererComponent>();
+
+            ImGui::Text("Object: %s", tag.Tag.c_str());
+            ImGui::ColorEdit4("Square Color", glm::value_ptr(sprRenderer.Color));
+        }
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
