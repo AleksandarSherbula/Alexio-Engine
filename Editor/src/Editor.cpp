@@ -48,7 +48,7 @@ namespace Alexio
         }
 
         framebuffer->Bind();
-        framebuffer->Clear(0.0f, 0.8f, 1.0f, 1.0f);
+        framebuffer->Clear(0.1f, 0.1f, 0.1f, 1.0f);
 
         mCurrentScene->OnUpdate();
        
@@ -146,9 +146,15 @@ namespace Alexio
         }
         
         ImGui::Text("Tag: %s", mCurrentScene->GetCamera().GetComponent<TagComponent>().Tag.c_str());
-        ImGui::Text("Camera Transform: ");
+        ImGui::Text("Camera Transform:");
         ImGui::DragFloat3("",
             glm::value_ptr(mCurrentScene->GetCamera().GetComponent<TransformComponent>().Transform[3]), 0.05f);
+
+       auto& camera = mCurrentScene->GetCamera().GetComponent<CameraComponent>().Camera;
+       float orthoSize = camera.GetOrthographicSize();
+       ImGui::Text("Orthographic size:");
+       if (ImGui::DragFloat(" ", &orthoSize))
+           camera.SetOrthographicSize(orthoSize);
 
         ImGui::End();
 
