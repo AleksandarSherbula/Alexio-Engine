@@ -14,7 +14,7 @@ namespace Alexio {
 
 		virtual void OnStart() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate(float dt) {}
+		virtual void OnUpdate() {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 

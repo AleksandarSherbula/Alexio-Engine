@@ -52,7 +52,7 @@ namespace Alexio
 				Close();
 
 			for (Layer* layer : mLayerStack)
-				layer->OnUpdate(Timer::DeltaTime());
+				layer->OnUpdate();
 			
 			for (Layer* layer : mLayerStack)
 				layer->OnImGuiRender();

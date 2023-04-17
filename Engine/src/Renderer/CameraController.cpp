@@ -41,7 +41,7 @@ namespace Alexio
 		return false;
 	}
 
-	void CameraController::OnUpdate(float dt)
+	void CameraController::OnUpdate()
 	{
 		float moveSpeed = mZoomLevel;
 		

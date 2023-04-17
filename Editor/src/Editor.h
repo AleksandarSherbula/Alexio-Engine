@@ -32,7 +32,7 @@ namespace Alexio
 		EditorLayer();
 
 		void OnStart() override;
-		void OnUpdate(float deltaTime) override;
+		void OnUpdate() override;
 		void OnImGuiRender() override;
 		void OnEvent(Event& e) override;
 	};

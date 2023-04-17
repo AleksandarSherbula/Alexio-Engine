@@ -19,7 +19,7 @@ namespace Alexio
 		bool OnWindowResize(WindowResizeEvent& e);
 		bool OnMouseScroll(MouseScrolledEvent& e);
 
-		void OnUpdate(float dt);
+		void OnUpdate();
 		void UpdateProjection(float width, float height);
 
 		void OnResize(float width, float height);

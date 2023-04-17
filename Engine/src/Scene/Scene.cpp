@@ -10,8 +10,12 @@ namespace Alexio
 {
 	Scene::Scene()
 	{
+		mViewportWidth = 0.0f;
+		mViewportHeight = 0.0f;
+
 		mCameraObject = CreateObject("Camera");
-		mCameraObject.AddComponent<CameraComponent>(Engine::Get()->ScreenWidth() / Engine::Get()->ScreenHeight());
+		CameraComponent& camera = mCameraObject.AddComponent<CameraComponent>();
+		camera.Primary = true;
 	}
 	
 	Scene::~Scene()
@@ -30,29 +34,53 @@ namespace Alexio
 
 	void Scene::OnUpdate()
 	{
-		CameraComponent& camera = mCameraObject.GetComponent<CameraComponent>();
-		camera.Controller.OnUpdate(Timer::DeltaTime());
-
-
-		auto group = mRegistry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group)
+		Mat4x4* mainCameraProjection = nullptr;
+		Mat4x4* mainCameraTransform = nullptr;
 		{
-			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-	
-			Renderer::DrawQuad(transform, sprite.Color);
+			auto view = mRegistry.view<TransformComponent, CameraComponent>();
+			for (auto entity : view)
+			{
+				auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+
+				if (camera.Primary)
+				{
+					mainCameraProjection = &camera.Camera.GetProjection();
+					mainCameraTransform = &transform.Transform;
+					break;
+				}
+			}
+		}
+
+		if (mainCameraProjection)
+		{
+			Mat4x4 viewProj = *mainCameraProjection * glm::inverse(*mainCameraTransform);
+
+			Renderer::GetCameraBuffer()->SetData(&viewProj, sizeof(Mat4x4));
+			Renderer::GetCameraBuffer()->Bind(0);
+
+			auto group = mRegistry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+				Renderer::DrawQuad(transform, sprite.Color);
+			}
+
+			Renderer::Flush();
 		}
 	}
 
-	void Scene::OnResize(float width, float height)
+	void Scene::OnViewportResize(float width, float height)
 	{
-		CameraComponent& camera = mCameraObject.GetComponent<CameraComponent>();
-		camera.Controller.UpdateProjection(width, height);
-	}
+		mViewportWidth = width;
+		mViewportHeight = height;
 
-	void Scene::OnEvent(Event& e)
-	{
-		CameraComponent& camera = mCameraObject.GetComponent<CameraComponent>();
-		camera.Controller.OnEvent(e);
+		auto view = mRegistry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			auto& cameraComponent = view.get<CameraComponent>(entity);
+			cameraComponent.Camera.SetViewportSize(width, height);
+		}
 	}
 }
 

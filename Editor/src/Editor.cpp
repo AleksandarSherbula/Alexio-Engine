@@ -38,29 +38,20 @@ namespace Alexio
         framebuffer = Framebuffer::Create(fbSpec);
     }
 
-    void EditorLayer::OnUpdate(float deltaTime)
-    {
-        //if (mViewportFocused)
-        //    sCameraController->OnUpdate(deltaTime);
+    void EditorLayer::OnUpdate()
+    {    
+        if (mViewportSize.x > 0.0f && mViewportSize.y > 0.0f && // zero sized framebuffer is invalid
+            (fbSpec.width != mViewportSize.x || fbSpec.height != mViewportSize.y))
+        {
+            framebuffer->OnResize((uint32_t)mViewportSize.x, (uint32_t)mViewportSize.y);
+            mCurrentScene->OnViewportResize(mViewportSize.x, mViewportSize.y);
+        }
 
         framebuffer->Bind();
         framebuffer->Clear(0.0f, 0.8f, 1.0f, 1.0f);
 
-        //Renderer::DrawRotatedQuad({ -0.9f, -0.9f }, { 0.5f , 0.5f }, { 1.0f, 1.0f, 0.0f, 1.0f }, Timer::Get());
-        //
-        //Renderer::DrawCircle({ -0.5f, 0.5f }, { 1.0f, 0.5f, 0.0f, 1.0f }, 0.5f, 1.0f, 0.5f);
-        //
-        //for (int i = 0; i < 20; i++)
-        //    Renderer::DrawLine({ -1.7f, -0.9f + (i * 0.1f), 0.5f }, { -1.2f, -0.9f + (i * 0.1f), 0.5f }, { 1.0f, 1.0f, 0.0f, 1.0f });
-        //
-        //Renderer::DrawPartialSprite(tileMap, { 0.5f, 0.0f }, { 1.501f, 1.0f }, { 1.0f, 0.0f }, { 16.0f, 16.0f });
-        //Renderer::DrawSprite(texture, { 0.5f,-1.0f }, { 1.0f, 1.0f });
-        //Renderer::DrawSprite(texture2, { 0.5f, 0.0f }, { 1.0f, 1.0f });
-        //Renderer::DrawRotatedSprite(texture, { -0.5f, -0.5f, 1.0f }, { 0.5f, 0.5f }, { 1.0f, 1.0f, 1.0f, 1.0f }, Timer::Get());
-
         mCurrentScene->OnUpdate();
-
-        Renderer::Flush();
+       
         framebuffer->Unbind();
     }
 
@@ -116,7 +107,7 @@ namespace Alexio
         #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             apiName = (Renderer::GetGraphicsAPI() == OpenGL) ? "OpenGL 4.5" : "DirectX 11";
         #elif defined(AIO_API_OPENGL)
-            apiName = "OpenGL";
+            apiName = "OpenGL 4.5";
         #elif defined(AIO_API_DX11)
             apiName = "DirectX11";
         #endif
@@ -144,6 +135,7 @@ namespace Alexio
         ImGui::Text("DrawCircle: %d", Renderer::Stats.DrawCircle);
         ImGui::Text("");
         ImGui::Unindent();
+
         if (mSquare)
         {
             TagComponent& tag = mSquare.GetComponent<TagComponent>();
@@ -152,6 +144,12 @@ namespace Alexio
             ImGui::Text("Object: %s", tag.Tag.c_str());
             ImGui::ColorEdit4("Square Color", glm::value_ptr(sprRenderer.Color));
         }
+        
+        ImGui::Text("Tag: %s", mCurrentScene->GetCamera().GetComponent<TagComponent>().Tag.c_str());
+        ImGui::Text("Camera Transform: ");
+        ImGui::DragFloat3("",
+            glm::value_ptr(mCurrentScene->GetCamera().GetComponent<TransformComponent>().Transform[3]), 0.05f);
+
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -162,12 +160,8 @@ namespace Alexio
         Engine::Get()->GetImGuiLayer()->BlockEvents(!mViewportFocused || !mViewportHovered);
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        if (mViewportSize != *((glm::vec2*)&viewportPanelSize))
-        {
-            framebuffer->OnResize(viewportPanelSize.x, viewportPanelSize.y);
-            mViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-            mCurrentScene->OnResize(viewportPanelSize.x, viewportPanelSize.y);
-        }
+        mViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
         ImVec2 uv0 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(0, 1) : ImVec2(0, 0); // Top-left UV coordinate
         ImVec2 uv1 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(1, 0) : ImVec2(1, 1); // Bottom-right UV coordinate
         ImGui::Image(framebuffer->GetColorAttachment(), ImVec2(mViewportSize.x, mViewportSize.y), uv0, uv1);
@@ -180,7 +174,5 @@ namespace Alexio
 
     void EditorLayer::OnEvent(Event& e)
     {
-        if (mViewportFocused)
-            mCurrentScene->OnEvent(e);
     }
 }

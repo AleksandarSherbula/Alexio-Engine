@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Math.h"
+#include "SceneCamera.h"
 #include "Renderer/CameraController.h"
 
 namespace Alexio
@@ -40,13 +41,10 @@ namespace Alexio
 
 	struct CameraComponent
 	{
-		CameraController Controller;
+		SceneCamera Camera;
+		bool Primary = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(float aspectRatio) 
-		{
-			Controller = CameraController(aspectRatio);
-		}
 	};
 }

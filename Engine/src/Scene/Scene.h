@@ -16,11 +16,13 @@ namespace Alexio
 		entt::registry& Reg() { return mRegistry; }
 
 		void OnUpdate();
+		inline Object GetCamera() { return mCameraObject; }
 
-		void OnResize(float width, float height);
-		void OnEvent(Event& e);
+		void OnViewportResize(float width, float height);
 	private:
 		entt::registry mRegistry;
 		Object mCameraObject;
+
+		float mViewportWidth, mViewportHeight;
 	};
 }
