@@ -1,6 +1,7 @@
 #include "aio_pch.h"
 #include "Input/Input.h"
 
+#include "Renderer/Renderer.h"
 #include "Alexio/Engine.h"
 
 namespace Alexio

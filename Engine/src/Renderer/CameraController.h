@@ -5,11 +5,11 @@
 
 namespace Alexio
 {
-	class Camera
+	class CameraController
 	{
 	public:
-		Camera() = default;
-		Camera(float aspectRatio);
+		CameraController() = default;
+		CameraController(float aspectRatio);
 		
 		inline Vector2& Position() { return mPosition; }
 		inline float& Rotation() { return mRotation; }

@@ -4,6 +4,9 @@
 
 #include "Math/Math.h"
 
+#include <unordered_map>
+#include <array>
+
 namespace Alexio
 {
 	class Input

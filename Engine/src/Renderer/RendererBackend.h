@@ -2,7 +2,7 @@
 
 #include "Buffer.h"
 #include "Shader.h"
-#include "Camera.h"
+#include "CameraController.h"
 #include "Texture.h"
 #include "Framebuffer.h"
 

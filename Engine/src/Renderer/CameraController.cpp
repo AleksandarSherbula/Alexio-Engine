@@ -1,12 +1,12 @@
 #include "aio_pch.h"
-#include "Camera.h"
+#include "CameraController.h"
 #include "Alexio/Timer.h"
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
 
 namespace Alexio
 {
-	Camera::Camera(float aspectRatio)
+	CameraController::CameraController(float aspectRatio)
 	{		
 		mAspectRatio = aspectRatio;
 		mZoomLevel = 1.0f;
@@ -19,21 +19,21 @@ namespace Alexio
 		mRotation = 0.0f;
 	}
 
-	void Camera::OnEvent(Event& e)
+	void CameraController::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowResizeEvent>(AIO_BIND_EVENT_FN(Camera::OnWindowResize));
-		dispatcher.Dispatch<MouseScrolledEvent>(AIO_BIND_EVENT_FN(Camera::OnMouseScroll));
+		dispatcher.Dispatch<WindowResizeEvent>(AIO_BIND_EVENT_FN(CameraController::OnWindowResize));
+		dispatcher.Dispatch<MouseScrolledEvent>(AIO_BIND_EVENT_FN(CameraController::OnMouseScroll));
 	}
 
-	bool Camera::OnWindowResize(WindowResizeEvent& e)
+	bool CameraController::OnWindowResize(WindowResizeEvent& e)
 	{
 		mAspectRatio = static_cast<float>(e.GetWidth()) / e.GetHeight();
 		mProjection = glm::ortho(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, mZoomLevel, -mZoomLevel);
 		return false;
 	}
 
-	bool Camera::OnMouseScroll(MouseScrolledEvent& e)
+	bool CameraController::OnMouseScroll(MouseScrolledEvent& e)
 	{
 		mZoomLevel -= e.GetYOffset() * 0.25f;
 		mZoomLevel = std::max(mZoomLevel, 0.25f);
@@ -41,7 +41,7 @@ namespace Alexio
 		return false;
 	}
 
-	void Camera::OnUpdate(float dt)
+	void CameraController::OnUpdate(float dt)
 	{
 		float moveSpeed = mZoomLevel;
 		
@@ -54,22 +54,25 @@ namespace Alexio
 		if (Alexio::Input::KeyHeld(DOWN))
 			mPosition.y += moveSpeed * Timer::DeltaTime();
 
-		mView = glm::translate(Mat4x4(1.0f), Vector3(mPosition, 0.0f)) *
+		AIO_LOG_TRACE("CameraController position: {0} : {1}", mPosition.x, mPosition.y);
+
+		Mat4x4 transform = glm::translate(Mat4x4(1.0f), Vector3(mPosition, 0.0f)) *
 			glm::rotate(Mat4x4(1.0f), glm::radians(mRotation), Vector3(0, 0, 1));
 		
+		mView = glm::inverse(transform);
 		mViewProjection = mProjection * mView;
 
 		Renderer::GetCameraBuffer()->SetData(&mViewProjection, sizeof(Mat4x4));
 		Renderer::GetCameraBuffer()->Bind(0);
 	}
 
-	void Camera::UpdateProjection(float width, float height)
+	void CameraController::UpdateProjection(float width, float height)
 	{
 		mAspectRatio = width / height;
 		mProjection = glm::ortho(-mAspectRatio * mZoomLevel, mAspectRatio * mZoomLevel, mZoomLevel, -mZoomLevel);
 	}
 
-	void Camera::OnResize(float width, float height)
+	void CameraController::OnResize(float width, float height)
 	{
 
 	}

@@ -1,6 +1,11 @@
 #include "aio_pch.h"
 #include "Engine.h"
 
+#include "Random.h"
+#include "Timer.h"
+#include "Renderer/Renderer.h"
+#include "Input/Input.h"
+
 namespace Alexio
 {
 	Engine* Engine::sInstance = nullptr;

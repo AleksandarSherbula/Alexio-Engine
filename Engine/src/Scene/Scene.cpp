@@ -1,36 +1,17 @@
 #include "aio_pch.h"
-#include "Scene.h"
 #include "Object.h"
+#include "Scene.h"
 
+#include "Alexio/Timer.h"
+#include "Alexio/Engine.h"
 #include "Renderer/Renderer.h"
 
 namespace Alexio
 {
 	Scene::Scene()
 	{
-#if ENTT_EXAMPLE_CODE
-		entt::entity entity = m_Registry.create();
-		m_Registry.emplace<TransformComponent>(entity, glm::mat4(1.0f));
-
-		m_Registry.on_construct<TransformComponent>().connect<&OnTransformConstruct>();
-
-
-		if (m_Registry.has<TransformComponent>(entity))
-			TransformComponent& transform = m_Registry.get<TransformComponent>(entity);
-
-
-		auto view = m_Registry.view<TransformComponent>();
-		for (auto entity : view)
-		{
-			TransformComponent& transform = view.get<TransformComponent>(entity);
-		}
-
-		auto group = m_Registry.group<TransformComponent>(entt::get<MeshComponent>);
-		for (auto entity : group)
-		{
-			auto& [transform, mesh] = group.get<TransformComponent, MeshComponent>(entity);
-		}
-#endif
+		mCameraObject = CreateObject("Camera");
+		mCameraObject.AddComponent<CameraComponent>(Engine::Get()->ScreenWidth() / Engine::Get()->ScreenHeight());
 	}
 	
 	Scene::~Scene()
@@ -38,7 +19,7 @@ namespace Alexio
 	
 	}
 
-	Object Scene::CreateEntity(const std::string& name)
+	Object Scene::CreateObject(const std::string& name)
 	{
 		Object object = {mRegistry.create(), this};
 		object.AddComponent<TransformComponent>();
@@ -49,6 +30,10 @@ namespace Alexio
 
 	void Scene::OnUpdate()
 	{
+		CameraComponent& camera = mCameraObject.GetComponent<CameraComponent>();
+		camera.Controller.OnUpdate(Timer::DeltaTime());
+
+
 		auto group = mRegistry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : group)
 		{
@@ -57,8 +42,18 @@ namespace Alexio
 			Renderer::DrawQuad(transform, sprite.Color);
 		}
 	}
-	
-	
+
+	void Scene::OnResize(float width, float height)
+	{
+		CameraComponent& camera = mCameraObject.GetComponent<CameraComponent>();
+		camera.Controller.UpdateProjection(width, height);
+	}
+
+	void Scene::OnEvent(Event& e)
+	{
+		CameraComponent& camera = mCameraObject.GetComponent<CameraComponent>();
+		camera.Controller.OnEvent(e);
+	}
 }
 
 

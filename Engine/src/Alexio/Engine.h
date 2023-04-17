@@ -1,19 +1,7 @@
 #pragma once
 
-#include "Layer.h"
-#include "Log.h"
-#include "Timer.h"
-#include "Utilities.h"
-#include "Random.h"
-
-#include "Math/Math.h"
-#include "Input/Input.h"
-#include "Events/Events.h"
 #include "Window/Window.h"
-#include "Renderer/Renderer.h"
 #include "ImGui/ImGuiLayer.h"
-#include "Scene/Scene.h"
-#include "Scene/Object.h"
 
 namespace Alexio
 {

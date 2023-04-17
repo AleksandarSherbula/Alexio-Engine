@@ -1,11 +1,12 @@
 #pragma once
 
 #include "..\..\Engine\dependencies\entt\include\entity\entt.hpp"
-
-#include "Scene.h"
+#include "Components.h"
 
 namespace Alexio
 {
+	class Scene;
+
 	class Object
 	{
 	public:
@@ -38,9 +39,9 @@ namespace Alexio
 			mScene->Reg().remove<T>(mEntityHandle);
 		}
 
-		operator bool() const { return mScene->Reg().all_of<TransformComponent>(mEntityHandle); }
+		operator bool() const { return mEntityHandle != entt::null; }
 	private:
-		entt::entity mEntityHandle{ 0 };
+		entt::entity mEntityHandle = entt::null;
 		Scene* mScene = nullptr;
 	};
 }

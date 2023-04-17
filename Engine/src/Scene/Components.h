@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Math.h"
+#include "Renderer/CameraController.h"
 
 namespace Alexio
 {
@@ -35,5 +36,17 @@ namespace Alexio
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const Vector4& color)
 			: Color(color) {}
+	};
+
+	struct CameraComponent
+	{
+		CameraController Controller;
+
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(float aspectRatio) 
+		{
+			Controller = CameraController(aspectRatio);
+		}
 	};
 }

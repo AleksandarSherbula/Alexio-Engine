@@ -4,8 +4,6 @@
 
 namespace Alexio
 {
-    Ref<Camera> EditorLayer::sCamera = nullptr;
-
     Editor::Editor()
     {
         SetGraphicsAPI(DirectX11);
@@ -24,16 +22,13 @@ namespace Alexio
 
     void EditorLayer::OnStart()
     {
-        sCamera = CreateRef<Camera>(static_cast<float>(Engine::Get()->ScreenWidth())
-            / static_cast<float>(Engine::Get()->ScreenHeight()));
-
         texture  = Texture::Create("assets/images/AlexioLogo(Black).png");
         texture2 = Texture::Create("assets/images/awesomeface.png");
         tileMap  = Texture::Create("assets/images/tilemap.png");
 
         mCurrentScene = CreateRef<Scene>();
 
-        mSquare = mCurrentScene->CreateEntity("Square");
+        mSquare = mCurrentScene->CreateObject("Square");
         mSquare.AddComponent<SpriteRendererComponent>(Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 
         fbSpec.width = Engine::Get()->ScreenWidth();
@@ -45,8 +40,8 @@ namespace Alexio
 
     void EditorLayer::OnUpdate(float deltaTime)
     {
-        if (mViewportFocused)
-            sCamera->OnUpdate(deltaTime);
+        //if (mViewportFocused)
+        //    sCameraController->OnUpdate(deltaTime);
 
         framebuffer->Bind();
         framebuffer->Clear(0.0f, 0.8f, 1.0f, 1.0f);
@@ -171,7 +166,7 @@ namespace Alexio
         {
             framebuffer->OnResize(viewportPanelSize.x, viewportPanelSize.y);
             mViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-            sCamera->UpdateProjection(viewportPanelSize.x, viewportPanelSize.y); // TO DO: Set a Camera to run only for Viewport
+            mCurrentScene->OnResize(viewportPanelSize.x, viewportPanelSize.y);
         }
         ImVec2 uv0 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(0, 1) : ImVec2(0, 0); // Top-left UV coordinate
         ImVec2 uv1 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(1, 0) : ImVec2(1, 1); // Bottom-right UV coordinate
@@ -183,9 +178,9 @@ namespace Alexio
         
     }
 
-    void EditorLayer::OnEvent(Event& event)
+    void EditorLayer::OnEvent(Event& e)
     {
-        if (sCamera != nullptr && mViewportFocused)
-            sCamera->OnEvent(event);
+        if (mViewportFocused)
+            mCurrentScene->OnEvent(e);
     }
 }

@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Alexio/Engine.h"
-
-#include <vector>
+#include "Alexio.h"
 
 namespace Alexio
 {
@@ -13,16 +11,16 @@ namespace Alexio
 		~Editor();
 	};
 
-	class EditorLayer : public Alexio::Layer
+	class EditorLayer : public Layer
 	{
 	public:
-		std::shared_ptr<Alexio::Texture> texture;
-		std::shared_ptr<Alexio::Texture> texture2;
-		std::shared_ptr<Alexio::Texture> tileMap;
+		std::shared_ptr<Texture> texture;
+		std::shared_ptr<Texture> texture2;
+		std::shared_ptr<Texture> tileMap;
 
-		Alexio::FramebufferSpecification fbSpec;
+		FramebufferSpecification fbSpec;
 
-		std::shared_ptr<Alexio::Framebuffer> framebuffer;
+		std::shared_ptr<Framebuffer> framebuffer;
 
 		Vector2 mViewportSize = { 0.0f, 0.0f };
 
@@ -30,15 +28,13 @@ namespace Alexio
 
 		Ref<Scene> mCurrentScene;
 		Object mSquare;
-
-		static Ref<Camera> sCamera;
 	public:
 		EditorLayer();
 
 		void OnStart() override;
 		void OnUpdate(float deltaTime) override;
 		void OnImGuiRender() override;
-		void OnEvent(Alexio::Event& event) override;
+		void OnEvent(Event& e) override;
 	};
 }
 
