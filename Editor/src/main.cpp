@@ -1,3 +1,4 @@
+#include "aio_pch.h"
 #include "Editor.h"
 
 int main(int argc, char** agrv)

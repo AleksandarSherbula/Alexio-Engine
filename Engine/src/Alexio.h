@@ -13,5 +13,5 @@
 #include "Window/Window.h"
 #include "Renderer/Renderer.h"
 #include "ImGui/ImGuiLayer.h"
-#include "Scene/Object.h"
+#include "Scene/Entity.h"
 #include "Scene/Scene.h"

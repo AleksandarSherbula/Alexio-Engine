@@ -1,4 +1,6 @@
+#include "aio_pch.h"
 #include "Editor.h"
+#include "Scripts/CameraController.h"
 
 #include <iostream>
 
@@ -7,7 +9,6 @@ namespace Alexio
     Editor::Editor()
     {
         SetGraphicsAPI(DirectX11);
-
         PushLayer(new EditorLayer());
     }
 
@@ -28,7 +29,7 @@ namespace Alexio
 
         mCurrentScene = CreateRef<Scene>();
 
-        mSquare = mCurrentScene->CreateObject("Square");
+        mSquare = mCurrentScene->CreateEntity("Square");
         mSquare.AddComponent<SpriteRendererComponent>(Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 
         fbSpec.width = Engine::Get()->ScreenWidth();
@@ -36,6 +37,14 @@ namespace Alexio
         fbSpec.samples = 1;
 
         framebuffer = Framebuffer::Create(fbSpec);
+
+        mCameraEntity = mCurrentScene->CreateEntity("Camera");
+        CameraComponent& camera = mCameraEntity.AddComponent<CameraComponent>();
+        camera.Primary = true;
+
+        mCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+        mSceneHierarchyPanel.SetContext(mCurrentScene);
     }
 
     void EditorLayer::OnUpdate()
@@ -73,109 +82,112 @@ namespace Alexio
         window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
         
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("DockSpace", &dockSpaceOpen, window_flags);
-        ImGui::PopStyleVar();
-
-        // ImGuiStyleVar_WindowRounding and ImGuiStyleVar_WindowBorderSize
-        ImGui::PopStyleVar(2);
-
-        // Submit the DockSpace
-        ImGuiIO& io = ImGui::GetIO();
-        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+        if (ImGui::Begin("DockSpace", &dockSpaceOpen, window_flags))
         {
-            ImGuiID dockspace_id = ImGui::GetID("DockSpace");
-            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-        }
-        else
-        {
-            AIO_LOG_ERROR("Docking isn't enabled");
-        }
+            ImGui::PopStyleVar();
 
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
+            // ImGuiStyleVar_WindowRounding and ImGuiStyleVar_WindowBorderSize
+            ImGui::PopStyleVar(2);
+
+            // Submit the DockSpace
+            ImGuiIO& io = ImGui::GetIO();
+            if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
             {
-                if (ImGui::MenuItem("Exit", NULL, false, dockSpaceOpen != NULL))
-                    Engine::Get()->Close();
-                ImGui::EndMenu();
+                ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+                ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+            }
+            else
+            {
+                AIO_LOG_ERROR("Docking isn't enabled");
             }
 
-            ImGui::EndMenuBar();
-        }
+            if (ImGui::BeginMenuBar())
+            {
+                if (ImGui::BeginMenu("File"))
+                {
+                    if (ImGui::MenuItem("Exit", NULL, false, dockSpaceOpen != NULL))
+                        Engine::Get()->Close();
+                    ImGui::EndMenu();
+                }
 
-        char* apiName = "";
-        #if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
+                ImGui::EndMenuBar();
+            }
+
+            char* apiName = "";
+#if defined(AIO_API_OPENGL) && defined(AIO_API_DX11)
             apiName = (Renderer::GetGraphicsAPI() == OpenGL) ? "OpenGL 4.5" : "DirectX 11";
-        #elif defined(AIO_API_OPENGL)
+#elif defined(AIO_API_OPENGL)
             apiName = "OpenGL 4.5";
-        #elif defined(AIO_API_DX11)
+#elif defined(AIO_API_DX11)
             apiName = "DirectX11";
-        #endif
+#endif
 
-        ImGui::Begin("App Info");
-        ImGui::Text("Graphics API: %s", apiName);
-        ImGui::Text("");
-        ImGui::Text("Application Time: %.2f", Timer::Get());
-        ImGui::Text("");
-        ImGui::Text("Application framerate:");
-        ImGui::Indent();
-        ImGui::Text("%.3f ms / frame", 1000.0f / ImGui::GetIO().Framerate);
-        ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-        ImGui::Unindent();
-        ImGui::Text("");
-        ImGui::Text("Rendering Stats:");
-        ImGui::Indent();
-        ImGui::Text("Lines: %d", Renderer::Stats.Lines);
-        ImGui::Text("DrawLine: %d", Renderer::Stats.DrawLine);
-        ImGui::Text("");
-        ImGui::Text("Quads: %d", Renderer::Stats.Quads);
-        ImGui::Text("DrawQuad: %d", Renderer::Stats.DrawQuad);
-        ImGui::Text("");
-        ImGui::Text("Circles: %d", Renderer::Stats.Circles);
-        ImGui::Text("DrawCircle: %d", Renderer::Stats.DrawCircle);
-        ImGui::Text("");
-        ImGui::Unindent();
+            if (ImGui::Begin("App Info"))
+            {
+                ImGui::Text("Graphics API: %s", apiName);
+                ImGui::Text("");
+                ImGui::Text("Application Time: %.2f", Timer::Get());
+                ImGui::Text("");
+                ImGui::Text("Application framerate:");
+                ImGui::Indent();
+                ImGui::Text("%.3f ms / frame", 1000.0f / ImGui::GetIO().Framerate);
+                ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+                ImGui::Unindent();
+                ImGui::Text("");
+                ImGui::Text("Rendering Stats:");
+                ImGui::Indent();
+                ImGui::Text("Lines: %d", Renderer::Stats.Lines);
+                ImGui::Text("DrawLine: %d", Renderer::Stats.DrawLine);
+                ImGui::Text("");
+                ImGui::Text("Quads: %d", Renderer::Stats.Quads);
+                ImGui::Text("DrawQuad: %d", Renderer::Stats.DrawQuad);
+                ImGui::Text("");
+                ImGui::Text("Circles: %d", Renderer::Stats.Circles);
+                ImGui::Text("DrawCircle: %d", Renderer::Stats.DrawCircle);
+                ImGui::Text("");
+                ImGui::Unindent();
 
-        if (mSquare)
-        {
-            TagComponent& tag = mSquare.GetComponent<TagComponent>();
-            SpriteRendererComponent sprRenderer = mSquare.GetComponent<SpriteRendererComponent>();
+                if (mSquare)
+                {
+                    TagComponent& tag = mSquare.GetComponent<TagComponent>();
+                    SpriteRendererComponent sprRenderer = mSquare.GetComponent<SpriteRendererComponent>();
 
-            ImGui::Text("Object: %s", tag.Tag.c_str());
-            ImGui::ColorEdit4("Square Color", glm::value_ptr(sprRenderer.Color));
+                    ImGui::Text("Entity: %s", tag.Tag.c_str());
+                    ImGui::ColorEdit4("Square Color", glm::value_ptr(sprRenderer.Color));
+                }
+
+                ImGui::Text("Tag: %s", mCameraEntity.GetComponent<TagComponent>().Tag.c_str());
+                ImGui::Text("Camera Transform:");
+                ImGui::DragFloat2("",
+                    glm::value_ptr(mCameraEntity.GetComponent<TransformComponent>().Transform[3]), 0.05f);
+
+                auto& camera = mCameraEntity.GetComponent<CameraComponent>();
+                ImGui::Text("Orthographic size:");
+                if (ImGui::DragFloat(" ", &camera.OrthographicSize))
+                    camera.Camera.SetOrthographicSize(camera.OrthographicSize);
+            }
+            ImGui::End();
+
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+            if (ImGui::Begin("Viewport"))
+            {
+                mViewportFocused = ImGui::IsWindowFocused();
+                mViewportHovered = ImGui::IsWindowHovered();
+                Engine::Get()->GetImGuiLayer()->BlockEvents(!mViewportFocused);
+
+                ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+                mViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
+                ImVec2 uv0 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(0, 1) : ImVec2(0, 0); // Top-left UV coordinate
+                ImVec2 uv1 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(1, 0) : ImVec2(1, 1); // Bottom-right UV coordinate
+                ImGui::Image(framebuffer->GetColorAttachment(), ImVec2(mViewportSize.x, mViewportSize.y), uv0, uv1);
+            }
+            ImGui::End();
+            ImGui::PopStyleVar();
         }
-        
-        ImGui::Text("Tag: %s", mCurrentScene->GetCamera().GetComponent<TagComponent>().Tag.c_str());
-        ImGui::Text("Camera Transform:");
-        ImGui::DragFloat3("",
-            glm::value_ptr(mCurrentScene->GetCamera().GetComponent<TransformComponent>().Transform[3]), 0.05f);
-
-       auto& camera = mCurrentScene->GetCamera().GetComponent<CameraComponent>().Camera;
-       float orthoSize = camera.GetOrthographicSize();
-       ImGui::Text("Orthographic size:");
-       if (ImGui::DragFloat(" ", &orthoSize))
-           camera.SetOrthographicSize(orthoSize);
-
         ImGui::End();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("Viewport");
-
-        mViewportFocused = ImGui::IsWindowFocused();
-        mViewportHovered = ImGui::IsWindowHovered();
-        Engine::Get()->GetImGuiLayer()->BlockEvents(!mViewportFocused || !mViewportHovered);
-
-        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        mViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-
-        ImVec2 uv0 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(0, 1) : ImVec2(0, 0); // Top-left UV coordinate
-        ImVec2 uv1 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(1, 0) : ImVec2(1, 1); // Bottom-right UV coordinate
-        ImGui::Image(framebuffer->GetColorAttachment(), ImVec2(mViewportSize.x, mViewportSize.y), uv0, uv1);
-        ImGui::End();
-        ImGui::PopStyleVar();
-
-        ImGui::End();
-        
+        mSceneHierarchyPanel.OnImGuiRender();
     }
 
     void EditorLayer::OnEvent(Event& e)

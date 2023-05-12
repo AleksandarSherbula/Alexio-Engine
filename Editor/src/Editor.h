@@ -2,6 +2,8 @@
 
 #include "Alexio.h"
 
+#include "Panels/SceneHierarchyPanel.h"
+
 namespace Alexio
 {
 	class Editor : public Engine
@@ -27,7 +29,10 @@ namespace Alexio
 		bool mViewportFocused = false, mViewportHovered = false;
 
 		Ref<Scene> mCurrentScene;
-		Object mSquare;
+		Entity mSquare;
+		Entity mCameraEntity;
+
+		SceneHierarchyPanel mSceneHierarchyPanel;
 	public:
 		EditorLayer();
 

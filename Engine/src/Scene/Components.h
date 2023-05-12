@@ -2,7 +2,6 @@
 
 #include "Math/Math.h"
 #include "SceneCamera.h"
-#include "Renderer/CameraController.h"
 
 namespace Alexio
 {
@@ -43,8 +42,26 @@ namespace Alexio
 	{
 		SceneCamera Camera;
 		bool Primary = false;
+		float OrthographicSize = 10.0f;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+	};
+
+	class EntityScript;
+
+	struct NativeScriptComponent
+	{
+		EntityScript* Instance = nullptr;
+
+		EntityScript*(*InstantiateScript)();
+		void (*DestroyScript)(NativeScriptComponent*);
+
+		template<typename T>
+		void Bind()
+		{
+			InstantiateScript = []() { return static_cast<EntityScript*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
+		}
 	};
 }

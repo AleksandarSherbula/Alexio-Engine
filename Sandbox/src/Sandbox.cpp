@@ -27,7 +27,7 @@ void MainLayer::OnStart()
 	tileMap = Alexio::Texture::Create("assets/images/tilemap.png");
 }
 
-void MainLayer::OnUpdate(float deltaTime)
+void MainLayer::OnUpdate()
 {
     Renderer::Clear(0.0f, 0.8f, 1.0f, 1.0f);
 

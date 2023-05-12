@@ -21,7 +21,7 @@ public:
 	MainLayer();
 
 	void OnStart() override;
-	void OnUpdate(float deltaTime) override;
+	void OnUpdate() override;
 	void OnImGuiRender() override;
 	void OnEvent(Alexio::Event& event) override;
 };

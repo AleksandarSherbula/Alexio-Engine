@@ -49,6 +49,15 @@ namespace Alexio
 
     void ImGuiLayer::OnEvent(Event& e)
     {
+        // TO DO: Go back to this after you setup the SceneCamera or EditorCamera.
+        // Currently, this SHOULD block anything you want to do on OnEvent function
+        // if it's key or mouse event. If these are events being dispatched, just set
+        // them as being handled and skip. However, this does not block the Input Polling
+        // because it is not part of the OnEvent functionality.
+
+        // Possible consideration: take it to the origin of where events are being spawn
+        // (GLFW_Window events or Win32_Window events).
+
         if (mBlockEvents)
         {
             ImGuiIO& io = ImGui::GetIO();
