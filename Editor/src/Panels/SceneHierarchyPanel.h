@@ -2,6 +2,7 @@
 
 #include "Alexio/Utilities.h"
 #include "Scene/Scene.h"
+#include "Scene/Entity.h"
 
 namespace Alexio
 {
@@ -14,7 +15,9 @@ namespace Alexio
 		void SetContext(const Ref<Scene>& context);
 
 		void OnImGuiRender();
+		void DrawEntityNode(Entity entity);
 	private:
 		Ref<Scene> mContext;
+		Entity mSelectionContext;
 	};
 }

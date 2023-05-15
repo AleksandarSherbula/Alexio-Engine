@@ -150,7 +150,7 @@ namespace Alexio
                 if (mSquare)
                 {
                     TagComponent& tag = mSquare.GetComponent<TagComponent>();
-                    SpriteRendererComponent sprRenderer = mSquare.GetComponent<SpriteRendererComponent>();
+                    SpriteRendererComponent& sprRenderer = mSquare.GetComponent<SpriteRendererComponent>();
 
                     ImGui::Text("Entity: %s", tag.Tag.c_str());
                     ImGui::ColorEdit4("Square Color", glm::value_ptr(sprRenderer.Color));

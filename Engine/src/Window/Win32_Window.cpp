@@ -65,7 +65,7 @@ namespace Alexio
 		
 		AIO_ASSERT(mHandle, "Failed to create a Window: {0}", ResultInfo(GetLastError()));
 		
-		ShowWindow(mHandle, SW_MAXIMIZE);
+		ShowWindow(mHandle, SW_SHOW);
 		SetForegroundWindow(mHandle);
 		SetFocus(mHandle);
 	}

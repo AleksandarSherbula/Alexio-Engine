@@ -38,7 +38,19 @@ namespace Alexio
 			mScene->Reg().remove<T>(mEntityHandle);
 		}
 
+		inline uint32_t GetID() { return (uint32_t) mEntityHandle; }
+
 		operator bool() const { return mEntityHandle != entt::null; }
+
+		bool operator==(const Entity& other) const 
+		{
+			return mEntityHandle == other.mEntityHandle && mScene == other.mScene; 
+		}
+
+		bool operator!=(const Entity& other) const
+		{
+			return !(mEntityHandle == other.mEntityHandle && mScene == other.mScene);
+		}
 	private:
 		entt::entity mEntityHandle = entt::null;
 		Scene* mScene = nullptr;
