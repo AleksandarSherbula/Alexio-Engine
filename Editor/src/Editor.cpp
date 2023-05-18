@@ -147,26 +147,8 @@ namespace Alexio
                 ImGui::Text("");
                 ImGui::Unindent();
 
-                if (mSquare)
-                {
-                    TagComponent& tag = mSquare.GetComponent<TagComponent>();
-                    SpriteRendererComponent& sprRenderer = mSquare.GetComponent<SpriteRendererComponent>();
-
-                    ImGui::Text("Entity: %s", tag.Tag.c_str());
-                    ImGui::ColorEdit4("Square Color", glm::value_ptr(sprRenderer.Color));
-                }
-
-                ImGui::Text("Tag: %s", mCameraEntity.GetComponent<TagComponent>().Tag.c_str());
-                ImGui::Text("Camera Transform:");
-                ImGui::DragFloat2("",
-                    glm::value_ptr(mCameraEntity.GetComponent<TransformComponent>().Transform[3]), 0.05f);
-
-                auto& camera = mCameraEntity.GetComponent<CameraComponent>();
-                ImGui::Text("Orthographic size:");
-                if (ImGui::DragFloat(" ", &camera.OrthographicSize))
-                    camera.Camera.SetOrthographicSize(camera.OrthographicSize);
+                ImGui::End();
             }
-            ImGui::End();
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
             if (ImGui::Begin("Viewport"))
@@ -181,11 +163,13 @@ namespace Alexio
                 ImVec2 uv0 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(0, 1) : ImVec2(0, 0); // Top-left UV coordinate
                 ImVec2 uv1 = Renderer::GetGraphicsAPI() == OpenGL ? ImVec2(1, 0) : ImVec2(1, 1); // Bottom-right UV coordinate
                 ImGui::Image(framebuffer->GetColorAttachment(), ImVec2(mViewportSize.x, mViewportSize.y), uv0, uv1);
+
+                ImGui::End();
             }
-            ImGui::End();
             ImGui::PopStyleVar();
+
+            ImGui::End();
         }
-        ImGui::End();
 
         mSceneHierarchyPanel.OnImGuiRender();
     }
