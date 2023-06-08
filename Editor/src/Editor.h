@@ -29,7 +29,8 @@ namespace Alexio
 		bool mViewportFocused = false, mViewportHovered = false;
 
 		Ref<Scene> mCurrentScene;
-		Entity mSquare;
+		Entity mBlueSquare;
+		Entity mGreenSquare;
 		Entity mCameraEntity;
 
 		SceneHierarchyPanel mSceneHierarchyPanel;

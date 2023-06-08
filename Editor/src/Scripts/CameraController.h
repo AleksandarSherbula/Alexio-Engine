@@ -12,17 +12,17 @@ namespace Alexio
 
 		void OnUpdate() override
 		{
-			auto& transform = GetComponent<TransformComponent>().Transform;
+			auto& transform = GetComponent<TransformComponent>();
 			float speed = 5.0f;
 
 			if (Input::KeyHeld(LEFT))
-				transform[3][0] -= speed * Timer::DeltaTime();
+				transform.Position.x -= speed * Timer::DeltaTime();
 			if (Input::KeyHeld(RIGHT))
-				transform[3][0] += speed * Timer::DeltaTime();
+				transform.Position.x += speed * Timer::DeltaTime();
 			if (Input::KeyHeld(UP))
-				transform[3][1] += speed * Timer::DeltaTime();
+				transform.Position.y += speed * Timer::DeltaTime();
 			if (Input::KeyHeld(DOWN))
-				transform[3][1] -= speed * Timer::DeltaTime();
+				transform.Position.y -= speed * Timer::DeltaTime();
 		}
 
 		void OnDestroy() override

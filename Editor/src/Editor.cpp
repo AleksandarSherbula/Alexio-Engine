@@ -8,7 +8,7 @@ namespace Alexio
 {
     Editor::Editor()
     {
-        SetGraphicsAPI(DirectX11);
+        SetGraphicsAPI(OpenGL);
         PushLayer(new EditorLayer());
     }
 
@@ -29,8 +29,13 @@ namespace Alexio
 
         mCurrentScene = CreateRef<Scene>();
 
-        mSquare = mCurrentScene->CreateEntity("Square");
-        mSquare.AddComponent<SpriteRendererComponent>(Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+        mBlueSquare = mCurrentScene->CreateEntity("Blue Square");
+        mBlueSquare.AddComponent<SpriteRendererComponent>(Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+        mBlueSquare.GetComponent<TransformComponent>().Position = {-3.0f, 0.0f, 0.0f};
+
+        mGreenSquare = mCurrentScene->CreateEntity("Green Square");
+        mGreenSquare.AddComponent<SpriteRendererComponent>(Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+        mGreenSquare.GetComponent<TransformComponent>().Position = { 3.0f, 0.0f, 0.0f};
 
         fbSpec.width = Engine::Get()->ScreenWidth();
         fbSpec.height = Engine::Get()->ScreenHeight();

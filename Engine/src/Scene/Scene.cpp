@@ -57,7 +57,7 @@ namespace Alexio
 				if (camera.Primary)
 				{
 					mainCameraProjection = &camera.Camera.GetProjection();
-					mainCameraTransform = &transform.Transform;
+					mainCameraTransform = &transform.GetTransform();
 					break;
 				}
 			}
@@ -75,7 +75,7 @@ namespace Alexio
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-				Renderer::DrawQuad(transform, sprite.Color);
+				Renderer::DrawQuad(transform.GetTransform(), sprite.Color);
 			}
 
 			Renderer::Flush();

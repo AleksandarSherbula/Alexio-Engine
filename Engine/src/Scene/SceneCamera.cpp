@@ -30,6 +30,6 @@ namespace Alexio
 		float orthoTop = mOrthographicSize;
 
 		mProjection = glm::ortho(orthoLeft, orthoRight,
-			orthoBottom, orthoTop);
+			orthoBottom, orthoTop, -100.0f, 100.0f);
 	}
 }

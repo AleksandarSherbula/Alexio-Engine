@@ -64,6 +64,9 @@ namespace Alexio
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE);
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
 	}
 
 	void OpenGL_Backend::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -83,7 +86,7 @@ namespace Alexio
 
 	void OpenGL_Backend::Clear(float r, float g, float b, float a)
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(r, g, b, a);
 	}
 

@@ -17,15 +17,25 @@ namespace Alexio
 
 	struct TransformComponent
 	{
-		Mat4x4 Transform{ 1.0f };
+		Vector3 Position = { 0.0f, 0.0f, 0.0f };
+		Vector3 Rotation = { 0.0f, 0.0f, 0.0f };
+		Vector3 Scale = { 1.0f, 1.0f, 1.0f };
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const Mat4x4& transform)
-			: Transform(transform) {}
+		TransformComponent(const Vector3& position)
+			: Position(position) {}
 
-		operator Mat4x4& () { return Transform; }
-		operator const Mat4x4& () const { return Transform; }
+		Mat4x4 GetTransform() const
+		{
+			glm::mat4x4 rotation = glm::rotate(glm::mat4x4(1.0f), Rotation.x, {1.0f, 0.0f, 0.0f})
+				* glm::rotate(glm::mat4x4(1.0f), Rotation.y, { 0.0f, 1.0f, 0.0f })
+				* glm::rotate(glm::mat4x4(1.0f), Rotation.z, { 0.0f, 0.0f, 1.0f });
+
+			return glm::translate(glm::mat4x4(1.0f), Position)
+				* rotation
+				* glm::scale(glm::mat4x4(1.0f), Scale);
+		}
 	};
 
 	struct SpriteRendererComponent
